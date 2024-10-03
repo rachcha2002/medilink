@@ -8,6 +8,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import Payments from "./Payments/Payments";
+import HealthAdminDashboard from "./HealthAdminDashboard";
 
 const HospitalAdmin = () => {
   return (
@@ -17,6 +18,7 @@ const HospitalAdmin = () => {
         <SideBar />
 
         <Routes>
+          <Route path="/" element={<HealthAdminDashboard />} />
           <Route path="payment" element={<Payments />} />
         </Routes>
       </>
