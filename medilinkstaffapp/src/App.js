@@ -15,6 +15,7 @@ import {
 import Loader from "./components/util/Loader";
 //Import components
 import LandingPage from "./components/LandingPage";
+import HospitalAdmin from "./components/HospitalAdmin/HospitalAdmin"
 
 // Main App component
 function App() {
@@ -33,6 +34,11 @@ function App() {
           <Route
             path="/"
             element={<LandingPage toggleLoading={toggleLoading} />}
+          />
+
+          <Route
+            path="/hospitaladmin"
+            element={<HospitalAdmin toggleLoading={toggleLoading} />}
           />
         </Routes>
       </Router>

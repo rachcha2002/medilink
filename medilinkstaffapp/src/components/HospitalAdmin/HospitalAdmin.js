@@ -1,11 +1,15 @@
 import React from "react";
+import Header from "../Header/Header"
+import SideBar from "./HospitalAdminSidebar/SideBar"
 
 const HospitalAdmin = () => {
+ 
   return (
-    <div>
-      <h1>Hospital Admin</h1>
-      <p>Content for Hospital Admin</p>
-    </div>
+    <>
+    <Header/>
+    <SideBar/>
+    
+    </>
   );
 };
 

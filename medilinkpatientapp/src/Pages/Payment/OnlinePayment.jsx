@@ -1,20 +1,18 @@
-import React from 'react'
+import React from "react";
 
-import Spacing from '../../Components/Spacing/Spacing'
-import PayOnline from '../../Components/Payments/PayOnline'
-
-
+import Spacing from "../../Components/Spacing/Spacing";
+import PayOnline from "../../Components/Payments/PayOnline";
 
 const OnlinePayment = () => {
   return (
     <>
       <Spacing lg={10} md={80} />
-     
+
       <hr />
-     <PayOnline/>
+      <PayOnline />
       <Spacing lg={200} md={80} />
     </>
-  )
-}
+  );
+};
 
-export default OnlinePayment
+export default OnlinePayment;
