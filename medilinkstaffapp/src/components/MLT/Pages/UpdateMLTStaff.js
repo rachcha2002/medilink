@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useForm, Controller, getValues } from "react-hook-form";
 import { Button, Col, Form, Row } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import ImageUpload from "../../ImageUpload/ImageUpload";
+import { useNavigate, useParams } from "react-router-dom";
+import ImageUpload from "../../MedicalStaff/Pages/ImageUpload";
 import { BsArrowLeft } from "react-icons/bs";
-import { BiCheckCircle, BiHide, BiShow } from "react-icons/bi";
+import { BiHide, BiShow } from "react-icons/bi";
 import "./Main.css";
 import PageTitle from "../../Main/PageTitle";
 
-function AddMLTStaff({ toggleLoading }) {
-  const cusfrontendurl = `${process.env.React_App_Frontend_URL}/customer`;
-  const stafffrontendurl = `${process.env.React_App_Frontend_URL}/staff/login`;
+function UpdateMLTStaff({ toggleLoading }) {
+  const { id } = useParams();
   const [errorMessage, setErrorMessage] = useState("");
-  const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [emailChanged, setEmailChanged] = useState(false); // Track email change
   const [selectedSubject, setSelectedSubject] = useState("");
-
   const navigate = useNavigate();
 
   const {
@@ -26,60 +23,81 @@ function AddMLTStaff({ toggleLoading }) {
     setValue,
     formState: { errors },
     getValues,
-    trigger,
   } = useForm();
 
-  const onSubmit = async (data) => {
-    if (data.password !== data.confirmPassword) {
-      setErrorMessage("The passwords do not match");
-      return;
-    }
+  useEffect(() => {
+    const fetchStaffData = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/staffroutes/mltstaff/${id}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setValue("name", data.name);
+          setValue("nic", data.nic);
+          setValue("contactNo", data.contactNo);
+          setValue("address", data.address);
+          setValue("subject", data.subject);
+          setValue("speciality", data.speciality);
+          setValue("email", data.email);
+          setSelectedSubject(data.subject);
+        } else {
+          throw new Error("Failed to fetch data");
+        }
+      } catch (err) {
+        console.error("Error fetching MLT staff details:", err);
+      }
+    };
 
+    if (id) fetchStaffData();
+  }, [id, setValue, toggleLoading]);
+
+  const onSubmit = async (data) => {
     try {
       toggleLoading(true);
 
-      // Create FormData and append all fields
-      const formData = new FormData();
-      formData.append("name", data.name);
-      formData.append("nic", data.nic);
-      formData.append("contactNo", data.contact);
-      formData.append("address", data.address);
-      formData.append("subject", data.subject);
-      formData.append("speciality", data.speciality);
-      formData.append("email", data.email);
-      formData.append("password", data.password);
-      formData.append("hospital", "Medihelp");
+      // Create formData if a file (e.g., image) is being uploaded
+      let requestData;
+      let headers = {};
 
-      // Append the photo if it's selected
       if (data.photo) {
-        formData.append("photo", data.photo); // No need for [0] if it's a single file
+        requestData = new FormData();
+        Object.keys(data).forEach((key) => {
+          requestData.append(key, data[key]);
+        });
+
+        // Ensure the photo is included in FormData
+        if (data.photo instanceof File) {
+          requestData.append("photo", data.photo);
+        }
+      } else {
+        requestData = {
+          ...data,
+        };
+        headers["Content-Type"] = "application/json";
       }
 
-      console.log("photo", data.photo);
-
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/staffroutes/create-mltstaff`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/staffroutes/mltstaff/${id}`,
         {
-          method: "POST",
-          body: formData, // Send FormData object
+          method: "PUT",
+          headers: headers,
+          body: data.photo ? requestData : JSON.stringify(requestData),
         }
       );
 
-      if (response.status === 201) {
-        alert("MLT Staff Registered Successfully!");
+      if (response.status === 200) {
+        alert("MLT Staff updated successfully!");
         navigate("/staff/hr/mlt");
       } else {
-        throw new Error("Failed to submit data");
+        const errorData = await response.json();
+        alert("Update failed:", errorData.message);
       }
     } catch (error) {
       console.error("Error:", error.message);
     } finally {
       toggleLoading(false);
     }
-  };
-
-  const handleSubjectChange = (e) => {
-    setSelectedSubject(e.target.value);
   };
 
   return (
@@ -94,80 +112,38 @@ function AddMLTStaff({ toggleLoading }) {
           >
             <BsArrowLeft /> Back
           </Button>
-          Create MLT Staff Account
+          Update MLT Staff Account
         </h3>
 
         <Row className="mb-3">
-          {/* Name */}
+          {/* Name (disabled) */}
           <Form.Group as={Col} controlId="formGridName">
             <Form.Label>Name</Form.Label>
             <Controller
               name="name"
               control={control}
-              rules={{
-                required: "Name is required",
-                minLength: {
-                  value: 3,
-                  message: "Name must be at least 3 characters",
-                },
-              }}
-              render={({ field }) => (
-                <Form.Control placeholder="John Doe" {...field} />
-              )}
+              render={({ field }) => <Form.Control {...field} disabled />}
             />
-            <Form.Text className="text-danger">
-              {errors.name?.message}
-            </Form.Text>
           </Form.Group>
 
-          {/* NIC */}
+          {/* NIC (disabled) */}
           <Form.Group as={Col} controlId="formGridNic">
             <Form.Label>NIC</Form.Label>
             <Controller
               name="nic"
               control={control}
-              rules={{
-                required: "NIC is required",
-                pattern: {
-                  value: /^(?:\d{9}[vV]|\d{12})$/,
-                  message: "Invalid NIC format",
-                },
-              }}
-              render={({ field }) => (
-                <Form.Control
-                  placeholder="791161645v"
-                  {...field}
-                  maxLength="12"
-                />
-              )}
+              render={({ field }) => <Form.Control {...field} disabled />}
             />
-            <Form.Text className="text-danger">{errors.nic?.message}</Form.Text>
           </Form.Group>
 
-          {/* Contact No. */}
+          {/* Contact No */}
           <Form.Group as={Col} controlId="formGridContact">
             <Form.Label>Contact No.</Form.Label>
             <Controller
-              name="contact"
+              name="contactNo"
               control={control}
-              rules={{
-                required: "Contact No. is required",
-                pattern: {
-                  value: /^[0-9]{10}$/,
-                  message: "Contact No. must be a 10-digit number",
-                },
-              }}
-              render={({ field }) => (
-                <Form.Control
-                  placeholder="0715897598"
-                  {...field}
-                  maxLength="10"
-                />
-              )}
+              render={({ field }) => <Form.Control {...field} />}
             />
-            <Form.Text className="text-danger">
-              {errors.contact?.message}
-            </Form.Text>
           </Form.Group>
         </Row>
 
@@ -177,20 +153,8 @@ function AddMLTStaff({ toggleLoading }) {
           <Controller
             name="address"
             control={control}
-            rules={{
-              required: "Address is required",
-              minLength: {
-                value: 5,
-                message: "Address must be at least 5 characters",
-              },
-            }}
-            render={({ field }) => (
-              <Form.Control placeholder="1234 Main St" {...field} />
-            )}
+            render={({ field }) => <Form.Control {...field} />}
           />
-          <Form.Text className="text-danger">
-            {errors.address?.message}
-          </Form.Text>
         </Form.Group>
 
         {/* Subject */}
@@ -200,47 +164,37 @@ function AddMLTStaff({ toggleLoading }) {
             <Controller
               name="subject"
               control={control}
-              rules={{ required: "Subject is required" }}
               render={({ field }) => (
                 <Form.Select
                   {...field}
                   onChange={(e) => {
                     field.onChange(e);
-                    handleSubjectChange(e);
+                    setSelectedSubject(e.target.value);
                   }}
+                  value={selectedSubject}
                 >
-                  <option value="">Choose Subject</option>
                   <option value="Radiology">Radiology</option>
                   <option value="Laboratory">Laboratory</option>
                 </Form.Select>
               )}
             />
-            <Form.Text className="text-danger">
-              {errors.subject?.message}
-            </Form.Text>
           </Form.Group>
 
-          {/* Speciality (conditionally rendered for both Radiology and Laboratory) */}
+          {/* Speciality */}
           <Form.Group as={Col} controlId="formGridSpeciality">
             <Form.Label>Speciality</Form.Label>
             <Controller
               name="speciality"
               control={control}
-              rules={{ required: "Speciality is required" }}
-              render={({ field }) => (
-                <Form.Control placeholder="Enter Speciality" {...field} />
-              )}
+              render={({ field }) => <Form.Control {...field} />}
             />
-            <Form.Text className="text-danger">
-              {errors.speciality?.message}
-            </Form.Text>
           </Form.Group>
         </Row>
 
         {/* Photo Upload */}
         <Row className="mb-3">
           <Form.Group as={Col} controlId="formImage">
-            <Form.Label>Add a photo *(.jpg, .jpeg, .png only)</Form.Label>
+            <Form.Label>Change photo *(.jpg, .jpeg, .png only)</Form.Label>
             <Controller
               name="photo"
               control={control}
@@ -262,33 +216,29 @@ function AddMLTStaff({ toggleLoading }) {
             <Controller
               name="email"
               control={control}
-              rules={{
-                required: "Email is required",
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                  message: "Invalid email address",
-                },
-              }}
               render={({ field }) => (
                 <Form.Control
-                  placeholder="Enter email"
                   {...field}
-                  onChange={(e) => field.onChange(e)}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    setEmailChanged(true); // Track email change
+                  }}
                 />
               )}
             />
-            <Form.Text className="text-danger">
-              {errors.email?.message}
-            </Form.Text>
           </Form.Group>
+        </Row>
 
-          {/* Password */}
+        {/* Password (conditionally required if email is changed) */}
+        <Row className="mb-3">
           <Form.Group as={Col} controlId="formGridPassword">
             <Form.Label>Password</Form.Label>
             <Controller
               name="password"
               control={control}
-              rules={{ required: "Password is required" }}
+              rules={{
+                required: emailChanged, // Require password only if email is changed
+              }}
               render={({ field }) => (
                 <div style={{ position: "relative" }}>
                   <Form.Control
@@ -334,7 +284,6 @@ function AddMLTStaff({ toggleLoading }) {
               name="confirmPassword"
               control={control}
               rules={{
-                required: "Confirm Password is required",
                 validate: (value) =>
                   value === getValues("password") || "Passwords do not match",
               }}
@@ -378,11 +327,11 @@ function AddMLTStaff({ toggleLoading }) {
         </Row>
 
         <Button variant="dark" type="submit">
-          Submit
+          Update
         </Button>
       </Form>
     </main>
   );
 }
 
-export default AddMLTStaff;
+export default UpdateMLTStaff;

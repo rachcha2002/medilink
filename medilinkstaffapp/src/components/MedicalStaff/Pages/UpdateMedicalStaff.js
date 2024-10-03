@@ -1,46 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useForm, Controller, getValues } from "react-hook-form";
 import { Button, Col, Form, Row } from "react-bootstrap";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { useNavigate } from "react-router-dom";
-import ImageUpload from "../../ImageUpload/ImageUpload";
+import { useNavigate, useParams } from "react-router-dom";
+import ImageUpload from "./ImageUpload";
 import { BsArrowLeft } from "react-icons/bs";
-import { BiCheckCircle, BiHide, BiShow } from "react-icons/bi";
+import { BiHide, BiShow } from "react-icons/bi";
 import "./Main.css";
 import PageTitle from "../../Main/PageTitle";
 
-function AddMedicalStaff({ toggleLoading }) {
-  const cusfrontendurl = `${process.env.React_App_Frontend_URL}/customer`;
-  const stafffrontendurl = `${process.env.React_App_Frontend_URL}/staff/login`;
+function UpdateMedicalStaff({ toggleLoading }) {
+  const { id, position } = useParams();
   const [errorMessage, setErrorMessage] = useState("");
-  const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isEmailValid, setIsEmailValid] = useState(false);
-  const [selectedPosition, setSelectedPosition] = useState("");
-  const [workingHours, setWorkingHours] = useState([""]); // Array to handle working hours
-
+  const [selectedPosition, setSelectedPosition] = useState(position || "");
+  const [workingHours, setWorkingHours] = useState([""]);
+  const [emailChanged, setEmailChanged] = useState(false); // Track email change
   const navigate = useNavigate();
-
-  // Handle adding a new working hours field
-  const handleAddWorkingHour = () => {
-    setWorkingHours([...workingHours, ""]);
-  };
-
-  // Handle removing a working hour field
-  const handleRemoveWorkingHour = (index) => {
-    const newWorkingHours = [...workingHours];
-    newWorkingHours.splice(index, 1);
-    setWorkingHours(newWorkingHours);
-  };
-
-  // Handle changes in the working hour field
-  const handleWorkingHourChange = (index, value) => {
-    const newWorkingHours = [...workingHours];
-    newWorkingHours[index] = value;
-    setWorkingHours(newWorkingHours);
-  };
 
   const {
     handleSubmit,
@@ -48,51 +24,106 @@ function AddMedicalStaff({ toggleLoading }) {
     setValue,
     formState: { errors },
     getValues,
-    trigger,
   } = useForm();
 
+  useEffect(() => {
+    const fetchStaffData = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/staffroutes/${
+            position === "Doctor" ? "doctors" : "nurses"
+          }/${id}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setValue("name", data.name);
+          setValue("nic", data.nic);
+          setValue("contact", data.contactNo);
+          setValue("email", data.email);
+          setValue("speciality", data.speciality || "");
+          setValue("hospital", data.hospital);
+          setWorkingHours(data.workingHours || [""]);
+        } else {
+          throw new Error("Failed to fetch data");
+        }
+      } catch (err) {
+        console.error("Error fetching staff details:", err);
+      }
+    };
+
+    if (id && position) fetchStaffData();
+  }, [id, position, setValue, toggleLoading]);
+
+  const handleAddWorkingHour = () => {
+    setWorkingHours([...workingHours, ""]);
+  };
+
+  const handleRemoveWorkingHour = (index) => {
+    const newWorkingHours = [...workingHours];
+    newWorkingHours.splice(index, 1);
+    setWorkingHours(newWorkingHours);
+  };
+
+  const handleWorkingHourChange = (index, value) => {
+    const newWorkingHours = [...workingHours];
+    newWorkingHours[index] = value;
+    setWorkingHours(newWorkingHours);
+  };
+
   const onSubmit = async (data) => {
-    if (data.password !== data.confirmPassword) {
-      setErrorMessage("The passwords do not match");
-      return;
-    }
     try {
       toggleLoading(true);
-      const formData = new FormData();
-      Object.keys(data).forEach((key) => {
-        formData.append(key, data[key]);
-      });
-      formData.append("workingHours", workingHours); // Append working hours array
-      formData.append("hospital", "Medihelp"); // Append hospital name
 
-      console.log("Form Data:", formData);
+      // Create formData if a file (e.g., image) is being uploaded
+      let requestData;
+      let headers = {};
+
+      if (data.photo) {
+        // Use FormData when uploading an image
+        requestData = new FormData();
+        Object.keys(data).forEach((key) => {
+          requestData.append(key, data[key]);
+        });
+        requestData.append("workingHours", workingHours); // Add working hours array
+
+        // Ensure the photo is included in FormData
+        if (data.photo instanceof File) {
+          requestData.append("photo", data.photo);
+        }
+      } else {
+        // Use JSON when no image is uploaded
+        requestData = {
+          ...data,
+          workingHours: workingHours, // Add working hours array
+        };
+        headers["Content-Type"] = "application/json"; // Set JSON content type header
+      }
 
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/staffroutes/create-medicalstaff`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/staffroutes/${
+          selectedPosition === "Doctor" ? `doctors/${id}` : `nurses/${id}`
+        }`,
         {
-          method: "POST",
-          body: formData,
+          method: "PUT",
+          headers: headers, // Only set headers if using JSON
+          body: data.photo ? requestData : JSON.stringify(requestData), // Use FormData if photo, else JSON
         }
       );
-      if (response.status === 201) {
-        const result = await response.json();
-        alert("Employee Registered Successfully!");
-        navigate("/staff/hr/employee");
-      } else if (response.status === 400) {
-        alert("Employee Registration Failed!", response.data.message);
+
+      if (response.status === 200) {
+        alert(`${selectedPosition} updated successfully!`);
+        navigate(
+          `/staff/hr/${selectedPosition === "Doctor" ? "doctors" : "nurses"}`
+        );
       } else {
-        throw new Error("Failed to submit data");
+        const errorData = await response.json();
+        alert("Update failed:", errorData.message);
       }
     } catch (error) {
       console.error("Error:", error.message);
     } finally {
       toggleLoading(false);
     }
-  };
-
-  const handlePositionChange = (e) => {
-    setSelectedPosition(e.target.value);
-    setWorkingHours([""]); // Reset working hours when changing position
   };
 
   return (
@@ -107,130 +138,59 @@ function AddMedicalStaff({ toggleLoading }) {
           >
             <BsArrowLeft /> Back
           </Button>
-          Create Medical Staff Account
+          Update Medical Staff Account
         </h3>
 
         <Row className="mb-3">
-          {/* Name */}
+          {/* Name (disabled) */}
           <Form.Group as={Col} controlId="formGridName">
             <Form.Label>Name</Form.Label>
             <Controller
               name="name"
               control={control}
-              rules={{
-                required: "Name is required",
-                minLength: {
-                  value: 3,
-                  message: "Name must be at least 3 characters",
-                },
-              }}
               render={({ field }) => (
-                <Form.Control placeholder="John Doe" {...field} />
+                <Form.Control {...field} disabled /> // Disable name field
               )}
             />
-            <Form.Text className="text-danger">
-              {errors.name?.message}
-            </Form.Text>
           </Form.Group>
 
-          {/* NIC */}
+          {/* NIC (disabled) */}
           <Form.Group as={Col} controlId="formGridNic">
             <Form.Label>NIC</Form.Label>
             <Controller
               name="nic"
               control={control}
-              rules={{
-                required: "NIC is required",
-                pattern: {
-                  value: /^(?:\d{9}[vV]|\d{12})$/,
-                  message: "Invalid NIC format",
-                },
-              }}
               render={({ field }) => (
-                <Form.Control
-                  placeholder="791161645v"
-                  {...field}
-                  maxLength="12"
-                />
+                <Form.Control {...field} disabled /> // Disable NIC field
               )}
             />
-            <Form.Text className="text-danger">{errors.nic?.message}</Form.Text>
           </Form.Group>
 
-          {/* Contact No. */}
+          {/* Contact No */}
           <Form.Group as={Col} controlId="formGridContact">
             <Form.Label>Contact No.</Form.Label>
             <Controller
               name="contact"
               control={control}
-              rules={{
-                required: "Contact No. is required",
-                pattern: {
-                  value: /^[0-9]{10}$/,
-                  message: "Contact No. must be a 10-digit number",
-                },
-              }}
-              render={({ field }) => (
-                <Form.Control
-                  placeholder="0715897598"
-                  {...field}
-                  maxLength="10"
-                />
-              )}
+              render={({ field }) => <Form.Control {...field} />}
             />
-            <Form.Text className="text-danger">
-              {errors.contact?.message}
-            </Form.Text>
           </Form.Group>
         </Row>
 
-        {/* Address */}
-        <Form.Group className="mb-3" controlId="formGridAddress">
-          <Form.Label>Address</Form.Label>
-          <Controller
-            name="address"
-            control={control}
-            rules={{
-              required: "Address is required",
-              minLength: {
-                value: 5,
-                message: "Address must be at least 5 characters",
-              },
-            }}
-            render={({ field }) => (
-              <Form.Control placeholder="1234 Main St" {...field} />
-            )}
-          />
-          <Form.Text className="text-danger">
-            {errors.address?.message}
-          </Form.Text>
-        </Form.Group>
-
-        {/* Position */}
+        {/* Position (disabled) */}
         <Row className="mb-3">
           <Form.Group as={Col} controlId="formGridPosition">
             <Form.Label>Position</Form.Label>
             <Controller
               name="position"
               control={control}
-              rules={{ required: "Position is required" }}
               render={({ field }) => (
-                <Form.Select
-                  {...field}
-                  onChange={(e) => {
-                    field.onChange(e);
-                    handlePositionChange(e);
-                  }}
-                >
-                  <option value="">Choose Position</option>
+                <Form.Select {...field} disabled>
                   <option value="Doctor">Doctor</option>
                   <option value="Nurse">Nurse</option>
                 </Form.Select>
               )}
             />
-            <Form.Text className="text-danger">
-              {errors.position?.message}
-            </Form.Text>
           </Form.Group>
 
           {/* Speciality (conditionally rendered if "Doctor" is selected) */}
@@ -240,14 +200,8 @@ function AddMedicalStaff({ toggleLoading }) {
               <Controller
                 name="speciality"
                 control={control}
-                rules={{ required: "Speciality is required for doctors" }}
-                render={({ field }) => (
-                  <Form.Control placeholder="Enter Speciality" {...field} />
-                )}
+                render={({ field }) => <Form.Control {...field} />}
               />
-              <Form.Text className="text-danger">
-                {errors.speciality?.message}
-              </Form.Text>
             </Form.Group>
           )}
         </Row>
@@ -262,7 +216,6 @@ function AddMedicalStaff({ toggleLoading }) {
                   <Col>
                     <Form.Control
                       type="text"
-                      placeholder="Working Hour"
                       value={workingHour}
                       onChange={(e) =>
                         handleWorkingHourChange(index, e.target.value)
@@ -288,24 +241,6 @@ function AddMedicalStaff({ toggleLoading }) {
           </Row>
         )}
 
-        {/* Photo Upload */}
-        <Row className="mb-3">
-          <Form.Group as={Col} controlId="formImage">
-            <Form.Label>Add a photo *(.jpg, .jpeg, .png only)</Form.Label>
-            <Controller
-              name="photo"
-              control={control}
-              render={({ field }) => (
-                <ImageUpload
-                  id="photo"
-                  onInput={(id, file, isValid) => field.onChange(file)}
-                  errorText={errors.photo?.message}
-                />
-              )}
-            />
-          </Form.Group>
-        </Row>
-
         {/* Email */}
         <Row className="mb-3">
           <Form.Group as={Col} controlId="formGridEmail">
@@ -313,33 +248,29 @@ function AddMedicalStaff({ toggleLoading }) {
             <Controller
               name="email"
               control={control}
-              rules={{
-                required: "Email is required",
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                  message: "Invalid email address",
-                },
-              }}
               render={({ field }) => (
                 <Form.Control
-                  placeholder="Enter email"
                   {...field}
-                  onChange={(e) => field.onChange(e)}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    setEmailChanged(true); // Track email change
+                  }}
                 />
               )}
             />
-            <Form.Text className="text-danger">
-              {errors.email?.message}
-            </Form.Text>
           </Form.Group>
+        </Row>
 
-          {/* Password */}
+        {/* Password (conditionally required if email is changed) */}
+        <Row className="mb-3">
           <Form.Group as={Col} controlId="formGridPassword">
             <Form.Label>Password</Form.Label>
             <Controller
               name="password"
               control={control}
-              rules={{ required: "Password is required" }}
+              rules={{
+                required: emailChanged, // Require password only if email is changed
+              }}
               render={({ field }) => (
                 <div style={{ position: "relative" }}>
                   <Form.Control
@@ -385,7 +316,6 @@ function AddMedicalStaff({ toggleLoading }) {
               name="confirmPassword"
               control={control}
               rules={{
-                required: "Confirm Password is required",
                 validate: (value) =>
                   value === getValues("password") || "Passwords do not match",
               }}
@@ -429,11 +359,11 @@ function AddMedicalStaff({ toggleLoading }) {
         </Row>
 
         <Button variant="dark" type="submit">
-          Submit
+          Update
         </Button>
       </Form>
     </main>
   );
 }
 
-export default AddMedicalStaff;
+export default UpdateMedicalStaff;

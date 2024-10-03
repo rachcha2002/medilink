@@ -37,11 +37,11 @@ function App() {
             element={<LandingPage toggleLoading={toggleLoading} />}
           />
           <Route
-            path="/medicalstaff"
+            path="/medicalstaff/*"
             element={<MedicalStaff toggleLoading={toggleLoading} />}
           />
           <Route
-            path="/mltstaff"
+            path="/mltstaff/*"
             element={<MLTStaff toggleLoading={toggleLoading} />}
           />
         </Routes>

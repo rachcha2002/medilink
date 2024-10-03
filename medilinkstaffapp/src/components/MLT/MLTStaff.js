@@ -9,6 +9,8 @@ import {
   Navigate,
 } from "react-router-dom";
 import AddMLTStaff from "./Pages/AddMLTStaff";
+import MLTStaffList from "./Pages/MLTStaffList";
+import UpdateMLTStaff from "./Pages/UpdateMLTStaff";
 
 const MLTStaff = ({ toggleLoading }) => {
   return (
@@ -19,6 +21,14 @@ const MLTStaff = ({ toggleLoading }) => {
         <Route
           path="/"
           element={<AddMLTStaff toggleLoading={toggleLoading} />}
+        />
+        <Route
+          path="/mltstafflist"
+          element={<MLTStaffList toggleLoading={toggleLoading} />}
+        />
+        <Route
+          path="/update/:id"
+          element={<UpdateMLTStaff toggleLoading={toggleLoading} />}
         />
       </Routes>
     </>
