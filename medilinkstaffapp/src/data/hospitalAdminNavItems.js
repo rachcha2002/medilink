@@ -1,8 +1,9 @@
 const navList = [
     {
       _id: 1,
-      name: "Dashboard",
-      icon: "bi bi-grid",
+      name: "Payment Management",
+      icon: "bi bi-cash",
+      href:"/hospitaladmin/payment"
     },
     {
       _id: 2,

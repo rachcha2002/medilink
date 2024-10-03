@@ -37,7 +37,7 @@ function App() {
           />
 
           <Route
-            path="/hospitaladmin"
+            path="/hospitaladmin/*"
             element={<HospitalAdmin toggleLoading={toggleLoading} />}
           />
         </Routes>
