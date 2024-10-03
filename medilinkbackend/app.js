@@ -9,23 +9,19 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-
 //Enable CORS
 app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE,PATCH");
-    res.setHeader("Access-Control-Allow-Headers", "authorization, Content-Type");
-  
-    next();
-  });
-  
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE,PATCH");
+  res.setHeader("Access-Control-Allow-Headers", "authorization, Content-Type");
 
+  next();
+});
 
 // Routes
-
+app.use("/api/staff", require("./routes/staffRoutes"));
 
 // Custom error handling middleware
-
 
 //Set Up Server
 const server = () => {

@@ -8,9 +8,9 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-import AddMedicalStaff from "./Pages/AddMedicalStaff";
+import AddMLTStaff from "./Pages/AddMLTStaff";
 
-const MedicalStaff = ({ toggleLoading }) => {
+const MLTStaff = ({ toggleLoading }) => {
   return (
     <>
       <Header />;
@@ -18,11 +18,11 @@ const MedicalStaff = ({ toggleLoading }) => {
       <Routes>
         <Route
           path="/"
-          element={<AddMedicalStaff toggleLoading={toggleLoading} />}
+          element={<AddMLTStaff toggleLoading={toggleLoading} />}
         />
       </Routes>
     </>
   );
 };
 
-export default MedicalStaff;
+export default MLTStaff;
