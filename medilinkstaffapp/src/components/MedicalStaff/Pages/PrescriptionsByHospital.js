@@ -3,6 +3,7 @@ import { Table, Spinner, Alert, Button, Modal } from "react-bootstrap";
 import axios from "axios";
 import "./Main.css";
 import PageTitle from "../../Main/PageTitle";
+import { useNavigate } from "react-router-dom";
 
 const hardCodedHospital = "Medihelp"; // Hardcoded hospital name
 
@@ -12,6 +13,7 @@ function PrescriptionsByHospital() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false); // To control modal visibility
+  const navigate = useNavigate();
 
   // Fetch prescriptions by hospital
   useEffect(() => {
@@ -43,12 +45,29 @@ function PrescriptionsByHospital() {
   };
 
   // Handle update and delete actions
-  const handleUpdate = () => {
-    alert("Update functionality goes here!");
+  const handleUpdate = (id) => {
+    navigate(`/medicalstaff/updateprescription/${id}`); // Navigate to the update page for the selected prescription
   };
 
-  const handleDelete = () => {
-    alert("Delete functionality goes here!");
+  const handleDelete = async (id) => {
+    try {
+      // Send DELETE request to the backend to delete the prescription by its ID
+      await axios.delete(
+        `${process.env.REACT_APP_BACKEND_URL}/api/medicalinfo/prescriptions/${id}`
+      );
+
+      // Update the state to remove the deleted prescription
+      setPrescriptions((prevPrescriptions) =>
+        prevPrescriptions.filter((prescription) => prescription._id !== id)
+      );
+
+      // Close the modal after deletion
+      setShowModal(false);
+      alert("Prescription deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting prescription:", error);
+      alert("Failed to delete the prescription. Please try again.");
+    }
   };
 
   // Render loading state
@@ -170,10 +189,16 @@ function PrescriptionsByHospital() {
             )}
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="warning" onClick={handleUpdate}>
+            <Button
+              variant="warning"
+              onClick={() => handleUpdate(selectedPrescription._id)}
+            >
               Update
             </Button>
-            <Button variant="danger" onClick={handleDelete}>
+            <Button
+              variant="danger"
+              onClick={() => handleDelete(selectedPrescription._id)}
+            >
               Delete
             </Button>
           </Modal.Footer>
