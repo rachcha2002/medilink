@@ -24,7 +24,13 @@ function NavItem({ nav }) {
           data-bs-parent="#sidebar-nav"
         >
           {nav.children.map((childNav) => (
-            <NavItem key={childNav._id} nav={childNav} />
+            <li key={childNav._id} className="nav-item">
+              <NavLink
+                href={childNav.href}
+                icon={childNav.icon}
+                title={childNav.name}
+              />
+            </li>
           ))}
         </ul>
       )}

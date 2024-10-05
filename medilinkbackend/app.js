@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const connectDB = require("./config/db");
+const billingRoutes = require("./routes/paymentRoutes");
 
 const PORT = process.env.PORT || 5000;
 
@@ -20,6 +21,8 @@ app.use((req, res, next) => {
 });
 
 // Routes
+
+app.use("/api/payment", billingRoutes);
 
 // Custom error handling middleware
 
