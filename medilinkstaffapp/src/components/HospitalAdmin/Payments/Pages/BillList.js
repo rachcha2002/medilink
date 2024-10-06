@@ -19,6 +19,7 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import ".././../../Main/Main.css"
 
 const BillingList = () => {
   const [billingData, setBillingData] = useState([]);
