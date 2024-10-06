@@ -11,6 +11,7 @@ import {
 import AddMLTStaff from "./Pages/AddMLTStaff";
 import MLTStaffList from "./Pages/MLTStaffList";
 import UpdateMLTStaff from "./Pages/UpdateMLTStaff";
+import CreateReportForm from "./Pages/CreateReportForm";
 
 const MLTStaff = ({ toggleLoading }) => {
   return (
@@ -29,6 +30,10 @@ const MLTStaff = ({ toggleLoading }) => {
         <Route
           path="/update/:id"
           element={<UpdateMLTStaff toggleLoading={toggleLoading} />}
+        />
+        <Route
+          path="/createreport"
+          element={<CreateReportForm toggleLoading={toggleLoading} />}
         />
       </Routes>
     </>
