@@ -19,7 +19,8 @@
 body {
   font-family: "Open Sans", sans-serif;
   color: #000000;
-  background: rgb(225, 235, 240);
+  background: url("./images/background.jpg") no-repeat center center fixed; /* Prevents repeating, centers the image */
+  background-size: cover; /* Scales the image to cover the entire viewport */
 }
 
 a {

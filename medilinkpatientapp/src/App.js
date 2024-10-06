@@ -13,6 +13,7 @@ import ContactPage from "./Pages/Multipage/ContactPage";
 import DoctorProfilePage from "./Pages/DoctorProfilePage";
 import DoctorProfilePage2 from "./Pages/DoctorProfilePage2";
 import DoctorProfilePage3 from "./Pages/DoctorProfilePage3";
+import PaymentsMain from "./Pages/Payment/PaymentsMain.jsx";
 
 const App = () => {
   const { pathname } = useLocation();
@@ -35,6 +36,11 @@ const App = () => {
         <Route path="doctor-profile2" element={<DoctorProfilePage2 />} />
         <Route path="doctor-profile3" element={<DoctorProfilePage3 />} />
         <Route path="doctor-profile" element={<DoctorProfilePage />} />
+
+        {/* Route for Payments */}
+        <Route path="payment/*" element={<PaymentsMain />} />
+
+
       </Route>
     </Routes>
   );

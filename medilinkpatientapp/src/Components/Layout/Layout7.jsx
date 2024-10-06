@@ -3,14 +3,15 @@ import { Outlet } from 'react-router-dom';
 import Preloader from '../Preloader/Preloader';
 import Footer from '../Footer/Footer';
 import Header7 from '../Header/Header7';
+import { IMAGES } from '../../constants/images';
 // import '../../sass/demo/theme_type3.scss';
 
 const headerData = {
-  logo: '/images/logo.png',
+  logo: IMAGES.medilinknobackground,
 };
 
 const footerData = {
-  logo: '/images/logo.png',
+  logo: IMAGES.medilinknobackground,
   bgImg: '/images/footer-bg.png',
   subTitle:
     ' Lorem ipsum dolor sit consectet adipisicing sed do eiusmod temp incididunt ut labore. Lorem Ipsum is simply dummy.',
