@@ -17,7 +17,7 @@ const Header7 = ({ data }) => {
         <div className="container">
           <div className="st-top-header-in">
             <Link className="st-site-branding" to="/">
-              <img src={logo} alt={logo} />
+              <img src={logo} alt={logo} width="160" height="110"/>
             </Link>
             <ul className="st-top-header-list">
               <li>
@@ -28,7 +28,7 @@ const Header7 = ({ data }) => {
                 >
                   <path d="m434.146 59.882h-389.234c-24.766 0-44.912 20.146-44.912 44.912v269.47c0 24.766 20.146 44.912 44.912 44.912h389.234c24.766 0 44.912-20.146 44.912-44.912v-269.47c0-24.766-20.146-44.912-44.912-44.912zm0 29.941c2.034 0 3.969.422 5.738 1.159l-200.355 173.649-200.356-173.649c1.769-.736 3.704-1.159 5.738-1.159zm0 299.411h-389.234c-8.26 0-14.971-6.71-14.971-14.971v-251.648l199.778 173.141c2.822 2.441 6.316 3.655 9.81 3.655s6.988-1.213 9.81-3.655l199.778-173.141v251.649c-.001 8.26-6.711 14.97-14.971 14.97z" />
                 </svg>
-                <Link to="">info@nischinto.com</Link>
+                <Link to="">teamoctagonit@gmail.com</Link>
               </li>
               <li>
                 <svg
@@ -43,7 +43,7 @@ const Header7 = ({ data }) => {
                     <path d="m368.02 272c-8.836 0-16-7.164-16-16 0-52.935-43.065-96-96-96-8.836 0-16-7.164-16-16s7.164-16 16-16c70.58 0 128 57.42 128 128 0 8.836-7.163 16-16 16z" />
                   </g>
                 </svg>
-                <Link to="">+01 - 234 567 890</Link>
+                <Link to="">+94 71 152 1161 </Link>
               </li>
             </ul>
           </div>
@@ -67,6 +67,19 @@ const Header7 = ({ data }) => {
                   <li>
                     <Link to="pricing" onClick={() => setMobileToggle(false)} >Pricing</Link>
                   </li>
+                  <li className="menu-item-has-children">
+                    <Link  onClick={() => setMobileToggle(false)} >Payments</Link>
+                    <ul>
+                      <li>
+                        <Link to="payment/payonline">Pay Online</Link>
+                      </li>
+                      <li>
+                        <Link to="payment/mypayments">My Payments</Link>
+                      </li>
+                    </ul>
+                  </li>
+                  
+
                   <li className="menu-item-has-children">
                     <Link to="post" onClick={() => setMobileToggle(false)} >Blog</Link>
                     <ul>
