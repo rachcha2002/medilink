@@ -15,7 +15,11 @@ import {
 import Loader from "./components/util/Loader";
 //Import components
 import LandingPage from "./components/LandingPage";
-import HospitalAdmin from "./components/HospitalAdmin/HospitalAdmin"
+
+import MedicalStaff from "./components/MedicalStaff/MedicalStaff";
+import MLTStaff from "./components/MLT/MLTStaff";
+
+import HospitalAdmin from "./components/HospitalAdmin/HospitalAdmin";
 
 // Main App component
 function App() {
@@ -36,6 +40,14 @@ function App() {
             element={<LandingPage toggleLoading={toggleLoading} />}
           />
 
+          <Route
+            path="/medicalstaff/*"
+            element={<MedicalStaff toggleLoading={toggleLoading} />}
+          />
+          <Route
+            path="/mltstaff/*"
+            element={<MLTStaff toggleLoading={toggleLoading} />}
+          />
           <Route
             path="/hospitaladmin/*"
             element={<HospitalAdmin toggleLoading={toggleLoading} />}

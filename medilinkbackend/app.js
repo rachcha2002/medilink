@@ -1,7 +1,11 @@
 require("dotenv").config();
 const express = require("express");
 const connectDB = require("./config/db");
+
+const staffRoutes = require("./routes/staffRoutes");
+const medicalInfoRoutes = require("./routes/medicalInfoRoutes");
 const billingRoutes = require("./routes/paymentRoutes");
+
 
 const PORT = process.env.PORT || 5000;
 
@@ -21,8 +25,13 @@ app.use((req, res, next) => {
 });
 
 // Routes
+app.use("/api/staffroutes", staffRoutes);
+
+
+app.use("/api/medicalinfo", medicalInfoRoutes);
 
 app.use("/api/payment", billingRoutes);
+
 
 // Custom error handling middleware
 
