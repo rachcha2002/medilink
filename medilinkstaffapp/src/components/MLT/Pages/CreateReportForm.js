@@ -71,7 +71,10 @@ function CreateReportForm() {
     }
 
     const formData = new FormData(event.currentTarget);
-    formData.append("resultPdf", file);
+    //formData.append("resultPdf", file);
+    formData.append("patientName", patientName);
+    formData.append("age", age);
+    formData.append("patientContact", patientContact);
 
     // Add current date
     const currentDate = new Date().toISOString();
@@ -84,6 +87,10 @@ function CreateReportForm() {
     } else if (reportType === "radiology") {
       formData.append("radiologistId", "RAD456");
       formData.append("radiologistName", "Dr. Radiology Expert");
+    }
+
+    for (let pair of formData.entries()) {
+      console.log(pair[0], pair[1]);
     }
 
     try {
@@ -119,7 +126,7 @@ function CreateReportForm() {
   return (
     <main id="main" className="main">
       <PageTitle />
-      <Container fluid>
+      <Container fluid style={{ backgroundColor: "rgba(255, 255, 255, 0.6)" }}>
         <Row>
           <Col md={12}>
             {feedbackMessage && (

@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 // Common fields for both Lab and Radiology Reports
 const reportSchema = {
+  reportId: { type: String, required: true },
   patientId: { type: String, required: true },
   patientName: { type: String, required: true },
   age: { type: Number, required: true },
