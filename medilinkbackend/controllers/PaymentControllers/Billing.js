@@ -65,3 +65,13 @@ exports.deleteBilling = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+//Get Pending Payments 
+exports.getPendingPayments = async (req, res) => {
+  try {
+    const pendingPayments = await Billing.find({ paymentStatus: "Pending" });
+    res.status(200).json(pendingPayments);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
