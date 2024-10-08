@@ -20,6 +20,8 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import ".././../../Main/Main.css";
+import { FaFilePdf } from "react-icons/fa";
+
 
 const BillingList = () => {
   const [billingData, setBillingData] = useState([]);
@@ -385,6 +387,25 @@ const BillingList = () => {
                   </Form.Group>
                 </Col>
               </Row>
+              {/* New Invoice Field */}
+    {selectedBilling.downloadURL && (
+      <Row className="mb-3">
+        <Col md={6}>
+          <Form.Group>
+            <Form.Label>Invoice</Form.Label>
+            <Button
+              variant="link"
+              style={{ textDecoration: "none", paddingLeft: 0 }}
+              onClick={() => window.open(selectedBilling.downloadURL, "_blank")}
+            >
+              <FaFilePdf style={{ marginRight: 5 }} />
+              Open Invoice
+            </Button>
+          </Form.Group>
+        </Col>
+      </Row>
+    )}
+
               <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group>

@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Container, Table, Spinner, Button, Badge, ButtonGroup, Form } from "react-bootstrap";
+import {
+  Container,
+  Table,
+  Spinner,
+  Button,
+  Badge,
+  ButtonGroup,
+  Form,
+} from "react-bootstrap";
 import axios from "axios";
-import { FaCheckCircle, FaExclamationCircle, FaTimes, FaCheck } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaExclamationCircle,
+  FaTimes,
+  FaCheck,
+} from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 import image from "../../../../images/logo.png"; // Correctly importing the logo image
 
@@ -12,22 +25,30 @@ const PendingPayments = () => {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/pending/pendingBills`)
+      .get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/pending/pendingBills`
+      )
       .then((response) => {
         setPendingPayments(response.data);
         setLoading(false);
       })
       .catch((error) => {
-        console.error("There was an error fetching the pending payments!", error);
+        console.error(
+          "There was an error fetching the pending payments!",
+          error
+        );
         setLoading(false);
       });
   }, []);
 
   const handleApprove = (paymentId) => {
     axios
-      .put(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${paymentId}`, {
-        paymentStatus: "Paid",
-      })
+      .put(
+        `${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${paymentId}`,
+        {
+          paymentStatus: "Paid",
+        }
+      )
       .then(() => {
         setPendingPayments((prev) =>
           prev.map((payment) =>
@@ -46,10 +67,12 @@ const PendingPayments = () => {
 
   const generatePDF = (paymentId) => {
     axios
-      .get(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${paymentId}`)
+      .get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${paymentId}`
+      )
       .then((response) => {
         const invoiceData = response.data;
-  
+
         // Creating HTML structure for the PDF content
         const element = document.createElement("div");
         element.innerHTML = `
@@ -58,34 +81,69 @@ const PendingPayments = () => {
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
               <div>
                 <img src="${image}" alt="Hospital Logo" style="width: 150px;">
-                <h4 style="color: #007BFF; margin-top: 10px;">${invoiceData.hospitalName}</h4>
+                <h4 style="color: #007BFF; margin-top: 10px;">${
+                  invoiceData.hospitalName
+                }</h4>
                 <p style="margin: 5px 0;">${invoiceData.hospitalAddress}</p>
-                <p style="margin: 5px 0;">Phone: ${invoiceData.hospitalPhone}</p>
-                <p style="margin: 5px 0;">Email: ${invoiceData.hospitalEmail}</p>
+                <p style="margin: 5px 0;">Phone: ${
+                  invoiceData.hospitalPhone
+                }</p>
+                <p style="margin: 5px 0;">Email: ${
+                  invoiceData.hospitalEmail
+                }</p>
               </div>
               <div style="text-align: right;">
                 <h2 style="color: #555; margin: 0;">Invoice</h2>
-                <p style="margin: 5px 0;"><strong>Bill No:</strong> ${invoiceData.billNo}</p>
-                <p style="margin: 5px 0;"><strong>Date:</strong> ${new Date(invoiceData.createdAt).toLocaleDateString()}</p>
+                <p style="margin: 5px 0;"><strong>Bill No:</strong> ${
+                  invoiceData.billNo
+                }</p>
+                <p style="margin: 5px 0;"><strong>Date:</strong> ${new Date(
+                  invoiceData.createdAt
+                ).toLocaleDateString()}</p>
               </div>
             </div>
   
             <!-- Patient Information -->
-            <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
-              <h4 style="color: #007BFF; margin-bottom: 10px;">Patient Information</h4>
-              <div style="display: flex; justify-content: space-between;">
-                <div>
-                  <p><strong>Name:</strong> ${invoiceData.patientName}</p>
-                  <p><strong>Patient ID:</strong> ${invoiceData.patientID}</p>
-                  <p><strong>Contact:</strong> ${invoiceData.contactNumber}</p>
-                  <p><strong>Payment Method:</strong> ${invoiceData.paymentMethod}</p> <!-- Add payment method -->
-                  <p><strong>Payment Status:</strong> ${invoiceData.paymentStatus}</p> <!-- Add payment status -->
-                </div>
-                <div style="text-align: right;">
-                  <p><strong>Email:</strong> ${invoiceData.patientEmail}</p>
-                </div>
-              </div>
-            </div>
+           <!-- Patient Information -->
+<div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; display: flex; flex-direction: column;">
+  <h4 style="color: #007BFF; margin-bottom: 10px;">Patient Information</h4>
+  
+  <div style="display: grid; grid-template-columns: 1fr 1fr; column-gap: 20px; row-gap: 10px;">
+    <div>
+      <p style="margin: 0;"><strong>Name:</strong> ${
+        invoiceData.patientName
+      }</p>
+    </div>
+    <div>
+      <p style="margin: 0;"><strong>Email:</strong> ${
+        invoiceData.patientEmail
+      }</p>
+    </div>
+    
+    <div>
+      <p style="margin: 0;"><strong>Patient ID:</strong> ${
+        invoiceData.patientID
+      }</p>
+    </div>
+    <div>
+      <p style="margin: 0;"><strong>Contact:</strong> ${
+        invoiceData.contactNumber
+      }</p>
+    </div>
+    
+    <div>
+      <p style="margin: 0;"><strong>Payment Method:</strong> ${
+        invoiceData.paymentMethod
+      }</p>
+    </div>
+    <div>
+      <p style="margin: 0;"><strong>Payment Status:</strong> ${
+        invoiceData.paymentStatus
+      }</p>
+    </div>
+  </div>
+</div>
+
   
             <!-- Services Table -->
             <div style="margin-bottom: 20px;">
@@ -102,8 +160,12 @@ const PendingPayments = () => {
                     .map(
                       (service) => `
                     <tr>
-                      <td style="padding: 10px; border: 1px solid #ddd;">${service.description}</td>
-                      <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">Rs. ${service.cost.toFixed(2)}</td>
+                      <td style="padding: 10px; border: 1px solid #ddd;">${
+                        service.description
+                      }</td>
+                      <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">Rs. ${service.cost.toFixed(
+                        2
+                      )}</td>
                     </tr>`
                     )
                     .join("")}
@@ -113,7 +175,9 @@ const PendingPayments = () => {
   
             <!-- Total Amount -->
             <div style="text-align: right; margin-bottom: 30px;">
-              <h3 style="margin: 0; color: #28a745;">Total: Rs. ${invoiceData.totalAmount.toFixed(2)}</h3>
+              <h3 style="margin: 0; color: #28a745;">Total: Rs. ${invoiceData.totalAmount.toFixed(
+                2
+              )}</h3>
             </div>
   
             <!-- Footer -->
@@ -122,7 +186,7 @@ const PendingPayments = () => {
             </div>
           </div>
         `;
-  
+
         const options = {
           margin: 1,
           filename: `invoice-${invoiceData.billNo}.pdf`,
@@ -130,38 +194,46 @@ const PendingPayments = () => {
           html2canvas: { scale: 2 },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
         };
-  
+
         // Convert HTML to PDF and then upload to Firebase
-        html2pdf().set(options).from(element).toPdf().get("pdf").then(async (pdf) => {
-          const blob = pdf.output("blob"); // Convert to blob
-  
-          const formData = new FormData();
-          formData.append("file", blob, `invoice-${invoiceData.billNo}.pdf`);
-  
-          // Upload PDF to the backend using axios
-          try {
-            const uploadResponse = await axios.post(
-              `${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/upload/uploadInvoice`,
-              formData,
-              {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-              }
-            );
-            const downloadURL = uploadResponse.data.downloadURL;
+        html2pdf()
+          .set(options)
+          .from(element)
+          .toPdf()
+          .get("pdf")
+          .then(async (pdf) => {
+            const blob = pdf.output("blob"); // Convert to blob
 
-            // After uploading, update the backend with the download URL
-            await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${paymentId}`, {
-              downloadURL: downloadURL, // Save the invoice URL
-            });
+            const formData = new FormData();
+            formData.append("file", blob, `invoice-${invoiceData.billNo}.pdf`);
 
-            console.log("PDF uploaded successfully:", downloadURL);
-            alert("PDF generated and uploaded to the cloud!");
-          } catch (error) {
-            console.error("Error uploading the PDF:", error);
-          }
-        });
+            // Upload PDF to the backend using axios
+            try {
+              const uploadResponse = await axios.post(
+                `${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/upload/uploadInvoice`,
+                formData,
+                {
+                  headers: {
+                    "Content-Type": "multipart/form-data",
+                  },
+                }
+              );
+              const downloadURL = uploadResponse.data.downloadURL;
+
+              // After uploading, update the backend with the download URL
+              await axios.put(
+                `${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${paymentId}`,
+                {
+                  downloadURL: downloadURL, // Save the invoice URL
+                }
+              );
+
+              console.log("PDF uploaded successfully:", downloadURL);
+              alert("PDF generated and uploaded to the cloud!");
+            } catch (error) {
+              console.error("Error uploading the PDF:", error);
+            }
+          });
       })
       .catch((error) => {
         console.error("Error generating PDF:", error);
@@ -244,10 +316,19 @@ const PendingPayments = () => {
                 <Badge
                   pill
                   bg={
-                    payment.paymentStatus === "Pending" ? "warning" : payment.paymentStatus === "Paid" ? "success" : "danger"
+                    payment.paymentStatus === "Pending"
+                      ? "warning"
+                      : payment.paymentStatus === "Paid"
+                      ? "success"
+                      : "danger"
                   }
                 >
-                  {payment.paymentStatus === "Pending" ? <FaExclamationCircle /> : <FaCheckCircle />} {payment.paymentStatus}
+                  {payment.paymentStatus === "Pending" ? (
+                    <FaExclamationCircle />
+                  ) : (
+                    <FaCheckCircle />
+                  )}{" "}
+                  {payment.paymentStatus}
                 </Badge>
               </td>
               <td>
