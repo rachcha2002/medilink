@@ -1,26 +1,13 @@
-import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Table,
-  Spinner,
-  Badge,
-  Button,
-  Modal,
-  Form,
-  Row,
-  Col,
-  ButtonGroup,
-} from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
+import React, { useState, useEffect } from "react";
+import { Container, Table, Spinner, Button, Badge, ButtonGroup, Form } from "react-bootstrap";
 import axios from "axios";
 import { FaCheckCircle, FaExclamationCircle, FaTimes, FaCheck } from "react-icons/fa";
-import ".././../../Main/Main.css";
+import html2pdf from "html2pdf.js";
+import image from "../../../../images/logo.png"; // Correctly importing the logo image
 
 const PendingPayments = () => {
   const [pendingPayments, setPendingPayments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedPayment, setSelectedPayment] = useState(null);
-  const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -36,16 +23,6 @@ const PendingPayments = () => {
       });
   }, []);
 
-  const handleShowModal = (payment) => {
-    setSelectedPayment(payment);
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setSelectedPayment(null);
-  };
-
   const handleApprove = (paymentId) => {
     axios
       .put(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${paymentId}`, {
@@ -60,29 +37,134 @@ const PendingPayments = () => {
           )
         );
         alert("Payment approved successfully.");
+        generatePDF(paymentId); // Generate the PDF after approval
       })
       .catch((error) => {
         console.error("Error approving payment:", error);
       });
   };
 
-  const handleReject = (paymentId) => {
+  const generatePDF = (paymentId) => {
     axios
-      .put(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${paymentId}`, {
-        paymentStatus: "Rejected",
-      })
-      .then(() => {
-        setPendingPayments((prev) =>
-          prev.map((payment) =>
-            payment._id === paymentId
-              ? { ...payment, paymentStatus: "Rejected" }
-              : payment
-          )
-        );
-        alert("Payment rejected successfully.");
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${paymentId}`)
+      .then((response) => {
+        const invoiceData = response.data;
+  
+        // Creating HTML structure for the PDF content
+        const element = document.createElement("div");
+        element.innerHTML = `
+          <div style="padding: 30px; font-family: 'Poppins', sans-serif; line-height: 1.6; color: #333;">
+            <!-- Header Section -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <div>
+                <img src="${image}" alt="Hospital Logo" style="width: 150px;">
+                <h4 style="color: #007BFF; margin-top: 10px;">${invoiceData.hospitalName}</h4>
+                <p style="margin: 5px 0;">${invoiceData.hospitalAddress}</p>
+                <p style="margin: 5px 0;">Phone: ${invoiceData.hospitalPhone}</p>
+                <p style="margin: 5px 0;">Email: ${invoiceData.hospitalEmail}</p>
+              </div>
+              <div style="text-align: right;">
+                <h2 style="color: #555; margin: 0;">Invoice</h2>
+                <p style="margin: 5px 0;"><strong>Bill No:</strong> ${invoiceData.billNo}</p>
+                <p style="margin: 5px 0;"><strong>Date:</strong> ${new Date(invoiceData.createdAt).toLocaleDateString()}</p>
+              </div>
+            </div>
+  
+            <!-- Patient Information -->
+            <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+              <h4 style="color: #007BFF; margin-bottom: 10px;">Patient Information</h4>
+              <div style="display: flex; justify-content: space-between;">
+                <div>
+                  <p><strong>Name:</strong> ${invoiceData.patientName}</p>
+                  <p><strong>Patient ID:</strong> ${invoiceData.patientID}</p>
+                  <p><strong>Contact:</strong> ${invoiceData.contactNumber}</p>
+                  <p><strong>Payment Method:</strong> ${invoiceData.paymentMethod}</p> <!-- Add payment method -->
+                  <p><strong>Payment Status:</strong> ${invoiceData.paymentStatus}</p> <!-- Add payment status -->
+                </div>
+                <div style="text-align: right;">
+                  <p><strong>Email:</strong> ${invoiceData.patientEmail}</p>
+                </div>
+              </div>
+            </div>
+  
+            <!-- Services Table -->
+            <div style="margin-bottom: 20px;">
+              <h4 style="color: #007BFF; margin-bottom: 10px;">Billing Summary</h4>
+              <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <thead style="background-color: #f2f2f2;">
+                  <tr>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Service</th>
+                    <th style="padding: 10px; border: 1px solid #ddd; text-align: right;">Amount (Rs.)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${invoiceData.serviceDetails
+                    .map(
+                      (service) => `
+                    <tr>
+                      <td style="padding: 10px; border: 1px solid #ddd;">${service.description}</td>
+                      <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">Rs. ${service.cost.toFixed(2)}</td>
+                    </tr>`
+                    )
+                    .join("")}
+                </tbody>
+              </table>
+            </div>
+  
+            <!-- Total Amount -->
+            <div style="text-align: right; margin-bottom: 30px;">
+              <h3 style="margin: 0; color: #28a745;">Total: Rs. ${invoiceData.totalAmount.toFixed(2)}</h3>
+            </div>
+  
+            <!-- Footer -->
+            <div style="text-align: center; border-top: 1px solid #ddd; padding-top: 20px; font-size: 12px;">
+              <p>NOTE: This is a computer-generated invoice and does not require a physical signature.</p>
+            </div>
+          </div>
+        `;
+  
+        const options = {
+          margin: 1,
+          filename: `invoice-${invoiceData.billNo}.pdf`,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        };
+  
+        // Convert HTML to PDF and then upload to Firebase
+        html2pdf().set(options).from(element).toPdf().get("pdf").then(async (pdf) => {
+          const blob = pdf.output("blob"); // Convert to blob
+  
+          const formData = new FormData();
+          formData.append("file", blob, `invoice-${invoiceData.billNo}.pdf`);
+  
+          // Upload PDF to the backend using axios
+          try {
+            const uploadResponse = await axios.post(
+              `${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/upload/uploadInvoice`,
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+            const downloadURL = uploadResponse.data.downloadURL;
+
+            // After uploading, update the backend with the download URL
+            await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${paymentId}`, {
+              downloadURL: downloadURL, // Save the invoice URL
+            });
+
+            console.log("PDF uploaded successfully:", downloadURL);
+            alert("PDF generated and uploaded to the cloud!");
+          } catch (error) {
+            console.error("Error uploading the PDF:", error);
+          }
+        });
       })
       .catch((error) => {
-        console.error("Error rejecting payment:", error);
+        console.error("Error generating PDF:", error);
       });
   };
 
@@ -149,7 +231,7 @@ const PendingPayments = () => {
         </thead>
         <tbody>
           {filteredPayments.map((payment, index) => (
-            <tr key={index} onClick={() => handleShowModal(payment)}>
+            <tr key={index}>
               <td>{payment.billNo}</td>
               <td>{payment.billingType}</td>
               <td>{payment.patientName}</td>
@@ -162,21 +244,10 @@ const PendingPayments = () => {
                 <Badge
                   pill
                   bg={
-                    payment.paymentStatus === "Pending"
-                      ? "warning"
-                      : payment.paymentStatus === "Paid"
-                      ? "success"
-                      : "danger"
+                    payment.paymentStatus === "Pending" ? "warning" : payment.paymentStatus === "Paid" ? "success" : "danger"
                   }
                 >
-                  {payment.paymentStatus === "Pending" ? (
-                    <FaExclamationCircle />
-                  ) : payment.paymentStatus === "Paid" ? (
-                    <FaCheckCircle />
-                  ) : (
-                    <FaExclamationCircle />
-                  )}{" "}
-                  {payment.paymentStatus}
+                  {payment.paymentStatus === "Pending" ? <FaExclamationCircle /> : <FaCheckCircle />} {payment.paymentStatus}
                 </Badge>
               </td>
               <td>
@@ -184,10 +255,7 @@ const PendingPayments = () => {
                   <Button
                     variant="success"
                     size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleApprove(payment._id);
-                    }}
+                    onClick={() => handleApprove(payment._id)}
                     disabled={payment.paymentStatus !== "Pending"}
                     title="Approve"
                   >
@@ -196,10 +264,6 @@ const PendingPayments = () => {
                   <Button
                     variant="danger"
                     size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleReject(payment._id);
-                    }}
                     disabled={payment.paymentStatus !== "Pending"}
                     title="Reject"
                   >
@@ -211,79 +275,6 @@ const PendingPayments = () => {
           ))}
         </tbody>
       </Table>
-
-      {selectedPayment && (
-        <Modal show={showModal} onHide={handleCloseModal} size="lg" centered>
-          <Modal.Header closeButton>
-            <Modal.Title>Payment Details</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form>
-              <Row className="mb-3">
-                <Col md={6}>
-                  <Form.Group>
-                    <Form.Label>Bill No</Form.Label>
-                    <Form.Control type="text" value={selectedPayment.billNo} readOnly />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group>
-                    <Form.Label>Billing Type</Form.Label>
-                    <Form.Control type="text" value={selectedPayment.billingType} readOnly />
-                  </Form.Group>
-                </Col>
-              </Row>
-              <Row className="mb-3">
-                <Col md={6}>
-                  <Form.Group>
-                    <Form.Label>Patient Name</Form.Label>
-                    <Form.Control type="text" value={selectedPayment.patientName} readOnly />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group>
-                    <Form.Label>Patient ID</Form.Label>
-                    <Form.Control type="text" value={selectedPayment.patientID} readOnly />
-                  </Form.Group>
-                </Col>
-              </Row>
-              <Row className="mb-3">
-                <Col md={6}>
-                  <Form.Group>
-                    <Form.Label>Total Amount</Form.Label>
-                    <Form.Control type="text" value={`Rs.${selectedPayment.totalAmount}`} readOnly />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group>
-                    <Form.Label>Contact Number</Form.Label>
-                    <Form.Control type="text" value={selectedPayment.contactNumber} readOnly />
-                  </Form.Group>
-                </Col>
-              </Row>
-              <Row className="mb-3">
-                <Col md={6}>
-                  <Form.Group>
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control type="text" value={selectedPayment.patientEmail} readOnly />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group>
-                    <Form.Label>Payment Method</Form.Label>
-                    <Form.Control type="text" value={selectedPayment.paymentMethod} readOnly />
-                  </Form.Group>
-                </Col>
-              </Row>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleCloseModal}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      )}
     </Container>
   );
 };

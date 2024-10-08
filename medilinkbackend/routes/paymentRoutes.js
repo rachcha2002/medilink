@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const billingController = require("../controllers/PaymentControllers/Billing");
+const {uploadInvoice} = require("../controllers/PaymentControllers/UploadBillToFirebase")
 
 // Create a new billing record
 router.post("/billing", billingController.createBilling);
@@ -27,5 +28,7 @@ router.get("/billing/patient/:patientID", billingController.getBillsByPatientId)
 // Get bills by bill number
 router.get('/billing/billno/:billNo', billingController.getBillByBillNo);
 
+
+router.post("/billing/upload/uploadInvoice",uploadInvoice);
 
 module.exports = router;

@@ -72,6 +72,9 @@ const BillingSchema = new mongoose.Schema(
       default: "Pending",
       enum: ["Pending", "Paid", "Rejected", "Failed"],
     },
+    downloadURL: {
+      type: String,
+    }
   },
   { timestamps: true }
 );
