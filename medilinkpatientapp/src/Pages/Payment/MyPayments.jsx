@@ -8,7 +8,7 @@ const OnlinePayment = () => {
     <>
       <Spacing lg={10} md={80} />
       <hr />
-      <Invoice/>
+     <PaymentHistory/>
       <Spacing lg={200} md={80} />
     </>
   );

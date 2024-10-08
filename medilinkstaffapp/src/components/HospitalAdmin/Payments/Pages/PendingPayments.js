@@ -25,7 +25,7 @@ const PendingPayments = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/payment/billing/pending/pendingbills")
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/pending/pendingBills`)
       .then((response) => {
         setPendingPayments(response.data);
         setLoading(false);
@@ -48,7 +48,7 @@ const PendingPayments = () => {
 
   const handleApprove = (paymentId) => {
     axios
-      .put(`http://localhost:5000/api/payment/billing/${paymentId}`, {
+      .put(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${paymentId}`, {
         paymentStatus: "Paid",
       })
       .then(() => {
@@ -68,7 +68,7 @@ const PendingPayments = () => {
 
   const handleReject = (paymentId) => {
     axios
-      .put(`http://localhost:5000/api/payment/billing/${paymentId}`, {
+      .put(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${paymentId}`, {
         paymentStatus: "Rejected",
       })
       .then(() => {
@@ -156,7 +156,7 @@ const PendingPayments = () => {
               <td>{payment.patientID}</td>
               <td>{payment.contactNumber}</td>
               <td>{payment.patientEmail}</td>
-              <td>${payment.totalAmount.toFixed(2)}</td>
+              <td>Rs.{payment.totalAmount.toFixed(2)}</td>
               <td>{payment.paymentMethod}</td>
               <td>
                 <Badge
@@ -251,7 +251,7 @@ const PendingPayments = () => {
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label>Total Amount</Form.Label>
-                    <Form.Control type="text" value={`$${selectedPayment.totalAmount}`} readOnly />
+                    <Form.Control type="text" value={`Rs.${selectedPayment.totalAmount}`} readOnly />
                   </Form.Group>
                 </Col>
                 <Col md={6}>

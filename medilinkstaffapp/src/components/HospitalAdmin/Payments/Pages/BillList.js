@@ -35,7 +35,7 @@ const BillingList = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/payment/billing")
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing`)
       .then((response) => {
         setBillingData(response.data);
         setFilteredData(response.data);
@@ -62,7 +62,7 @@ const BillingList = () => {
     if (validateForm()) {
       axios
         .put(
-          `http://localhost:5000/api/payment/billing/${selectedBilling._id}`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${selectedBilling._id}`,
           selectedBilling
         )
         .then(() => {
@@ -84,7 +84,7 @@ const BillingList = () => {
     if (window.confirm("Are you sure you want to delete this billing record?")) {
       axios
         .delete(
-          `http://localhost:5000/api/payment/billing/${selectedBilling._id}`
+          `${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${selectedBilling._id}`
         )
         .then(() => {
           setBillingData((prevData) =>
@@ -290,7 +290,7 @@ const BillingList = () => {
               <td>{billing.patientID}</td>
               <td>{billing.contactNumber}</td>
               <td>{billing.patientEmail}</td>
-              <td>${billing.totalAmount.toFixed(2)}</td>
+              <td>Rs.{billing.totalAmount.toFixed(2)}</td>
               <td>{billing.paymentMethod}</td>
               <td>
                 <Badge
@@ -428,7 +428,7 @@ const BillingList = () => {
               <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group>
-                    <Form.Label>Total Amount</Form.Label>
+                    <Form.Label>Total Amount (Rs.)</Form.Label>
                     <Form.Control
                       type="number"
                       value={selectedBilling.totalAmount}

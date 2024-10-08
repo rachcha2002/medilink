@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SectionHeading from '../SectionHeading/SectionHeading';
 import { Icon } from '@iconify/react';
+import axios from 'axios';
 
 const PayOnline = () => {
   const [loading, setLoading] = useState(false);
@@ -8,24 +9,29 @@ const PayOnline = () => {
   const [billDetails, setBillDetails] = useState(null);
   const [error, setError] = useState('');
 
-  const bills = [
-    { billNo: '1001', name: 'John Doe', amount: '$150', dueDate: '10/10/2024' },
-    { billNo: '1002', name: 'Jane Doe', amount: '$200', dueDate: '15/10/2024' },
-    { billNo: '1003', name: 'Mike Smith', amount: '$300', dueDate: '20/10/2024' },
-  ];
-
   const handleInputChange = (event) => {
     setBillNo(event.target.value);
   };
 
-  const handleSearchBill = () => {
-    const foundBill = bills.find((bill) => bill.billNo === billNo);
-    if (foundBill) {
-      setBillDetails(foundBill);
-      setError('');
-    } else {
-      setBillDetails(null);
-      setError('Bill not found');
+  const handleSearchBill = async () => {
+    setLoading(true);
+    setError('');
+    setBillDetails(null);
+
+    try {
+      const response = await axios.get(`http://localhost:5000/api/payment/billing/billno/${billNo}`);
+      const data = response.data;
+
+      // Check if the bill status is "Pending"
+      if (data.paymentStatus === 'Pending') {
+        setBillDetails(data);
+      } else {
+        setError('Payment already completed or invalid status.');
+      }
+    } catch (error) {
+      setError('Bill not found or an error occurred.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,8 +85,9 @@ const PayOnline = () => {
                         className="st-btn st-style1 st-color1 st-size-medium"
                         onClick={handleSearchBill}
                         style={{ whiteSpace: 'nowrap' }}
+                        disabled={loading}
                       >
-                        Search Bill
+                        {loading ? 'Searching...' : 'Search Bill'}
                       </button>
                     </div>
                   </div>
@@ -108,21 +115,29 @@ const PayOnline = () => {
                         <strong>Bill Number:</strong> {billDetails.billNo}
                       </p>
                       <p>
-                        <strong>Name:</strong> {billDetails.name}
+                        <strong>Patient Name:</strong> {billDetails.patientName}
                       </p>
                       <p>
-                        <strong>Amount Due:</strong> {billDetails.amount}
+                        <strong>Billing Type:</strong> {billDetails.billingType}
                       </p>
                       <p>
-                        <strong>Due Date:</strong> {billDetails.dueDate}
+                        <strong>Hospital Name:</strong> {billDetails.hospitalName}
+                      </p>
+                      <p>
+                        <strong>Total Amount Due:</strong> {billDetails.totalAmount}
+                      </p>
+                      <p>
+                        <strong>Payment Status:</strong> {billDetails.paymentStatus}
                       </p>
                       <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                        <button
-                          className="st-btn st-style1 st-color1 st-size-medium"
-                          onClick={handlePayOnline}
-                        >
-                          Pay Online
-                        </button>
+                        {billDetails.paymentStatus === 'Pending' && (
+                          <button
+                            className="st-btn st-style1 st-color1 st-size-medium"
+                            onClick={handlePayOnline}
+                          >
+                            Pay Online
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
