@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const BillingSchema = new mongoose.Schema(
   {
+    billNo: {
+      type: String,
+      required: true,
+      default: "Bill00000",
+    },
     billingType: {
       type: String,
       required: true,
@@ -65,7 +70,7 @@ const BillingSchema = new mongoose.Schema(
     paymentStatus: {
       type: String,
       default: "Pending",
-      enum: ["Pending", "Paid","Rejected","Failed"],
+      enum: ["Pending", "Paid", "Rejected", "Failed"],
     },
   },
   { timestamps: true }

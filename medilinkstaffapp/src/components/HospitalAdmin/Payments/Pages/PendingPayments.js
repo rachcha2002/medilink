@@ -21,6 +21,7 @@ const PendingPayments = () => {
   const [loading, setLoading] = useState(true);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     axios
@@ -85,6 +86,17 @@ const PendingPayments = () => {
       });
   };
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredPayments = pendingPayments.filter(
+    (payment) =>
+      payment.billNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      payment.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      payment.patientID.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   if (loading) {
     return (
       <Container className="text-center mt-3">
@@ -104,6 +116,16 @@ const PendingPayments = () => {
     >
       <h1>Pending Payments</h1>
 
+      {/* Search bar for filtering by Bill No */}
+      <Form.Group className="mb-3">
+        <Form.Control
+          type="text"
+          placeholder="Search by Bill No, Patient Name, or Patient ID"
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </Form.Group>
+
       <Table
         bordered
         hover
@@ -113,6 +135,7 @@ const PendingPayments = () => {
       >
         <thead className="bg-primary text-white">
           <tr>
+            <th>Bill No</th>
             <th>Billing Type</th>
             <th>Patient Name</th>
             <th>Patient ID</th>
@@ -125,8 +148,9 @@ const PendingPayments = () => {
           </tr>
         </thead>
         <tbody>
-          {pendingPayments.map((payment, index) => (
+          {filteredPayments.map((payment, index) => (
             <tr key={index} onClick={() => handleShowModal(payment)}>
+              <td>{payment.billNo}</td>
               <td>{payment.billingType}</td>
               <td>{payment.patientName}</td>
               <td>{payment.patientID}</td>
@@ -198,36 +222,50 @@ const PendingPayments = () => {
               <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group>
+                    <Form.Label>Bill No</Form.Label>
+                    <Form.Control type="text" value={selectedPayment.billNo} readOnly />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group>
                     <Form.Label>Billing Type</Form.Label>
                     <Form.Control type="text" value={selectedPayment.billingType} readOnly />
                   </Form.Group>
                 </Col>
+              </Row>
+              <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label>Patient Name</Form.Label>
                     <Form.Control type="text" value={selectedPayment.patientName} readOnly />
                   </Form.Group>
                 </Col>
-              </Row>
-              <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label>Patient ID</Form.Label>
                     <Form.Control type="text" value={selectedPayment.patientID} readOnly />
                   </Form.Group>
                 </Col>
+              </Row>
+              <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label>Total Amount</Form.Label>
                     <Form.Control type="text" value={`$${selectedPayment.totalAmount}`} readOnly />
                   </Form.Group>
                 </Col>
-              </Row>
-              <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label>Contact Number</Form.Label>
                     <Form.Control type="text" value={selectedPayment.contactNumber} readOnly />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row className="mb-3">
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control type="text" value={selectedPayment.patientEmail} readOnly />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
