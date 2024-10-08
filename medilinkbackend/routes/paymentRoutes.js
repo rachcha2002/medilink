@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const billingController = require("../controllers/PaymentControllers/Billing");
+const {paymentinitiate,handlePaymentNotification} = require("../controllers/PaymentControllers/OnlinePayments");
 const {uploadInvoice} = require("../controllers/PaymentControllers/UploadBillToFirebase")
 
 // Create a new billing record
@@ -30,5 +31,8 @@ router.get('/billing/billno/:billNo', billingController.getBillByBillNo);
 
 
 router.post("/billing/upload/uploadInvoice",uploadInvoice);
+
+router.post("/billing/onlinepayment/initiate",paymentinitiate)
+router.post("/billing/onlinepayment/handle",handlePaymentNotification)
 
 module.exports = router;
