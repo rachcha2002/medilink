@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import SectionHeading from '../SectionHeading/SectionHeading';
-import { Button, Spinner, Card } from 'react-bootstrap';
+import { Button, Card } from 'react-bootstrap';
 import axios from 'axios';
+import PayOnlineCommand from './PayOnlineCommand';  // Import the PayOnlineCommand class
 
 const PayOnline = () => {
   const [loading, setLoading] = useState(false);
@@ -35,49 +36,14 @@ const PayOnline = () => {
     }
   };
 
-  const handlePayOnline = async () => {
+  const handlePayOnline = () => {
     if (!billDetails) {
       alert("No payment data available");
       return;
     }
 
-    const paymentData = {
-      first_name: billDetails.patientName.split(" ")[0],  // Split patient name for first name
-      last_name: billDetails.patientName.split(" ")[1] || "",  // Split patient name for last name, if available
-      email: billDetails.patientEmail,
-      phone: billDetails.contactNumber,
-      address: "Colombo, Sri Lanka",  // Hardcoded for your request
-      city: "Colombo",
-      country: "Sri Lanka",
-      order_id: billDetails.billNo,
-      items: billDetails.billNo,
-      currency: "LKR",
-      amount: billDetails.totalAmount.toFixed(2),  // Total amount formatted to two decimals
-    };
-
-    try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/onlinepayment/initiate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(paymentData),
-      });
-
-      if (response.ok) {
-        const responseData = await response.text();
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = responseData;
-        const form = tempDiv.querySelector("form");
-        document.body.appendChild(form);
-        form.submit();  // Automatically submit the form to redirect to PayHere
-      } else {
-        throw new Error("Failed to initiate payment");
-      }
-    } catch (error) {
-      console.error("Error initiating payment:", error.message);
-      alert("Error initiating payment. Please try again later.");
-    }
+    const payOnlineCommand = new PayOnlineCommand(billDetails);
+    payOnlineCommand.execute();
   };
 
   return (
