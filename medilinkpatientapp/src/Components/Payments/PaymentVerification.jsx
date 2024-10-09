@@ -172,7 +172,6 @@ const PaymentVerification = () => {
           setUpdating(false);
 
           console.log("Bill uploaded successfully:", downloadURL);
-          
 
           // Set isUploaded to true to prevent future uploads and show the success screen
           setIsUploaded(true);
@@ -185,24 +184,33 @@ const PaymentVerification = () => {
     }
   };
 
+  // Custom styled spinner for the initial state
+  const renderSpinner = (message) => (
+    <div
+      className="d-flex flex-column justify-content-center align-items-center"
+      style={{
+        height: "100vh",
+        backgroundColor: "#f8f9fa",
+        textAlign: "center",
+      }}
+    >
+      <Spinner animation="border" role="status" style={{ width: "3rem", height: "3rem", color: "#007bff" }}>
+        <span className="visually-hidden">Processing...</span>
+      </Spinner>
+      <p style={{ marginTop: "20px", fontSize: "1.2rem", color: "#007bff" }}>
+        {message}
+      </p>
+    </div>
+  );
+
   // Always show spinner while loading, uploading, or updating
   if (loading || uploading || updating) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }}
-      >
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">
-            {loading
-              ? "Loading..."
-              : uploading
-              ? "Uploading bill..."
-              : "Updating information..."}
-          </span>
-        </Spinner>
-      </div>
-    );
+    const message = loading
+      ? "Payment Processing..."
+      : uploading
+      ? "Uploading bill..."
+      : "Updating information...";
+    return renderSpinner(message);
   }
 
   // Render success screen only if the bill is uploaded and payment is successful
