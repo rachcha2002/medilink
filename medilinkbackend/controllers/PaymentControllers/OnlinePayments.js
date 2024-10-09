@@ -134,19 +134,19 @@ exports.handlePaymentNotification = (req, res) => {
 
 
 
-// exports.getPaymentbyOrderID = async (req, res) => {
-//     try {
-//         const { order_id } = req.params;
+exports.getPaymentbyOrderID = async (req, res) => {
+    try {
+        const { order_id } = req.params;
 
-//         const payment = await onlinePaymentSchema.findOne({ order_id });
+        const payment = await onlinePaymentSchema.findOne({ order_id });
 
-//         if (!payment) {
-//             return res.status(404).json({ error: 'Payment not found' });
-//         }
+        if (!payment) {
+            return res.status(404).json({ error: 'Payment not found' });
+        }
 
-//         res.json(payment);
-//     } catch (error) {
-//         console.error('Error retrieving payment by order ID:', error);
-//         res.status(500).json({ error: 'Internal server error' });
-//     }
-// };
+        res.json(payment);
+    } catch (error) {
+        console.error('Error retrieving payment by order ID:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
