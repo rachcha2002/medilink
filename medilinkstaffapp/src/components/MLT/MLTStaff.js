@@ -42,7 +42,7 @@ const MLTStaff = ({ toggleLoading }) => {
           element={<ReportList toggleLoading={toggleLoading} />}
         />
         <Route
-          path="/reportupdate/:id"
+          path="/reportupdate/:reportType/:reportId"
           element={<UpdateReportForm toggleLoading={toggleLoading} />}
         />
       </Routes>

@@ -44,7 +44,10 @@ exports.createReportWithFile = async (req, res) => {
     }
 
     // Upload the file to Firebase and get the public URL and fileName
-    const { publicUrl, fileName } = await uploadFileToFirebase(req.file);
+    const { publicUrl, fileName } = await uploadFileToFirebase(
+      req.file,
+      "reports"
+    );
 
     // Save the report data with the file URL, fileName, and reportId
     const report = new ReportModel({
@@ -187,6 +190,8 @@ exports.updateReportById = async (req, res) => {
   const { reportType, id } = req.params;
   const updateData = { ...req.body };
 
+  console.log("updateData", updateData);
+
   try {
     // Fetch the correct model based on the existing reportType in the request
     const ReportModel = ReportFactory.getModel(reportType);
@@ -223,7 +228,10 @@ exports.updateReportById = async (req, res) => {
       }
 
       // Upload the new file to Firebase Storage
-      const { publicUrl, fileName } = await uploadFileToFirebase(req.file);
+      const { publicUrl, fileName } = await uploadFileToFirebase(
+        req.file,
+        "reports"
+      );
 
       // Update the file URL and fileName in the update data
       updateData.resultPdf = publicUrl;

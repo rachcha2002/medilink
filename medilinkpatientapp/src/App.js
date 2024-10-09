@@ -14,6 +14,7 @@ import DoctorProfilePage from "./Pages/DoctorProfilePage";
 import DoctorProfilePage2 from "./Pages/DoctorProfilePage2";
 import DoctorProfilePage3 from "./Pages/DoctorProfilePage3";
 import PaymentsMain from "./Pages/Payment/PaymentsMain.jsx";
+import PatientMain from "./Pages/Patient/PatientMain.jsx";
 
 const App = () => {
   const { pathname } = useLocation();
@@ -40,7 +41,8 @@ const App = () => {
         {/* Route for Payments */}
         <Route path="payment/*" element={<PaymentsMain />} />
 
-
+        {/* Route for Patient */}
+        <Route path="patient/*" element={<PatientMain />} />
       </Route>
     </Routes>
   );

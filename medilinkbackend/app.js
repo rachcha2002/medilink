@@ -5,7 +5,7 @@ const connectDB = require("./config/db");
 const staffRoutes = require("./routes/staffRoutes");
 const medicalInfoRoutes = require("./routes/medicalInfoRoutes");
 const billingRoutes = require("./routes/paymentRoutes");
-
+const patientRoutes = require("./routes/patientRoutes");
 
 const PORT = process.env.PORT || 5000;
 
@@ -27,11 +27,11 @@ app.use((req, res, next) => {
 // Routes
 app.use("/api/staffroutes", staffRoutes);
 
-
 app.use("/api/medicalinfo", medicalInfoRoutes);
 
 app.use("/api/payment", billingRoutes);
 
+app.use("/api/patients", patientRoutes);
 
 // Custom error handling middleware
 

@@ -10,14 +10,11 @@ const app = require("../config/firebase"); // Import initialized Firebase app
 // Initialize Firebase Storage
 const storage = getStorage(app);
 
-// Specify the folder where files will be stored in Firebase
-const folderName = "reports"; // Folder to store the reports
-
-// Function to upload a file to Firebase Storage
-const uploadFileToFirebase = async (file) => {
+// Function to upload a file to Firebase Storage (with dynamic folder support)
+const uploadFileToFirebase = async (file, folder = "reports") => {
   try {
-    // Include the folder name in the file path
-    const fileName = `${folderName}/${Date.now()}_${file.originalname}`;
+    // Include the folder name dynamically in the file path
+    const fileName = `${folder}/${Date.now()}_${file.originalname}`;
     const storageRef = ref(storage, fileName);
 
     // Upload the file
