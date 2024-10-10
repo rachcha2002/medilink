@@ -65,3 +65,41 @@ exports.deleteBilling = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+//Get Pending Payments 
+exports.getPendingPayments = async (req, res) => {
+  try {
+    const pendingPayments = await Billing.find({ paymentStatus: "Pending" });
+    res.status(200).json(pendingPayments);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+exports.getBillsByPatientId = async (req, res) => {
+  try {
+    const { patientID } = req.params;
+    const bills = await Billing.find({ patientID: patientID });
+    if (bills.length === 0) {
+      return res.status(404).json({ error: "No bills found for this patient" });
+    }
+    res.status(200).json(bills);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get a billing record by Bill No
+exports.getBillByBillNo = async (req, res) => {
+  try {
+    const { billNo } = req.params;
+    const billing = await Billing.findOne({ billNo: billNo });
+    if (!billing) {
+      return res.status(404).json({ error: "Billing record not found" });
+    }
+    res.status(200).json(billing);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

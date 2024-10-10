@@ -13,12 +13,12 @@ const navList = [
   },
   {
     _id: 3,
-    name: "Documents",
-    icon: "bi bi-menu-button-wide",
+    name: "Appointments",
+    icon: "bi bi-ui-checks",
     children: [
-      { _id: 21, name: "Customers", icon: "bi bi-circle" },
-      { _id: 22, name: "Suppliers", icon: "bi bi-circle" },
-      { _id: 23, name: "Logistic", icon: "bi bi-circle" },
+      { _id: 21, name: "Channeling", icon: "bi bi-circle",href: "/hospitaladmin/Channelingappointments" },
+      { _id: 22, name: "Clinic", icon: "bi bi-circle",href: "/hospitaladmin/Clinicappointments" },
+      { _id: 23, name: "Tests & Scans", icon: "bi bi-circle",href: "/hospitaladmin/TestsandScansappointments" },
     ],
   },
   {

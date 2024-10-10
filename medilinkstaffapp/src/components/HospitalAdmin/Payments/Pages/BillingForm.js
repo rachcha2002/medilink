@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Form,
@@ -12,6 +12,7 @@ import { FaPlusCircle } from "react-icons/fa";
 import { BsInfoCircle } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import moment from "moment"; // Import moment for date handling
 import "bootstrap/dist/css/bootstrap.min.css";
 import PageTitle from "../../../Common/PageTitle";
 
@@ -24,7 +25,20 @@ const BillingForm = () => {
     formState: { errors },
   } = useForm();
   const [serviceDetails, setServiceDetails] = useState([]);
+  const [billNo, setBillNo] = useState(""); // State for bill number
   const navigate = useNavigate();
+
+  // Generate a unique bill number when the component loads
+  useEffect(() => {
+    const generateBillNo = () => {
+      const datePart = moment().format("YYYYMMDD"); // Format date as YYYYMMDD
+      const timePart = moment().format("HHmm"); // Use HHmm (hour and minute) for uniqueness
+      const uniqueBillNo = `B${datePart}${timePart}`;
+      setBillNo(uniqueBillNo);
+    };
+
+    generateBillNo(); // Call the function to set the bill number
+  }, []);
 
   const handleAddService = () => {
     setServiceDetails([...serviceDetails, { description: "", cost: "" }]);
@@ -32,8 +46,8 @@ const BillingForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      // Combine the form data with service details
-      const formData = { ...data, serviceDetails };
+      // Combine the form data with service details and billNo
+      const formData = { ...data, serviceDetails, billNo };
 
       // Send POST request to the backend API
       const response = await axios.post(
@@ -297,4 +311,4 @@ const BillingForm = () => {
   );
 };
 
-export default BillingForm
+export default BillingForm;

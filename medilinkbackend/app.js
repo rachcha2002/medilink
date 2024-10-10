@@ -1,11 +1,18 @@
 require("dotenv").config();
 const express = require("express");
 const connectDB = require("./config/db");
+const helmet = require("helmet");
 
 const staffRoutes = require("./routes/staffRoutes");
 const medicalInfoRoutes = require("./routes/medicalInfoRoutes");
 const billingRoutes = require("./routes/paymentRoutes");
+
 const patientRoutes = require("./routes/patientRoutes");
+
+const appointmentRoutes = require("./routes/appointmentRoutes");
+
+
+
 
 const PORT = process.env.PORT || 5000;
 
@@ -24,6 +31,26 @@ app.use((req, res, next) => {
   next();
 });
 
+
+
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: [
+          "'self'", 
+          "https://sandbox.payhere.lk",  // Allow PayHere sandbox scripts
+          "https://www.google-analytics.com" // Allow Google Analytics scripts
+        ],
+        connectSrc: ["'self'", "https://sandbox.payhere.lk"],
+        imgSrc: ["'self'", "data:"], // Allow images from your domain and data URIs
+        styleSrc: ["'self'", "'unsafe-inline'"], // Allow inline styles for now
+      },
+    },
+  })
+);
+
 // Routes
 app.use("/api/staffroutes", staffRoutes);
 
@@ -31,7 +58,11 @@ app.use("/api/medicalinfo", medicalInfoRoutes);
 
 app.use("/api/payment", billingRoutes);
 
+
 app.use("/api/patients", patientRoutes);
+
+app.use("/api/appointment", appointmentRoutes);
+
 
 // Custom error handling middleware
 

@@ -1,4 +1,4 @@
-import React from "react";
+ import React from "react";
 import Header from "../Header/Header";
 import SideBar from "./Sidebar/SideBar";
 //import Main from "../Main/Main";
