@@ -3,24 +3,36 @@ import { Form, Button, Row, Col, Container, Alert } from "react-bootstrap";
 import "./Main.css";
 import PageTitle from "../../Main/PageTitle";
 
-// Dummy patient data
-const patientData = {
-  P12345: { name: "John Doe", age: 35, contact: "1234567890" },
-  P1002: { name: "Jane Smith", age: 29, contact: "0987654321" },
-  P1003: { name: "Michael Johnson", age: 42, contact: "1122334455" },
-};
-
-function CreateReportForm() {
+function CreateMedicalRecordForm() {
   const [file, setFile] = useState(null);
   const [feedbackMessage, setFeedbackMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [patientId, setPatientId] = useState("");
-  const [patientName, setPatientName] = useState("");
-  const [age, setAge] = useState("");
-  const [patientContact, setPatientContact] = useState("");
-  const [reportType, setReportType] = useState("laboratory");
+  // Form state management with default values for hospital, createdBy, and createdByPosition
+  const [formData, setFormData] = useState({
+    patientId: "",
+    patientName: "",
+    patientAge: "",
+    gender: "Male", // Default value
+    doctorName: "",
+    doctorId: "",
+    diagnosis: "",
+    symptoms: "",
+    remarks: "",
+    hospital: "Medi Help", // Assigning dummy value
+    createdBy: "Doctor123", // Assigning dummy value
+    createdByPosition: "Senior Doctor", // Assigning dummy value
+  });
+
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   // Handle file selection and validation
   const handleFileChange = (event) => {
@@ -44,24 +56,6 @@ function CreateReportForm() {
     }
   };
 
-  // Auto-fill patient details when patient ID is entered
-  const handlePatientIdChange = (event) => {
-    const enteredPatientId = event.target.value;
-    setPatientId(enteredPatientId);
-
-    const patient = patientData[enteredPatientId];
-    if (patient) {
-      setPatientName(patient.name);
-      setAge(patient.age);
-      setPatientContact(patient.contact);
-    } else {
-      // Reset patient fields if ID doesn't match
-      setPatientName("");
-      setAge("");
-      setPatientContact("");
-    }
-  };
-
   // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -70,36 +64,19 @@ function CreateReportForm() {
       return;
     }
 
-    const formData = new FormData(event.currentTarget);
-    //formData.append("resultPdf", file);
-    formData.append("patientName", patientName);
-    formData.append("age", age);
-    formData.append("patientContact", patientContact);
-
-    // Add current date
-    const currentDate = new Date().toISOString();
-    formData.append("date", currentDate);
-
-    // Add laboratorist/radiologist details based on report type
-    if (reportType === "laboratory") {
-      formData.append("laboratoristId", "LAB123");
-      formData.append("laboratoristName", "Dr. Lab Specialist");
-    } else if (reportType === "radiology") {
-      formData.append("radiologistId", "RAD456");
-      formData.append("radiologistName", "Dr. Radiology Expert");
+    const submitData = new FormData();
+    for (const key in formData) {
+      submitData.append(key, formData[key]);
     }
-
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
+    submitData.append("medicalDocument", file);
 
     try {
       setIsLoading(true);
       const response = await fetch(
-        "http://localhost:5000/api/medicalinfo/reports/createWithFile",
+        `${process.env.REACT_APP_BACKEND_URL}/api/medicalinfo/medical-records`,
         {
           method: "POST",
-          body: formData,
+          body: submitData,
         }
       );
 
@@ -109,15 +86,29 @@ function CreateReportForm() {
 
       const result = await response.json();
       console.log(result);
-      setFeedbackMessage("Report created successfully!");
+      setFeedbackMessage("Medical record created successfully!");
       setErrorMessage(null);
 
       // Reset form and clear file
       setFile(null);
+      setFormData({
+        patientId: "",
+        patientName: "",
+        patientAge: "",
+        gender: "Male",
+        doctorName: "",
+        doctorId: "",
+        diagnosis: "",
+        symptoms: "",
+        remarks: "",
+        hospital: "General Hospital", // Reset to dummy value
+        createdBy: "Doctor123", // Reset to dummy value
+        createdByPosition: "Senior Doctor", // Reset to dummy value
+      });
       event.target.reset(); // Reset form fields
     } catch (error) {
       console.error("Failed to submit the form:", error);
-      setErrorMessage("Failed to create report. Please try again.");
+      setErrorMessage("Failed to create medical record. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -135,26 +126,6 @@ function CreateReportForm() {
             {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
 
             <Form onSubmit={handleSubmit}>
-              {/* Report Type Section */}
-              <h5>Report Type</h5>
-              <Row>
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Report Type</Form.Label>
-                    <Form.Control
-                      as="select"
-                      name="reportType"
-                      value={reportType}
-                      onChange={(e) => setReportType(e.target.value)}
-                      required
-                    >
-                      <option value="laboratory">Laboratory</option>
-                      <option value="radiology">Radiology</option>
-                    </Form.Control>
-                  </Form.Group>
-                </Col>
-              </Row>
-
               {/* Patient Information Section */}
               <h5>Patient Information</h5>
               <Row>
@@ -164,15 +135,11 @@ function CreateReportForm() {
                     <Form.Control
                       type="text"
                       name="patientId"
-                      value={patientId}
-                      onChange={handlePatientIdChange}
+                      value={formData.patientId}
+                      onChange={handleInputChange}
                       required
-                      //pattern="\d+"
                       placeholder="Enter Patient ID"
                     />
-                    <Form.Text className="text-muted">
-                      Patient ID must be numeric.
-                    </Form.Text>
                   </Form.Group>
                 </Col>
                 <Col md={6}>
@@ -181,40 +148,42 @@ function CreateReportForm() {
                     <Form.Control
                       type="text"
                       name="patientName"
-                      disabled
-                      value={patientName}
-                      readOnly
+                      value={formData.patientName}
+                      onChange={handleInputChange}
                       required
+                      placeholder="Enter Patient Name"
                     />
                   </Form.Group>
                 </Col>
               </Row>
-
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Age</Form.Label>
+                    <Form.Label>Patient Age</Form.Label>
                     <Form.Control
                       type="number"
-                      name="age"
-                      disabled
-                      value={age}
-                      readOnly
+                      name="patientAge"
+                      value={formData.patientAge}
+                      onChange={handleInputChange}
                       required
+                      placeholder="Enter Patient Age"
                     />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Patient Contact</Form.Label>
+                    <Form.Label>Gender</Form.Label>
                     <Form.Control
-                      type="text"
-                      name="patientContact"
-                      disabled
-                      value={patientContact}
-                      readOnly
+                      as="select"
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleInputChange}
                       required
-                    />
+                    >
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </Form.Control>
                   </Form.Group>
                 </Col>
               </Row>
@@ -224,10 +193,12 @@ function CreateReportForm() {
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Doctor</Form.Label>
+                    <Form.Label>Doctor Name</Form.Label>
                     <Form.Control
                       type="text"
-                      name="doctor"
+                      name="doctorName"
+                      value={formData.doctorName}
+                      onChange={handleInputChange}
                       required
                       placeholder="Enter Doctor Name"
                     />
@@ -235,80 +206,59 @@ function CreateReportForm() {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Hospital</Form.Label>
+                    <Form.Label>Doctor ID</Form.Label>
                     <Form.Control
                       type="text"
-                      name="hospital"
+                      name="doctorId"
+                      value={formData.doctorId}
+                      onChange={handleInputChange}
                       required
-                      placeholder="Enter Hospital Name"
+                      placeholder="Enter Doctor ID"
                     />
                   </Form.Group>
                 </Col>
               </Row>
 
+              {/* Medical Information Section */}
+              <h5>Medical Information</h5>
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Lab Name</Form.Label>
+                    <Form.Label>Diagnosis</Form.Label>
                     <Form.Control
                       type="text"
-                      name="labName"
+                      name="diagnosis"
+                      value={formData.diagnosis}
+                      onChange={handleInputChange}
                       required
-                      placeholder="Enter Lab Name"
+                      placeholder="Enter Diagnosis"
                     />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Lab Contact</Form.Label>
+                    <Form.Label>Symptoms</Form.Label>
                     <Form.Control
                       type="text"
-                      name="labContact"
+                      name="symptoms"
+                      value={formData.symptoms}
+                      onChange={handleInputChange}
                       required
-                      pattern="^\d{10}$"
-                      placeholder="Enter Lab Contact (10 digits)"
-                    />
-                    <Form.Text className="text-muted">
-                      Please enter a valid 10-digit lab contact number.
-                    </Form.Text>
-                  </Form.Group>
-                </Col>
-              </Row>
-
-              {/* Test Information Section */}
-              <h5>Test Information</h5>
-              <Row>
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Test Name</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="testName"
-                      required
-                      placeholder="Enter Test Name"
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Remarks</Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      rows={3}
-                      name="remarks"
-                      placeholder="Enter any remarks"
+                      placeholder="Enter Symptoms (comma separated)"
                     />
                   </Form.Group>
                 </Col>
               </Row>
 
+              {/* Document Upload */}
+              <h5>Document Upload</h5>
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Report PDF File</Form.Label>
+                    <Form.Label>Medical Document (PDF)</Form.Label>
                     <Form.Control
                       type="file"
-                      name="resultPdf"
+                      name="medicalDocument"
                       onChange={handleFileChange}
                       required
                       accept="application/pdf"
@@ -316,6 +266,23 @@ function CreateReportForm() {
                     <Form.Text className="text-muted">
                       Please upload a valid PDF file (max 5MB).
                     </Form.Text>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              {/* Remarks */}
+              <Row>
+                <Col md={12}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Remarks</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      name="remarks"
+                      value={formData.remarks}
+                      onChange={handleInputChange}
+                      placeholder="Enter any remarks"
+                    />
                   </Form.Group>
                 </Col>
               </Row>
@@ -331,4 +298,4 @@ function CreateReportForm() {
   );
 }
 
-export default CreateReportForm;
+export default CreateMedicalRecordForm;

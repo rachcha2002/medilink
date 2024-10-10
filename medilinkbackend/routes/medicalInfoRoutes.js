@@ -3,6 +3,7 @@ const router = express.Router();
 const prescriptionController = require("../controllers/MedicalInfoControllers/prescription-controller");
 const reportController = require("../controllers/MedicalInfoControllers/reportController");
 const upload = require("../middlewares/multer");
+const medicalRecordController = require("../controllers/MedicalInfoControllers/medicalRecordController");
 
 /*-------Prescription Routes-------*/
 
@@ -81,6 +82,55 @@ router.put(
   "/reports/:reportType/:id",
   upload.single("resultPdf"),
   reportController.updateReportById
+);
+
+/*-------Medical Record Routes-------*/
+
+// Route to create a new medical record with a file upload
+router.post(
+  "/medical-records",
+  upload.single("medicalDocument"),
+  medicalRecordController.createMedicalRecord
+);
+
+// Route to get all medical records
+router.get("/medical-records", medicalRecordController.getAllMedicalRecords);
+
+// Route to get a medical record by ID
+router.get(
+  "/medical-records/:id",
+  medicalRecordController.getMedicalRecordById
+);
+
+// Route to get medical records by hospital
+router.get(
+  "/medical-records/hospital/:hospital",
+  medicalRecordController.getMedicalRecordsByHospital
+);
+
+// Route to get medical records by patient ID
+router.get(
+  "/medical-records/patient/:patientId",
+  medicalRecordController.getMedicalRecordsByPatientId
+);
+
+// Route to get medical records by the creator's ID
+router.get(
+  "/medical-records/created-by/:createdBy",
+  medicalRecordController.getMedicalRecordsByCreatedBy
+);
+
+// Route to update a medical record by ID
+router.put(
+  "/medical-records/:id",
+  upload.single("medicalDocument"),
+  medicalRecordController.updateMedicalRecordById
+);
+
+// Route to delete a medical record by ID
+router.delete(
+  "/medical-records/:id",
+  medicalRecordController.deleteMedicalRecordById
 );
 
 module.exports = router;

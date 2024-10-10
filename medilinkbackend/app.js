@@ -6,7 +6,11 @@ const helmet = require("helmet");
 const staffRoutes = require("./routes/staffRoutes");
 const medicalInfoRoutes = require("./routes/medicalInfoRoutes");
 const billingRoutes = require("./routes/paymentRoutes");
+
+const patientRoutes = require("./routes/patientRoutes");
+
 const appointmentRoutes = require("./routes/appointmentRoutes");
+
 
 
 
@@ -50,11 +54,15 @@ app.use(
 // Routes
 app.use("/api/staffroutes", staffRoutes);
 
-
 app.use("/api/medicalinfo", medicalInfoRoutes);
 
 app.use("/api/payment", billingRoutes);
+
+
+app.use("/api/patients", patientRoutes);
+
 app.use("/api/appointment", appointmentRoutes);
+
 
 // Custom error handling middleware
 
