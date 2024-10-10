@@ -65,6 +65,8 @@ export default function HospitalRegistration() {
           adminName: data.adminName,
           adminEmail: data.adminEmail,
           adminContact: data.adminContact,
+          hospitalName:data.hospitalName,
+          registrationID:data.registrationID
         };
     
         try {

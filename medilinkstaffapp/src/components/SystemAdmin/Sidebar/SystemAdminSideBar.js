@@ -3,7 +3,7 @@ import "./SideBar.css";
 import navList from "../../../data/systemAdminNavItems";
 import NavItem from "./NavItem";
 
-function SideBar() {
+function SystemAdminSideBar() {
   return (
     <aside id="sidebar" className="sidebar">
       <ul className="sidebar-nav" id="sidebar-nav">
@@ -15,4 +15,4 @@ function SideBar() {
   );
 }
 
-export default SideBar;
+export default SystemAdminSideBar;

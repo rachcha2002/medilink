@@ -82,6 +82,7 @@ export default function HospitalAdminDetails() {
         <thead>
           <tr>
             <th><center>Admin ID</center></th>
+            <th><center>Hospital Name</center></th>
             <th><center>Admin Name</center></th>
             <th><center>Admin Email</center></th>
             <th><center>Admin Contact</center></th>
@@ -93,6 +94,7 @@ export default function HospitalAdminDetails() {
             hospitalAdminData.map((admin, index) => (
               <tr key={index}>
                 <td>{admin.adminID}</td>
+                <td>{admin.hospitalName}</td>
                 <td>{admin.adminName}</td>
                 <td>{admin.adminEmail}</td>
                 <td>{admin.adminContact}</td>
@@ -140,6 +142,22 @@ export default function HospitalAdminDetails() {
                     setSelectedAdmin({
                       ...selectedAdmin,
                       adminName: e.target.value,
+                    })
+                  }
+                  required
+                />
+              </Form.Group>
+
+               {/* Hospital Name */}
+               <Form.Group className="mb-2">
+                <Form.Label>Hospital Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={selectedAdmin.hospitalName || ""}
+                  onChange={(e) =>
+                    setSelectedAdmin({
+                      ...selectedAdmin,
+                      hospitalName: e.target.value,
                     })
                   }
                   required

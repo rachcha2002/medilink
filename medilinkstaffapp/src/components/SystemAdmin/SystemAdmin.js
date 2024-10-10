@@ -1,7 +1,7 @@
 import {React, useState} from "react";
 import { Route, Routes } from "react-router-dom";
 import Header from "../Header/Header";
-import SideBar from "../SystemAdmin/Sidebar/SideBar";
+import SystemAdminSideBar from "./Sidebar/SystemAdminSideBar";
 import PageTitle from "../Common/PageTitle";
 import HospitalRegistration from "./Pages/HospitalRegistration";
 import HospitalDetails from "./Pages/HospitalDetails";
@@ -13,7 +13,7 @@ const SystemAdmin = ({ toggleLoading }) => {
     <>
       <PageTitle title="System Admin Dashboard" url="/systemadmin" />
       <Header />
-      <SideBar/>
+      <SystemAdminSideBar/>
       <Routes>
         <Route
         path="/registerhospital/*"

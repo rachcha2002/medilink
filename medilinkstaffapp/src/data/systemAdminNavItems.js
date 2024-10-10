@@ -3,7 +3,7 @@ const navList = [
       _id: 1,
       name: "Dashboard",
       icon: "bi bi-house",
-      href: "/systemadmin",
+      href: "/systemadmin/",
     },
     {
       _id: 2,

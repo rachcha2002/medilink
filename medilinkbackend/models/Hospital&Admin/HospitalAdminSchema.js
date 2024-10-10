@@ -17,6 +17,12 @@ const HospitalAdminSchema = new mongoose.Schema({
         type: String,
         required: true, 
       },
+      hospitalName: {
+        type: String,
+      },
+    registrationID: {
+        type: String,
+      },
     
 }, { timestamps: true });
 
