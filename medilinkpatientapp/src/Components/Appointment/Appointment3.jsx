@@ -1,18 +1,17 @@
-import React, { useState } from 'react'
-import parser from 'html-react-parser'
-import { Icon } from '@iconify/react';
+import React, { useState } from 'react';
+import SectionHeading from '../SectionHeading/SectionHeading';
 
-const Appointment3 = ({ data, varient }) => {
-  const { title, img, phone } = data;
-
+const Appointment3 = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    date: '',
-    doctor: '',
-    msg: ''
+    mobile: '',
+    appointmentDate: '',
+    appointmentTime: '',
+    hospitalType: '',
+    hospitalName: '',
+    payment: '',
+    doctorName: '',
+    speciality: '',
   });
 
   // Handler for input field changes
@@ -27,176 +26,173 @@ const Appointment3 = ({ data, varient }) => {
   const onSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    const formData = new FormData(event.target);
-    formData.append("access_key", "fcc74231-656a-425b-a54f-aff38354fadb");
+    const dataToSubmit = {
+      ...formData,
+      userid: 'u002',
+      type: 'Clinic',
+      username: 'Eranga',
+      email: 'Eranga@gmail.com',
+      hospitalId: 'H001',
+      status: 'pending',
+    };
+    console.log(dataToSubmit);
 
-    const object = Object.fromEntries(formData);
-    const json = JSON.stringify(object);
-
-    const res = await fetch("https://api.web3forms.com/submit", {
+    const res = await fetch("http://localhost:5000/api/appointment/makeappointment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json"
       },
-      body: json
+      body: JSON.stringify(dataToSubmit),
     }).then((res) => res.json());
 
     if (res.success) {
       setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        date: '',
-        doctor: '',
-        msg: ''
+        mobile: '',
+        appointmentDate: '',
+        appointmentTime: '',
+        hospitalType: '',
+        hospitalName: '',
+        payment: '',
+        doctorName: '',
+        speciality: '',
       });
-      setLoading(false)
     }
+    setLoading(false);
   };
 
   return (
-    <section id="appointment" className="st-gray-bg1">
-      <div className="st-height-b120 st-height-lg-b80" />
+    <section id="appointment" className="st-shape-wrap st-gray-bg">
+      <div className="st-shape4">
+        <img src="/shape/section_shape.png" alt="/shape/section_shape.png" />
+      </div>
+      <div className="st-shape6">
+        <img src="/shape/contact-shape3.svg" alt="/shape/contact-shape3.svg" />
+      </div>
+      <SectionHeading title="Appointment for Clinic" />
       <div className="container">
-        <div className="row st-col-reverse-xl">
-          <div className="col-xl-6">
-            <div className="st-vertical-middle">
-              <div className="st-vertical-middle-in">
-                <form
-                  method="POST"
-                  onSubmit={onSubmit}
-                  className="st-appointment-form"
-                  id="appointment-form"
-                >
-                  <input type="hidden" name="from_name" value="Nischinto Medical Appoinment" />
-                  <input type="hidden" name="replyto" value="custom@gmail.com" />
-                  <div id="st-alert1" />
-                  <div className="st-section-heading st-style2 text-left">
-                    <h2 className="st-section-heading-title">{parser(title)}</h2>
-                  </div>
-                  <div className="st-height-b35 st-height-lg-b35" />
-                  <div className="st-form-field st-style1 st-color1">
+        <div className="row">
+          <div className="col-lg-10 offset-lg-1">
+            <form
+              method="POST"
+              className="st-appointment-form"
+              id="appointment-form"
+              onSubmit={onSubmit}
+            >
+              <div className="row">
+                <div className="col-lg-6">
+                  <div className="st-form-field st-style1">
+                    <label>Phone Number</label>
                     <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      placeholder="Full Name"
+                      type="tel"
+                      id="mobile"
+                      name="mobile"
+                      placeholder="07X XXX XXXX"
                       onChange={handleInputChange}
-                      value={formData.name}
+                      value={formData.mobile}
                       required
                     />
                   </div>
-                  <div className="st-form-field st-style1 st-color1">
+                </div>
+                <div className="col-lg-6">
+                  <div className="st-form-field st-style1">
+                    <label>Booking Date</label>
                     <input
-                      type="text"
-                      id="email"
-                      name="email"
-                      placeholder="Email address"
+                      name="appointmentDate"
+                      type="date"
+                      id="appointmentDate"
                       onChange={handleInputChange}
-                      value={formData.email}
-                      required
-                    />
-                  </div>
-                  <div className="st-form-field st-style1 st-color1">
-                    <input
-                      type="text"
-                      id="phone"
-                      name="phone"
-                      placeholder="Phone number"
-                      onChange={handleInputChange}
-                      value={formData.phone}
-                      required
-                    />
-                  </div>
-                  <div className="st-form-field st-style1 st-color1">
-                    <input
-                      name="date"
-                      type="text"
-                      id="date"
-                      placeholder="dd/mm/yy"
-                      onChange={handleInputChange}
-                      value={formData.date}
+                      value={formData.appointmentDate}
                       required
                     />
                     <div className="form-field-icon">
-                      <Icon icon="fa:calendar" />
                     </div>
                   </div>
-                  <div className="st-form-field st-style1 st-color1">
-                    <div className="st-custom-select-wrap">
-                      <select
-                        name="doctor"
-                        className="st_select1"
-                        id="doctor"
-                        data-placeholder="Select doctor"
-                        onChange={handleInputChange}
-                        value={formData.doctor}
-                        required
-                      >
-                        <option>Select Doctor</option>
-                        <option value="jhon-doe">Dr. Jhon Doe</option>
-                        <option value="mak-rushi">Dr. Mak Roshi</option>
-                        <option value="mohoshin-kabir">Dr. Mohoshin Kabir</option>
-                        <option value="nayon-borua">Dr. Nayon Borua</option>
-                        <option value="rasel-islam">Dr. Rasel Islam</option>
-                        <option value="mahid-islam">Dr. Mahid Islam</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className="st-form-field st-style1 st-color1">
-                    <textarea
-                      cols={30}
-                      rows={10}
-                      id="msg"
-                      name="msg"
-                      placeholder="Write something here..."
+                </div>
+                <div className="col-lg-6">
+                  <div className="st-form-field st-style1">
+                    <label>Booking Time</label>
+                    <input
+                      name="appointmentTime"
+                      type="time"
+                      id="appointmentTime"
                       onChange={handleInputChange}
-                      value={formData.msg}
+                      value={formData.appointmentTime}
                       required
                     />
                   </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="st-form-field st-style1">
+                    <label>Hospital Type</label>
+                    <select
+                      name="hospitalType"
+                      id="hospitalType"
+                      onChange={handleInputChange}
+                      value={formData.hospitalType}
+                      required
+                    >
+                      <option value="">Select Hospital Type</option>
+                      <option value="government">Government</option>
+                      <option value="non-government">Non-Government</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="st-form-field st-style1">
+                    <label>Hospital Name</label>
+                    <input
+                      name="hospitalName"
+                      type="text"
+                      id="hospitalName"
+                      onChange={handleInputChange}
+                      value={formData.hospitalName}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="st-form-field st-style1">
+                    <label>Doctor</label>
+                    <input
+                      name="doctorName"
+                      type="text"
+                      id="doctorName"
+                      onChange={handleInputChange}
+                      value={formData.doctorName}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="st-form-field st-style1">
+                    <label>Speciality</label>
+                    <input
+                      name="speciality"
+                      type="text"
+                      id="speciality"
+                      onChange={handleInputChange}
+                      value={formData.speciality}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="col-lg-12">
                   <button
-                    className="st-btn st-style1 st-size-medium st-color4"
+                    className="st-btn st-style1 st-color1 st-size-medium"
                     type="submit"
                     id="appointment-submit"
                     name="submit"
                   >
                     {loading ? "Sending..." : "Appointment"}
                   </button>
-                </form>
-              </div>
-            </div>
-          </div>
-          <div className="col-xl-6">
-            <div className="st-right-full-width">
-              <div className="st-infobox-wrap text-center">
-                <img src={img} alt={img} />
-                <div className="st-infobox st-style1 st-type1 st-color2">
-                  <div className="st-infobox-text">
-                    Monday - Friday: 8:00am - 8:00pm <br />
-                    Saturday: 8:00am - 6:00pm
-                    <br />
-                    Sunday: closed
-                  </div>
-                  <div className="st-infobox-call">
-                    <div className="st-infobox-icon">
-                      <Icon icon="fa:phone" />
-                    </div>
-                    <div className="st-infobox-right">
-                      <span>Call Today</span>
-                      <h3>{phone}</h3>
-                    </div>
-                  </div>
                 </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>
-      <div className="st-height-b120 st-height-lg-b80" />
     </section>
-  )
-}
+  );
+};
 
-export default Appointment3
+export default Appointment3;

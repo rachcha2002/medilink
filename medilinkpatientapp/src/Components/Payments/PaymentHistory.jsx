@@ -1,34 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import SectionHeading from '../SectionHeading/SectionHeading';
 import { Icon } from '@iconify/react';
+import { Modal, Button } from 'react-bootstrap';
+import axios from 'axios';
 
 const PaymentHistory = () => {
-  const paymentHistory = [
-    {
-      id: 1,
-      billNumber: '1001',
-      name: 'John Doe',
-      amount: '$150',
-      date: '10/10/2024',
-      status: 'Paid',
-    },
-    {
-      id: 2,
-      billNumber: '1002',
-      name: 'Jane Doe',
-      amount: '$200',
-      date: '12/10/2024',
-      status: 'Pending',
-    },
-    {
-      id: 3,
-      billNumber: '1003',
-      name: 'Mike Smith',
-      amount: '$300',
-      date: '15/10/2024',
-      status: 'Paid',
-    },
-  ];
+  const [paymentHistory, setPaymentHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  // Fetch payment data from the API
+  useEffect(() => {
+    axios
+      .get('http://localhost:5000/api/payment/billing/patient/P0203')
+      .then((response) => {
+        setPaymentHistory(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching payment history:', error);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleShowModal = (payment) => {
+    setSelectedPayment(payment);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedPayment(null);
+  };
+
+  if (loading) {
+    return <p>Loading payment history...</p>;
+  }
 
   return (
     <section className="st-shape-wrap" id="payment-history">
@@ -51,8 +59,8 @@ const PaymentHistory = () => {
                 <thead>
                   <tr>
                     <th>Bill Number</th>
-                    <th>Name</th>
-                    <th>Amount</th>
+                    <th>Hospital Name</th>
+                    <th>Total Amount</th>
                     <th>Date</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -60,22 +68,25 @@ const PaymentHistory = () => {
                 </thead>
                 <tbody>
                   {paymentHistory.map((payment) => (
-                    <tr key={payment.id}>
-                      <td>{payment.billNumber}</td>
-                      <td>{payment.name}</td>
-                      <td>{payment.amount}</td>
-                      <td>{payment.date}</td>
+                    <tr key={payment._id}>
+                      <td>{payment.billNo}</td>
+                      <td>{payment.hospitalName}</td>
+                      <td>{`Rs.${payment.totalAmount}`}</td>
+                      <td>{new Date(payment.createdAt).toLocaleDateString()}</td>
                       <td>
                         <span
                           className={`status ${
-                            payment.status === 'Paid' ? 'paid' : 'pending'
+                            payment.paymentStatus === 'Paid' ? 'paid' : 'pending'
                           }`}
                         >
-                          {payment.status}
+                          {payment.paymentStatus}
                         </span>
                       </td>
                       <td>
-                        <button className="st-btn st-style1 st-color2 st-size-small st-btn-align">
+                        <button
+                          className="st-btn st-style1 st-color2 st-size-small st-btn-align"
+                          onClick={() => handleShowModal(payment)}
+                        >
                           <Icon
                             icon="mdi:eye"
                             style={{
@@ -96,6 +107,39 @@ const PaymentHistory = () => {
         </div>
       </div>
       <div className="st-height-b120 st-height-lg-b80" />
+
+      {/* Modal for payment details */}
+      {selectedPayment && (
+        <Modal show={showModal} onHide={handleCloseModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Payment Details</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p><strong>Bill Number:</strong> {selectedPayment.billNo}</p>
+            <p><strong>Hospital Name:</strong> {selectedPayment.hospitalName}</p>
+            <p><strong>Hospital Address:</strong> {selectedPayment.hospitalAddress}</p>
+            <p><strong>Total Amount:</strong> Rs.{selectedPayment.totalAmount}</p>
+            <p><strong>Billing Type:</strong> {selectedPayment.billingType}</p>
+            <p><strong>Payment Method:</strong> {selectedPayment.paymentMethod}</p>
+            <p><strong>Status:</strong> {selectedPayment.paymentStatus}</p>
+            <p><strong>Date:</strong> {new Date(selectedPayment.createdAt).toLocaleString()}</p>
+            <p><strong>Services:</strong></p>
+            <ul>
+              {selectedPayment.serviceDetails.map((service, index) => (
+                <li key={index}>
+                  {service.description}: Rs.{service.cost}
+                </li>
+              ))}
+            </ul>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseModal}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
+
       <style jsx>{`
         .st-payment-history-table {
           width: 100%;

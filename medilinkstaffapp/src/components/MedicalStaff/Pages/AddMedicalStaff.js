@@ -8,7 +8,7 @@ import ImageUpload from "../../ImageUpload/ImageUpload";
 import { BsArrowLeft } from "react-icons/bs";
 import { BiCheckCircle, BiHide, BiShow } from "react-icons/bi";
 import "./Main.css";
-import PageTitle from "../../Main/PageTitle";
+import PageTitle from "../../Common/PageTitle";
 
 function AddMedicalStaff({ toggleLoading }) {
   const cusfrontendurl = `${process.env.React_App_Frontend_URL}/customer`;
@@ -97,7 +97,7 @@ function AddMedicalStaff({ toggleLoading }) {
 
   return (
     <main id="main" className="main">
-      <PageTitle />
+      <PageTitle title={"Add Medical Staff(Doctors/Nurses)"} />
       <Form onSubmit={handleSubmit(onSubmit)}>
         <h3>
           <Button

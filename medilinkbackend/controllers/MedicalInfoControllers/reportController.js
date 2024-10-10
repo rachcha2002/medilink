@@ -24,7 +24,7 @@ exports.createReportWithFile = async (req, res) => {
     const existingReport = await ReportModel.findOne({
       testName: reportData.testName,
       date: reportData.date,
-      reportType: reportType, // Include reportType in the check if needed
+      reportType: reportType,
     });
 
     if (existingReport) {
@@ -33,22 +33,37 @@ exports.createReportWithFile = async (req, res) => {
       });
     }
 
-    // Upload the file to Firebase and get the public URL and fileName
-    const { publicUrl, fileName } = await uploadFileToFirebase(req.file);
+    // Retrieve the latest report to generate the next reportId
+    const latestReport = await ReportModel.findOne().sort({ reportId: -1 });
+    let newReportId = "R00000001"; // Default reportId if no reports exist
 
-    // Save the report data with the file URL and fileName
+    if (latestReport && latestReport.reportId) {
+      const latestReportNumber = parseInt(latestReport.reportId.slice(1), 10); // Remove the 'R' and convert to a number
+      const nextReportNumber = latestReportNumber + 1;
+      newReportId = `R${nextReportNumber.toString().padStart(8, "0")}`; // Ensure it's 8 digits, prefixed with 'R'
+    }
+
+    // Upload the file to Firebase and get the public URL and fileName
+    const { publicUrl, fileName } = await uploadFileToFirebase(
+      req.file,
+      "reports"
+    );
+
+    // Save the report data with the file URL, fileName, and reportId
     const report = new ReportModel({
       ...reportData,
-      reportType, // Save reportType in the database
+      reportType,
       resultPdf: publicUrl,
       firebaseFileName: fileName,
+      reportId: newReportId, // Add generated reportId
     });
 
     await report.save();
 
-    res
-      .status(201)
-      .json({ message: `${reportType} report created successfully`, report });
+    res.status(201).json({
+      message: `${reportType} report created successfully`,
+      report,
+    });
   } catch (error) {
     res.status(500).json({
       message: "Error uploading file or saving report",
@@ -175,6 +190,8 @@ exports.updateReportById = async (req, res) => {
   const { reportType, id } = req.params;
   const updateData = { ...req.body };
 
+  console.log("updateData", updateData);
+
   try {
     // Fetch the correct model based on the existing reportType in the request
     const ReportModel = ReportFactory.getModel(reportType);
@@ -211,7 +228,10 @@ exports.updateReportById = async (req, res) => {
       }
 
       // Upload the new file to Firebase Storage
-      const { publicUrl, fileName } = await uploadFileToFirebase(req.file);
+      const { publicUrl, fileName } = await uploadFileToFirebase(
+        req.file,
+        "reports"
+      );
 
       // Update the file URL and fileName in the update data
       updateData.resultPdf = publicUrl;

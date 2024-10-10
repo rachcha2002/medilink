@@ -15,6 +15,9 @@ import UpdateMedicalStaff from "./Pages/UpdateMedicalStaff";
 import PrescriptionForm from "./Pages/PrescriptionForm";
 import PrescriptionsByHospital from "./Pages/PrescriptionsByHospital";
 import PrescriptionUpdateForm from "./Pages/PrescriptionUpdateForm";
+import CreateMedicalRecordForm from "./Pages/CreateMedicalRecordForm";
+import MedicalRecords from "./Pages/MedicalRecords";
+import UpdateMedicalRecordForm from "./Pages/UpdateMedicalRecordForm";
 
 const MedicalStaff = ({ toggleLoading }) => {
   return (
@@ -49,6 +52,21 @@ const MedicalStaff = ({ toggleLoading }) => {
         <Route
           path="/updateprescription/:id"
           element={<PrescriptionUpdateForm toggleLoading={toggleLoading} />}
+        />
+
+        <Route
+          path="/addmedicalrecord"
+          element={<CreateMedicalRecordForm toggleLoading={toggleLoading} />}
+        />
+
+        <Route
+          path="/medicalrecords"
+          element={<MedicalRecords toggleLoading={toggleLoading} />}
+        />
+
+        <Route
+          path="/updatemedicalrecords/:id"
+          element={<UpdateMedicalRecordForm toggleLoading={toggleLoading} />}
         />
       </Routes>
     </>
