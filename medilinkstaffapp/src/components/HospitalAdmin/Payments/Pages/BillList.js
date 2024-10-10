@@ -19,7 +19,9 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import ".././../../Main/Main.css"
+import ".././../../Main/Main.css";
+import { FaFilePdf } from "react-icons/fa";
+
 
 const BillingList = () => {
   const [billingData, setBillingData] = useState([]);
@@ -35,7 +37,7 @@ const BillingList = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/payment/billing")
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing`)
       .then((response) => {
         setBillingData(response.data);
         setFilteredData(response.data);
@@ -47,16 +49,9 @@ const BillingList = () => {
       });
   }, []);
 
-  const handleShowModal = (billingId) => {
-    axios
-      .get(`http://localhost:5000/api/payment/billing/${billingId}`)
-      .then((response) => {
-        setSelectedBilling(response.data);
-        setShowModal(true);
-      })
-      .catch((error) => {
-        console.error("Error fetching billing details:", error);
-      });
+  const handleShowModal = (billing) => {
+    setSelectedBilling(billing);
+    setShowModal(true);
   };
 
   const handleCloseModal = () => {
@@ -69,7 +64,7 @@ const BillingList = () => {
     if (validateForm()) {
       axios
         .put(
-          `http://localhost:5000/api/payment/billing/${selectedBilling._id}`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${selectedBilling._id}`,
           selectedBilling
         )
         .then(() => {
@@ -88,12 +83,10 @@ const BillingList = () => {
   };
 
   const handleDelete = () => {
-    if (
-      window.confirm("Are you sure you want to delete this billing record?")
-    ) {
+    if (window.confirm("Are you sure you want to delete this billing record?")) {
       axios
         .delete(
-          `http://localhost:5000/api/payment/billing/${selectedBilling._id}`
+          `${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${selectedBilling._id}`
         )
         .then(() => {
           setBillingData((prevData) =>
@@ -176,10 +169,11 @@ const BillingList = () => {
       );
     }
 
-    // Search by patient name or patient ID
+    // Search by billNo, patient name or patient ID
     if (searchTerm) {
       filtered = filtered.filter(
         (bill) =>
+          bill.billNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
           bill.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
           bill.patientID.toLowerCase().includes(searchTerm.toLowerCase())
       );
@@ -224,10 +218,10 @@ const BillingList = () => {
         <Row>
           <Col md={4}>
             <Form.Group>
-              <Form.Label>Search by Name or Patient ID</Form.Label>
+              <Form.Label>Search by Bill No, Name, or Patient ID</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter name or patient ID"
+                placeholder="Enter Bill No, name, or patient ID"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -277,6 +271,7 @@ const BillingList = () => {
       >
         <thead className="bg-primary text-white">
           <tr>
+            <th>Bill No</th>
             <th>Billing Type</th>
             <th>Patient Name</th>
             <th>Patient ID</th>
@@ -286,18 +281,18 @@ const BillingList = () => {
             <th>Payment Method</th>
             <th>Status</th>
             <th>Date & Time</th>
-            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {filteredData.map((billing, index) => (
-            <tr key={index}>
+            <tr key={index} onClick={() => handleShowModal(billing)}>
+              <td>{billing.billNo}</td>
               <td>{billing.billingType}</td>
               <td>{billing.patientName}</td>
               <td>{billing.patientID}</td>
               <td>{billing.contactNumber}</td>
               <td>{billing.patientEmail}</td>
-              <td>${billing.totalAmount.toFixed(2)}</td>
+              <td>Rs.{billing.totalAmount.toFixed(2)}</td>
               <td>{billing.paymentMethod}</td>
               <td>
                 <Badge
@@ -313,15 +308,6 @@ const BillingList = () => {
                 </Badge>
               </td>
               <td>{new Date(billing.createdAt).toLocaleString()}</td>
-              <td>
-                <Button
-                  variant="info"
-                  size="sm"
-                  onClick={() => handleShowModal(billing._id)}
-                >
-                  View
-                </Button>
-              </td>
             </tr>
           ))}
         </tbody>
@@ -335,6 +321,12 @@ const BillingList = () => {
           <Modal.Body>
             <Form>
               <Row className="mb-3">
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label>Bill No</Form.Label>
+                    <Form.Control type="text" value={selectedBilling.billNo} disabled />
+                  </Form.Group>
+                </Col>
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label>Billing Type</Form.Label>
@@ -354,6 +346,8 @@ const BillingList = () => {
                     </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
+              </Row>
+              <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label>Patient Name</Form.Label>
@@ -373,8 +367,6 @@ const BillingList = () => {
                     </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
-              </Row>
-              <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label>Patient ID</Form.Label>
@@ -394,6 +386,27 @@ const BillingList = () => {
                     </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
+              </Row>
+              {/* New Invoice Field */}
+    {selectedBilling.downloadURL && (
+      <Row className="mb-3">
+        <Col md={6}>
+          <Form.Group>
+            <Form.Label>Invoice</Form.Label>
+            <Button
+              variant="link"
+              style={{ textDecoration: "none", paddingLeft: 0 }}
+              onClick={() => window.open(selectedBilling.downloadURL, "_blank")}
+            >
+              <FaFilePdf style={{ marginRight: 5 }} />
+              Open Invoice
+            </Button>
+          </Form.Group>
+        </Col>
+      </Row>
+    )}
+
+              <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label>Contact Number</Form.Label>
@@ -413,8 +426,6 @@ const BillingList = () => {
                     </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
-              </Row>
-              <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label>Patient Email</Form.Label>
@@ -434,9 +445,11 @@ const BillingList = () => {
                     </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
+              </Row>
+              <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group>
-                    <Form.Label>Total Amount</Form.Label>
+                    <Form.Label>Total Amount (Rs.)</Form.Label>
                     <Form.Control
                       type="number"
                       value={selectedBilling.totalAmount}
@@ -453,8 +466,6 @@ const BillingList = () => {
                     </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
-              </Row>
-              <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label>Payment Method</Form.Label>
@@ -474,6 +485,8 @@ const BillingList = () => {
                     </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
+              </Row>
+              <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label>Payment Status</Form.Label>

@@ -14,6 +14,7 @@ import DoctorProfilePage from "./Pages/DoctorProfilePage";
 import DoctorProfilePage2 from "./Pages/DoctorProfilePage2";
 import DoctorProfilePage3 from "./Pages/DoctorProfilePage3";
 import PaymentsMain from "./Pages/Payment/PaymentsMain.jsx";
+import PaymentSuccess from "./Components/Payments/PaymentSuccess.jsx";
 
 const App = () => {
   const { pathname } = useLocation();
@@ -39,7 +40,7 @@ const App = () => {
 
         {/* Route for Payments */}
         <Route path="payment/*" element={<PaymentsMain />} />
-
+     
 
       </Route>
     </Routes>
