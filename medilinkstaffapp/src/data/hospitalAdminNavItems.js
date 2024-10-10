@@ -36,11 +36,6 @@ const navList = [
     name: "Charts",
     icon: "bi bi-bar-chart",
   },
-  {
-    _id: 7,
-    name: "Icons",
-    icon: "bi bi-gem",
-  },
 ];
 
 export default navList;

@@ -11,6 +11,7 @@ import Payments from "./Payments/Payments";
 import HealthAdminDashboard from "./HealthAdminDashboard";
 import BillingForm from "./Payments/Pages/BillingForm";
 
+
 const HospitalAdmin = () => {
   return (
     <div>
@@ -24,7 +25,6 @@ const HospitalAdmin = () => {
           {/* Payment Routes */}
           <Route path="payment" element={<Payments />} />
           <Route path="payment/createBill" element={<BillingForm />} />
-          
           
           
         </Routes>
