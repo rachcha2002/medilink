@@ -1,23 +1,24 @@
-import React from 'react'
+import React from "react";
 import {
-    BrowserRouter as Router,
-    Route,
-    Routes,
-    Navigate,
-  } from "react-router-dom";
-import PayOnline from '../../Components/Payments/PayOnline';
-import PaymentHistory from '../../Components/Payments/PaymentHistory';
-import OnlinePayment from './OnlinePayment';
-import MyPayments from "./MyPayments"
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 
-export default function PaymentsMain(){
-    return(
-        <Routes>
-           
-            <Route path="/payonline" element={<OnlinePayment />} />
-            <Route path="/mypayments" element={<MyPayments />} />
-          
-        </Routes>
-    );     
+import OnlinePayment from "./OnlinePayment";
+import MyPayments from "./MyPayments";
 
+import PaymentFailure from "../../Components/Payments/PaymentFailure";
+import PaymentVerification from "../../Components/Payments/PaymentVerification";
+
+export default function PaymentsMain() {
+  return (
+    <Routes>
+      <Route path="/payonline" element={<OnlinePayment />} />
+      <Route path="/mypayments" element={<MyPayments />} />
+      <Route path="/verifypay/*" element={<PaymentVerification />} />
+      <Route path="/failedpay/*" element={<PaymentFailure />} />
+    </Routes>
+  );
 }
