@@ -9,6 +9,10 @@ const upload = multer({ storage: storage }); // Initialize multer with memory st
 
 // Routes
 // 1. Create a new patient profile (with file upload for photo)
+
+
+router.post("/login", patientProfileController.login);
+
 router.post("/create", upload.single("photo"), patientProfileController.create);
 
 // 2. Get all patient profiles

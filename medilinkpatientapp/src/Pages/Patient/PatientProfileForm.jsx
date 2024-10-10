@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import SectionHeading from "../../Components/SectionHeading/SectionHeading";
 import Spacing from "../../Components/Spacing/Spacing";
+import {  useAuthContext } from "../../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
+
 
 const PatientProfileForm = () => {
+  const auth = useAuthContext();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -73,35 +78,47 @@ const PatientProfileForm = () => {
       formDataObject.append(key, formData[key]);
     });
 
-    // Send data (you can adjust the URL and method as necessary)
-    const res = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/patients/create`,
-      {
-        method: "POST",
-        body: formDataObject,
+    try {
+      // Send data (you can adjust the URL and method as necessary)
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/patients/create`,
+        {
+          method: "POST",
+          body: formDataObject,
+        }
+      );
+  
+      const result = await res.json();
+      
+    
+      if (res.ok) {
+        auth.login(result.user, result.token); // Login after successful registration
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          dateOfBirth: "",
+          gender: "",
+          idNumber: "",
+          address: "",
+          emergencyContact: "",
+          medicalHistory: "",
+          currentDiagnoses: "",
+          currentMedications: "",
+          allergies: "",
+          password: "", // Clear password after submission
+          confirmPassword: "", // Clear confirm password after submission
+          photo: null,
+          photoPreview: null, // Clear the preview after submission
+        });
+        navigate("/home"); // Redirect to the homepage
+      } else {
+        setErrorMessage(result.message || "Profile creation failed.");
       }
-    );
-
-    if (res.ok) {
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        dateOfBirth: "",
-        gender: "",
-        idNumber: "",
-        address: "",
-        emergencyContact: "",
-        medicalHistory: "",
-        currentDiagnoses: "",
-        currentMedications: "",
-        allergies: "",
-        password: "", // Clear password after submission
-        confirmPassword: "", // Clear confirm password after submission
-        photo: null,
-        photoPreview: null, // Clear the preview after submission
-      });
-      setLoading(false);
+    } catch (error) {
+      setErrorMessage("An error occurred. Please try again.");
+    } finally {
+      setLoading(false); // Set loading to false regardless of success or failure
     }
   };
 
