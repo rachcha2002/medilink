@@ -1,180 +1,251 @@
-import { Icon } from '@iconify/react';
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import SectionHeading from '../SectionHeading/SectionHeading';
+
+const scanOptions = {
+  scan: [
+    { value: 'x-ray', label: 'X-Ray' },
+    { value: 'ct-scan', label: 'CT Scan' },
+    { value: 'mri', label: 'MRI' },
+    { value: 'ultrasound', label: 'Ultrasound' },
+    { value: 'pet-scan', label: 'PET Scan' },
+    { value: 'bone-density', label: 'Bone Density Scan (DEXA)' },
+    { value: 'mammography', label: 'Mammography' },
+    { value: 'fluoroscopy', label: 'Fluoroscopy' },
+    { value: 'echocardiogram', label: 'Echocardiogram' },
+    { value: 'nuclear-medicine', label: 'Nuclear Medicine Scan' },
+  ],
+  test: [
+    { value: 'blood-test', label: 'Blood Test' },
+    { value: 'urinalysis', label: 'Urinalysis' },
+    { value: 'biopsy', label: 'Biopsy' },
+    { value: 'allergy-test', label: 'Allergy Test' },
+    { value: 'thyroid-function', label: 'Thyroid Function Test' },
+    { value: 'stool-test', label: 'Stool Test' },
+    { value: 'electrocardiogram', label: 'Electrocardiogram (ECG)' },
+    { value: 'pulmonary-function', label: 'Pulmonary Function Test (PFT)' },
+    { value: 'pap-smear', label: 'Pap Smear' },
+    { value: 'prostate-specific-antigen', label: 'Prostate-Specific Antigen (PSA) Test' },
+    { value: 'genetic-testing', label: 'Genetic Testing' },
+    { value: 'pregnancy-test', label: 'Pregnancy Test' },
+  ],
+};
 
 const Appointment4 = () => {
-
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    date: '',
-    doctor: '',
-    msg: ''
+    mobile: '',
+    appointmentDate: '',
+    appointmentTime: '',
+    hospitalType: '',
+    hospitalName: '',
+    payment: '',
+    scanType: '',
+    scanName: '',
   });
 
+  const [scanNameOptions, setScanNameOptions] = useState([]);
+
   // Handler for input field changes
-  const handleInputChange = event => {
+  const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFormData(prevFormData => ({
+    setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
     }));
+
+    // Update scan name options based on scan type selected
+    if (name === 'scanType') {
+      if (value === 'scan') {
+        setScanNameOptions(scanOptions.scan);
+      } else if (value === 'test') {
+        setScanNameOptions(scanOptions.test);
+      } else {
+        setScanNameOptions([]); // Reset options if no valid scan type is selected
+      }
+      setFormData((prevFormData) => ({ ...prevFormData, scanName: '' })); // Reset scanName
+    }
   };
 
   const onSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    const formData = new FormData(event.target);
-    formData.append("access_key", "fcc74231-656a-425b-a54f-aff38354fadb");
+    const dataToSubmit = {
+      ...formData,
+      userid: 'u003',
+      type:"testscan",
+      username: 'Kamal',
+      email: 'Kamal@gmail.com',
+      hospitalId: 'H001',
+      status: 'pending',
+    };
+    console.log(dataToSubmit);
 
-    const object = Object.fromEntries(formData);
-    const json = JSON.stringify(object);
-
-    const res = await fetch("https://api.web3forms.com/submit", {
+    const res = await fetch("http://localhost:5000/api/appointment/makeappointment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json"
       },
-      body: json
+      body: JSON.stringify(dataToSubmit),
     }).then((res) => res.json());
 
     if (res.success) {
       setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        date: '',
-        doctor: '',
-        msg: ''
+        mobile: '',
+        appointmentDate: '',
+        appointmentTime: '',
+        hospitalType: '',
+        hospitalName: '',
+        payment: '',
+        scanType: '',
+        scanName: '',
       });
-      setLoading(false)
+      setScanNameOptions([]); // Reset scan name options
     }
+    setLoading(false);
   };
 
   return (
-    <section id="appointment">
-      <div className="st-height-b120 st-height-lg-b80" />
-      <div className="container">
-        <div className="st-section-heading st-style2">
-          <h2 className="st-section-heading-title">
-            Make an <span className="st-pink">appointment</span> <br />
-            to get early access
-          </h2>
-        </div>
-        <div className="st-height-b35 st-height-lg-b35" />
+    <section id="appointment" className="st-shape-wrap st-gray-bg">
+      <div className="st-shape4">
+        <img src="/shape/section_shape.png" alt="/shape/section_shape.png" />
       </div>
+      <div className="st-shape6">
+        <img src="/shape/contact-shape3.svg" alt="/shape/contact-shape3.svg" />
+      </div>
+
+      <SectionHeading title="Appointment for Tests & Scans" />
       <div className="container">
         <div className="row">
-          <div className="col-lg-8 offset-lg-2">
+          <div className="col-lg-10 offset-lg-1">
             <form
               method="POST"
-              onSubmit={onSubmit}
               className="st-appointment-form"
               id="appointment-form"
+              onSubmit={onSubmit}
             >
-              <input type="hidden" name="from_name" value="Nischinto Medical Appoinment" />
-              <input type="hidden" name="replyto" value="custom@gmail.com" />
-              <div id="st-alert1" />
-              <div className="st-height-b35 st-height-lg-b35" />
-              <div className="st-form-field st-style1 st-color2">
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  placeholder="Full Name"
-                  onChange={handleInputChange}
-                  value={formData.name}
-                  required
-                />
-              </div>
-              <div className="st-form-field st-style1 st-color2">
-                <input
-                  type="text"
-                  id="email"
-                  name="email"
-                  placeholder="Email address"
-                  onChange={handleInputChange}
-                  value={formData.email}
-                  required
-                />
-              </div>
-              <div className="st-form-field st-style1 st-color2">
-                <input
-                  type="text"
-                  id="phone"
-                  name="phone"
-                  placeholder="Phone number"
-                  onChange={handleInputChange}
-                  value={formData.phone}
-                  required
-                />
-              </div>
-              <div className="st-form-field st-style1 st-color2">
-                <input
-                  name="date"
-                  type="text"
-                  id="date"
-                  placeholder="dd/mm/yy"
-                  onChange={handleInputChange}
-                  value={formData.date}
-                  required
-                />
-                <div className="form-field-icon">
-                  <Icon icon="fa:calendar" />
+              <div className="row">
+                <div className="col-lg-6">
+                  <div className="st-form-field st-style1">
+                    <label>Phone Number</label>
+                    <input
+                      type="tel"
+                      id="mobile"
+                      name="mobile"
+                      placeholder="07X XXX XXXX"
+                      onChange={handleInputChange}
+                      value={formData.mobile}
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="st-form-field st-style1 st-color2">
-                <div className="st-custom-select-wrap">
-                  <select
-                    name="doctor"
-                    className="st_select1"
-                    id="doctor"
-                    data-placeholder="Select doctor"
-                    onChange={handleInputChange}
-                    value={formData.doctor}
-                    required
+                <div className="col-lg-6">
+                  <div className="st-form-field st-style1">
+                    <label>Booking Date</label>
+                    <input
+                      name="appointmentDate"
+                      type="date"
+                      id="appointmentDate"
+                      onChange={handleInputChange}
+                      value={formData.appointmentDate}
+                      required
+                    />
+                    <div className="form-field-icon">
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="st-form-field st-style1">
+                    <label>Booking Time</label>
+                    <input
+                      name="appointmentTime"
+                      type="time"
+                      id="appointmentTime"
+                      onChange={handleInputChange}
+                      value={formData.appointmentTime}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="st-form-field st-style1">
+                    <label>Hospital Type</label>
+                    <select
+                      name="hospitalType"
+                      id="hospitalType"
+                      onChange={handleInputChange}
+                      value={formData.hospitalType}
+                      required
+                    >
+                      <option value="">Select Hospital Type</option>
+                      <option value="government">Government</option>
+                      <option value="non-government">Non-Government</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="st-form-field st-style1">
+                    <label>Hospital Name</label>
+                    <input
+                      name="hospitalName"
+                      type="text"
+                      id="hospitalName"
+                      onChange={handleInputChange}
+                      value={formData.hospitalName}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="st-form-field st-style1">
+                    <label>Scan Type</label>
+                    <select
+                      name="scanType"
+                      id="scanType"
+                      onChange={handleInputChange}
+                      value={formData.scanType}
+                      required
+                    >
+                      <option value="">Select Scan Type</option>
+                      <option value="scan">Scan</option>
+                      <option value="test">Test</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="st-form-field st-style1">
+                    <label>Scan/Test Name</label>
+                    <select
+                      name="scanName"
+                      id="scanName"
+                      onChange={handleInputChange}
+                      value={formData.scanName}
+                      required
+                      disabled={scanNameOptions.length === 0}
+                    >
+                      <option value="">Select {formData.scanType === 'scan' ? 'Scan' : 'Test'} Name</option>
+                      {scanNameOptions.map(option => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="col-lg-12">
+                  <button
+                    className="st-btn st-style1 st-color1 st-size-medium"
+                    type="submit"
+                    id="appointment-submit"
+                    name="submit"
                   >
-                    <option>Select Doctor</option>
-                    <option value="jhon-doe">Dr. Jhon Doe</option>
-                    <option value="mak-rushi">Dr. Mak Roshi</option>
-                    <option value="mohoshin-kabir">Dr. Mohoshin Kabir</option>
-                    <option value="nayon-borua">Dr. Nayon Borua</option>
-                    <option value="rasel-islam">Dr. Rasel Islam</option>
-                    <option value="mahid-islam">Dr. Mahid Islam</option>
-                  </select>
+                    {loading ? "Sending..." : "Appointment"}
+                  </button>
                 </div>
-              </div>
-              <div className="st-form-field st-style1 st-color2">
-                <textarea
-                  cols={30}
-                  rows={10}
-                  id="msg"
-                  name="msg"
-                  placeholder="Write something here..."
-                  onChange={handleInputChange}
-                  value={formData.msg}
-                  required
-                />
-              </div>
-              <div className="text-center">
-                <button
-                  className="st-btn st-style1 st-color4 st-size-medium"
-                  type="submit"
-                  id="appointment-submit"
-                  name="submit"
-                >
-                  {loading ? "Sending..." : "Appointment"}
-                </button>
               </div>
             </form>
           </div>
         </div>
       </div>
-      <div className="st-height-b120 st-height-lg-b80" />
     </section>
-  )
-}
+  );
+};
 
-export default Appointment4
+export default Appointment4;
