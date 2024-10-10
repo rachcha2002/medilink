@@ -1,6 +1,6 @@
 import React from "react";
 import "./SideBar.css";
-import navList from "../../../data/medicalStaffNavItems";
+import navList from "../../../data/mltStaffNavItems";
 import NavItem from "./NavItem";
 
 function SideBar() {

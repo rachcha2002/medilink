@@ -6,7 +6,7 @@ import ImageUpload from "../../ImageUpload/ImageUpload";
 import { BsArrowLeft } from "react-icons/bs";
 import { BiCheckCircle, BiHide, BiShow } from "react-icons/bi";
 import "./Main.css";
-import PageTitle from "../../Main/PageTitle";
+import PageTitle from "../../Common/PageTitle";
 
 function AddMLTStaff({ toggleLoading }) {
   const cusfrontendurl = `${process.env.React_App_Frontend_URL}/customer`;
@@ -84,12 +84,12 @@ function AddMLTStaff({ toggleLoading }) {
 
   return (
     <main id="main" className="main">
-      <PageTitle />
+      <PageTitle title="Add MLT Staff" url="/hospitaladmin/addmltstaff" />
       <Form onSubmit={handleSubmit(onSubmit)}>
         <h3>
           <Button
             variant="dark"
-            onClick={() => navigate("/staff/hr/mlt")}
+            onClick={() => navigate("/hospitaladmin/mltstaff")}
             style={{ margin: "10px" }}
           >
             <BsArrowLeft /> Back

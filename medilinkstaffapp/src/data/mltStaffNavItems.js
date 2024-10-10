@@ -6,13 +6,8 @@ const navList = [
   },
   {
     _id: 2,
-    name: "Medical Records",
+    name: "Medical Reports",
     icon: "bi bi-journal-text",
-  },
-  {
-    _id: 3,
-    name: "Prescriptions",
-    icon: "bi bi-card-text",
   },
 ];
 

@@ -1,4 +1,4 @@
- import React from "react";
+import React from "react";
 import Header from "../Header/Header";
 import SideBar from "./Sidebar/SideBar";
 //import Main from "../Main/Main";
@@ -14,6 +14,7 @@ import UpdateMLTStaff from "./Pages/UpdateMLTStaff";
 import CreateReportForm from "./Pages/CreateReportForm";
 import ReportList from "./Pages/ReportList";
 import UpdateReportForm from "./Pages/UpdateReportForm";
+import MLTStaffDashboard from "./Pages/MLTStaffDashboard";
 
 const MLTStaff = ({ toggleLoading }) => {
   return (
@@ -23,15 +24,7 @@ const MLTStaff = ({ toggleLoading }) => {
       <Routes>
         <Route
           path="/"
-          element={<AddMLTStaff toggleLoading={toggleLoading} />}
-        />
-        <Route
-          path="/mltstafflist"
-          element={<MLTStaffList toggleLoading={toggleLoading} />}
-        />
-        <Route
-          path="/update/:id"
-          element={<UpdateMLTStaff toggleLoading={toggleLoading} />}
+          element={<MLTStaffDashboard toggleLoading={toggleLoading} />}
         />
         <Route
           path="/createreport"

@@ -52,85 +52,82 @@ function DoctorsList({ toggleLoading }) {
 
   const handleUpdate = (doctorId) => {
     // Navigate to the update page for the selected doctor
-    navigate(`/medicalstaff/update/Doctor/${doctorId}`);
+    navigate(`/hospitaladmin/updatemedicalstaff/Doctor/${doctorId}`);
   };
 
   return (
-    <main id="main" className="main">
-      <PageTitle />
-      <div className="container">
-        <h2 className="my-4">Doctors List</h2>
-        {loading ? (
-          <Spinner animation="border" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
-        ) : error ? (
-          <Alert variant="danger">{error}</Alert>
-        ) : doctors.length === 0 ? (
-          <Alert variant="warning">No records found</Alert>
-        ) : (
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Image</th> {/* New column for image */}
-                <th>Doctor ID</th>
-                <th>Name</th>
-                <th>NIC</th>
-                <th>Contact No</th>
-                <th>Email</th>
-                <th>Speciality</th>
-                <th>Working Hours</th>
-                <th>Hospital</th>
-                <th>Actions</th> {/* New column for actions */}
+    <div className="container">
+      <h2 className="my-4">Doctors List</h2>
+      {loading ? (
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      ) : error ? (
+        <Alert variant="danger">{error}</Alert>
+      ) : doctors.length === 0 ? (
+        <Alert variant="warning">No records found</Alert>
+      ) : (
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Image</th> {/* New column for image */}
+              <th>Doctor ID</th>
+              <th>Name</th>
+              <th>NIC</th>
+              <th>Contact No</th>
+              <th>Email</th>
+              <th>Speciality</th>
+              <th>Working Hours</th>
+              <th>Hospital</th>
+              <th>Actions</th> {/* New column for actions */}
+            </tr>
+          </thead>
+          <tbody>
+            {doctors.map((doctor, index) => (
+              <tr key={doctor.doctorId}>
+                <td>{index + 1}</td>
+                <td>
+                  <img
+                    src={doctor.photoUrl}
+                    alt={doctor.name}
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                      borderRadius: "50%",
+                    }}
+                  />{" "}
+                  {/* Display the doctor image */}
+                </td>
+                <td>{doctor.doctorId}</td>
+                <td>{doctor.name}</td>
+                <td>{doctor.nic}</td>
+                <td>{doctor.contactNo}</td>
+                <td>{doctor.email}</td>
+                <td>{doctor.speciality}</td>
+                <td>{doctor.workingHours.join(", ")}</td>
+                <td>{doctor.hospital}</td>
+                <td>
+                  <Button
+                    variant="warning"
+                    onClick={() => handleUpdate(doctor.doctorId)}
+                    className="mb-2"
+                  >
+                    Update
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={() => handleDelete(doctor.doctorId)}
+                  >
+                    Delete
+                  </Button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {doctors.map((doctor, index) => (
-                <tr key={doctor.doctorId}>
-                  <td>{index + 1}</td>
-                  <td>
-                    <img
-                      src={doctor.photoUrl}
-                      alt={doctor.name}
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        borderRadius: "50%",
-                      }}
-                    />{" "}
-                    {/* Display the doctor image */}
-                  </td>
-                  <td>{doctor.doctorId}</td>
-                  <td>{doctor.name}</td>
-                  <td>{doctor.nic}</td>
-                  <td>{doctor.contactNo}</td>
-                  <td>{doctor.email}</td>
-                  <td>{doctor.speciality}</td>
-                  <td>{doctor.workingHours.join(", ")}</td>
-                  <td>{doctor.hospital}</td>
-                  <td>
-                    <Button
-                      variant="warning"
-                      onClick={() => handleUpdate(doctor.doctorId)}
-                      className="mb-2"
-                    >
-                      Update
-                    </Button>
-                    <Button
-                      variant="danger"
-                      onClick={() => handleDelete(doctor.doctorId)}
-                    >
-                      Delete
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        )}
-      </div>
-    </main>
+            ))}
+          </tbody>
+        </Table>
+      )}
+    </div>
   );
 }
 

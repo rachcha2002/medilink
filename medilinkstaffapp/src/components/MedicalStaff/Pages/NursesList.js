@@ -51,72 +51,69 @@ function NursesList({ toggleLoading }) {
   // Handle nurse update (this can redirect to an update form)
   const handleUpdate = (nurseId) => {
     // Redirect to update nurse form or open a modal
-    window.location.href = `/medicalstaff/update/Nurse/${nurseId}`; // Adjust this as per your routing
+    window.location.href = `/hospitaladmin/updatemedicalstaff/Nurse/${nurseId}`; // Adjust this as per your routing
   };
 
   return (
-    <main id="main" className="main">
-      <PageTitle />
-      <div className="container">
-        <h2 className="my-4">Nurses List</h2>
-        {loading ? (
-          <Spinner animation="border" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
-        ) : error ? (
-          <Alert variant="danger">{error}</Alert>
-        ) : nurses.length === 0 ? (
-          <Alert variant="warning">No records found</Alert>
-        ) : (
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Nurse ID</th>
-                <th>Name</th>
-                <th>NIC</th>
-                <th>Contact No</th>
-                <th>Email</th>
-                <th>Hospital</th>
-                <th>Actions</th> {/* New column for actions */}
+    <div className="container">
+      <h2 className="my-4">Nurses List</h2>
+      {loading ? (
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      ) : error ? (
+        <Alert variant="danger">{error}</Alert>
+      ) : nurses.length === 0 ? (
+        <Alert variant="warning">No records found</Alert>
+      ) : (
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nurse ID</th>
+              <th>Name</th>
+              <th>NIC</th>
+              <th>Contact No</th>
+              <th>Email</th>
+              <th>Hospital</th>
+              <th>Actions</th> {/* New column for actions */}
+            </tr>
+          </thead>
+          <tbody>
+            {nurses.map((nurse, index) => (
+              <tr key={nurse.nurseId}>
+                <td>{index + 1}</td>
+                <td>{nurse.nurseId}</td>
+                <td>{nurse.name}</td>
+                <td>{nurse.nic}</td>
+                <td>{nurse.contactNo}</td>
+                <td>{nurse.email}</td>
+                <td>{nurse.hospital}</td>
+                <td>
+                  {/* Update and Delete buttons */}
+                  <Button
+                    variant="warning"
+                    size="sm"
+                    onClick={() => handleUpdate(nurse.nurseId)}
+                    className="m-1"
+                  >
+                    Update
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleDelete(nurse.nurseId)}
+                    className="m-1"
+                  >
+                    Delete
+                  </Button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {nurses.map((nurse, index) => (
-                <tr key={nurse.nurseId}>
-                  <td>{index + 1}</td>
-                  <td>{nurse.nurseId}</td>
-                  <td>{nurse.name}</td>
-                  <td>{nurse.nic}</td>
-                  <td>{nurse.contactNo}</td>
-                  <td>{nurse.email}</td>
-                  <td>{nurse.hospital}</td>
-                  <td>
-                    {/* Update and Delete buttons */}
-                    <Button
-                      variant="warning"
-                      size="sm"
-                      onClick={() => handleUpdate(nurse.nurseId)}
-                      className="m-1"
-                    >
-                      Update
-                    </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleDelete(nurse.nurseId)}
-                      className="m-1"
-                    >
-                      Delete
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        )}
-      </div>
-    </main>
+            ))}
+          </tbody>
+        </Table>
+      )}
+    </div>
   );
 }
 

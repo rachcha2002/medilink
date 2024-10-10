@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import ImageUpload from "../../ImageUpload/ImageUpload";
 import { BsArrowLeft } from "react-icons/bs";
 import { BiCheckCircle, BiHide, BiShow } from "react-icons/bi";
-import "./Main.css";
+import "../../Main/Main.css";
 import PageTitle from "../../Common/PageTitle";
 
 function AddMedicalStaff({ toggleLoading }) {
@@ -97,11 +97,15 @@ function AddMedicalStaff({ toggleLoading }) {
 
   return (
     <main id="main" className="main">
+      <PageTitle
+        title="Create Medicl Staff"
+        url="/hospitaladmin/addmedicalstaff"
+      />
       <Form onSubmit={handleSubmit(onSubmit)}>
         <h3>
           <Button
             variant="dark"
-            onClick={() => navigate("/staff/hr/employee")}
+            onClick={() => navigate("/hospitaladmin/medicalstaff")}
             style={{ margin: "10px" }}
           >
             <BsArrowLeft /> Back

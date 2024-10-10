@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Spinner, Alert, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "./Main.css";
-import PageTitle from "../../Main/PageTitle";
+import PageTitle from "../../Common/PageTitle";
 
 function MLTStaffList({ toggleLoading }) {
   const [mltStaff, setMltStaff] = useState([]);
@@ -52,12 +52,18 @@ function MLTStaffList({ toggleLoading }) {
 
   const handleUpdate = (mltId) => {
     // Navigate to the update page for the selected MLT staff
-    navigate(`/mltstaff/update/${mltId}`);
+    navigate(`/hospitaladmin/updatemltstaff/${mltId}`);
   };
 
   return (
     <main id="main" className="main">
-      <PageTitle />
+      <PageTitle title="MLT Satff" url="/hospitaladmin/mltstaff" />
+      <Button
+        variant="dark"
+        onClick={() => navigate("/hospitaladmin/addmltstaff")}
+      >
+        Add New Staff
+      </Button>
       <div className="container">
         <h2 className="my-4">MLT Staff List</h2>
         {loading ? (

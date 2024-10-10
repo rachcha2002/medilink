@@ -6,7 +6,7 @@ import ImageUpload from "./ImageUpload";
 import { BsArrowLeft } from "react-icons/bs";
 import { BiHide, BiShow } from "react-icons/bi";
 import "./Main.css";
-import PageTitle from "../../Main/PageTitle";
+import PageTitle from "../../Common/PageTitle";
 
 function UpdateMedicalStaff({ toggleLoading }) {
   const { id, position } = useParams();
@@ -128,12 +128,15 @@ function UpdateMedicalStaff({ toggleLoading }) {
 
   return (
     <main id="main" className="main">
-      <PageTitle />
+      <PageTitle
+        title="Update Medical Staff"
+        url="/hospitaladmin/updatemediaclstaff"
+      />
       <Form onSubmit={handleSubmit(onSubmit)}>
         <h3>
           <Button
             variant="dark"
-            onClick={() => navigate("/staff/hr/employee")}
+            onClick={() => navigate("/hospitaladmin/medicalstaff")}
             style={{ margin: "10px" }}
           >
             <BsArrowLeft /> Back
