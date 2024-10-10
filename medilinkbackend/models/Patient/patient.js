@@ -44,14 +44,8 @@ const patientProfileSchema = new mongoose.Schema({
     required: true,
   },
   emergencyContact: {
-    name: {
-      type: String,
-      required: true,
-    },
-    phone: {
-      type: String,
-      required: true,
-    },
+    type: String,
+    required: true,
   },
   medicalHistory: {
     type: String,
@@ -60,18 +54,15 @@ const patientProfileSchema = new mongoose.Schema({
   },
   currentDiagnoses: {
     type: String,
-    required: true,
-    trim: true,
+    default: "No current diagnoses",
   },
   currentMedications: {
     type: String,
-    required: true,
-    trim: true,
+    default: "No current medications",
   },
   allergies: {
     type: String,
-    required: true,
-    trim: true,
+    default: "No allergies",
   },
   photoURL: {
     type: String, // URL to the uploaded photo

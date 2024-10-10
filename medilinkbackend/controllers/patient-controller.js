@@ -56,17 +56,13 @@ exports.create = async (req, res) => {
       gender,
       idNumber,
       address,
+      emergencyContact,
       medicalHistory,
       currentDiagnoses,
       currentMedications,
       allergies,
       password, // Include password field
     } = req.body;
-
-    const emergencyContact = {
-      name: req.body["emergencyContact.name"], // Extract the emergency contact name from the form-data
-      phone: req.body["emergencyContact.phone"], // Extract the emergency contact phone from the form-data
-    };
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10); // Hash the password with a salt round of 10
@@ -149,6 +145,7 @@ exports.updateById = async (req, res) => {
       allergies,
       password, // Add password in update
     } = req.body;
+    console.log(req.body);
 
     const updateData = {
       name,

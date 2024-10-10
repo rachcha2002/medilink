@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SectionHeading from "../../Components/SectionHeading/SectionHeading";
 import Spacing from "../../Components/Spacing/Spacing";
+import { useParams } from "react-router-dom"; // To get the patient ID from URL
 
-const PatientProfileForm = () => {
+const UpdatePatientProfileForm = () => {
+  const { id } = useParams(); // Get patient ID from URL params
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -17,13 +19,37 @@ const PatientProfileForm = () => {
     currentDiagnoses: "",
     currentMedications: "",
     allergies: "",
-    password: "", // New password field
-    confirmPassword: "", // New confirm password field
     photo: null, // For storing the patient photo
     photoPreview: null, // For storing the preview URL of the photo
   });
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const [errorMessage, setErrorMessage] = useState(""); // State for error message
+  // Fetch patient details and pre-fill the form
+  useEffect(() => {
+    const fetchPatientDetails = async () => {
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/patients/getbyid/${id}`
+      );
+      const data = await res.json();
+      setFormData({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        dateOfBirth: new Date(data.dateOfBirth).toISOString().substr(0, 10),
+        gender: data.gender,
+        idNumber: data.idNumber,
+        address: data.address,
+        emergencyContact: data.emergencyContact,
+        medicalHistory: data.medicalHistory,
+        currentDiagnoses: data.currentDiagnoses,
+        currentMedications: data.currentMedications,
+        allergies: data.allergies,
+        photoPreview: data.photoURL, // Set the existing photo URL as preview
+      });
+    };
+
+    fetchPatientDetails();
+  }, [id]);
 
   // Handler for input field changes
   const handleInputChange = (event) => {
@@ -38,69 +64,47 @@ const PatientProfileForm = () => {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      // Update the photo in state
       setFormData((prevFormData) => ({
         ...prevFormData,
         photo: file,
       }));
 
-      // Generate a preview URL using FileReader
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData((prevFormData) => ({
           ...prevFormData,
-          photoPreview: reader.result, // Store the preview URL
+          photoPreview: reader.result,
         }));
       };
-      reader.readAsDataURL(file); // Read the file as a Data URL for preview
+      reader.readAsDataURL(file);
     }
   };
 
+  // Submit updated form data
   const onSubmit = async (event) => {
     event.preventDefault();
-
-    // Check if password and confirm password match
-    if (formData.password !== formData.confirmPassword) {
-      setErrorMessage("Passwords do not match.");
-      return;
-    }
-
     setLoading(true);
-    setErrorMessage(""); // Clear any previous error messages
+    setErrorMessage("");
 
     const formDataObject = new FormData();
     Object.keys(formData).forEach((key) => {
       formDataObject.append(key, formData[key]);
     });
 
-    // Send data (you can adjust the URL and method as necessary)
+    // Send update request to the backend
     const res = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/patients/create`,
+      `${process.env.REACT_APP_BACKEND_URL}/api/patients/update/${id}`,
       {
-        method: "POST",
+        method: "PUT", // Use PUT for updating
         body: formDataObject,
       }
     );
 
     if (res.ok) {
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        dateOfBirth: "",
-        gender: "",
-        idNumber: "",
-        address: "",
-        emergencyContact: "",
-        medicalHistory: "",
-        currentDiagnoses: "",
-        currentMedications: "",
-        allergies: "",
-        password: "", // Clear password after submission
-        confirmPassword: "", // Clear confirm password after submission
-        photo: null,
-        photoPreview: null, // Clear the preview after submission
-      });
+      alert("Patient profile updated successfully.");
+      setLoading(false);
+    } else {
+      setErrorMessage("Failed to update profile.");
       setLoading(false);
     }
   };
@@ -113,8 +117,8 @@ const PatientProfileForm = () => {
         </div>
         <div className="st-height-b120 st-height-lg-b80" />
         <SectionHeading
-          title="Create Patient Profile"
-          subTitle="Fill in the details to create a new patient profile."
+          title="Update Patient Profile"
+          subTitle="Update the patient's details below."
         />
         <div className="container">
           <div className="row">
@@ -127,7 +131,6 @@ const PatientProfileForm = () => {
               >
                 <div id="st-alert1" />
                 <div className="row">
-                  {/* Existing form fields */}
                   <div className="col-lg-6">
                     <div className="st-form-field st-style1">
                       <label>Full Name</label>
@@ -297,43 +300,6 @@ const PatientProfileForm = () => {
                     </div>
                   </div>
 
-                  {/* Add Password field */}
-                  <div className="col-lg-6">
-                    <div className="st-form-field st-style1">
-                      <label>Password</label>
-                      <input
-                        type="password"
-                        name="password"
-                        placeholder="Password"
-                        onChange={handleInputChange}
-                        value={formData.password}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Add Confirm Password field */}
-                  <div className="col-lg-6">
-                    <div className="st-form-field st-style1">
-                      <label>Confirm Password</label>
-                      <input
-                        type="password"
-                        name="confirmPassword"
-                        placeholder="Confirm Password"
-                        onChange={handleInputChange}
-                        value={formData.confirmPassword}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Error message display */}
-                  {errorMessage && (
-                    <div className="col-lg-12">
-                      <p style={{ color: "red" }}>{errorMessage}</p>
-                    </div>
-                  )}
-
                   <div className="col-lg-6">
                     <div className="st-form-field st-style1">
                       <label>Upload Photo</label>
@@ -342,7 +308,6 @@ const PatientProfileForm = () => {
                         name="photo"
                         accept="image/*"
                         onChange={handleFileChange}
-                        required
                       />
                     </div>
                   </div>
@@ -371,7 +336,7 @@ const PatientProfileForm = () => {
                       className="st-btn st-style1 st-color1 st-size-medium"
                       type="submit"
                     >
-                      {loading ? "Submitting..." : "Create Profile"}
+                      {loading ? "Submitting..." : "Update Profile"}
                     </button>
                   </div>
                 </div>
@@ -385,4 +350,4 @@ const PatientProfileForm = () => {
   );
 };
 
-export default PatientProfileForm;
+export default UpdatePatientProfileForm;
