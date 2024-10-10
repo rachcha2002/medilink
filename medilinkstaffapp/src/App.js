@@ -20,6 +20,7 @@ import MedicalStaff from "./components/MedicalStaff/MedicalStaff";
 import MLTStaff from "./components/MLT/MLTStaff";
 
 import HospitalAdmin from "./components/HospitalAdmin/HospitalAdmin";
+import SystemAdmin from "./components/SystemAdmin/SystemAdmin";
 
 // Main App component
 function App() {
@@ -51,6 +52,10 @@ function App() {
           <Route
             path="/hospitaladmin/*"
             element={<HospitalAdmin toggleLoading={toggleLoading} />}
+          />
+          <Route
+            path="/systemadmin/*"
+            element={<SystemAdmin toggleLoading={toggleLoading} />}
           />
         </Routes>
       </Router>

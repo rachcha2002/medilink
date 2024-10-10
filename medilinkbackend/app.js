@@ -7,13 +7,10 @@ const staffRoutes = require("./routes/staffRoutes");
 const medicalInfoRoutes = require("./routes/medicalInfoRoutes");
 const billingRoutes = require("./routes/paymentRoutes");
 
+const hospitalRoutes = require("./routes/hospitalRoutes");
+const hospitaladminRoutes = require("./routes/hospitaladminRoutes");
 const patientRoutes = require("./routes/patientRoutes");
-
 const appointmentRoutes = require("./routes/appointmentRoutes");
-
-
-
-
 const PORT = process.env.PORT || 5000;
 
 const app = express();
@@ -57,6 +54,10 @@ app.use("/api/staffroutes", staffRoutes);
 app.use("/api/medicalinfo", medicalInfoRoutes);
 
 app.use("/api/payment", billingRoutes);
+
+app.use("/api/hospital", hospitalRoutes);
+
+app.use("/api/hospitaladmin", hospitaladminRoutes);
 
 
 app.use("/api/patients", patientRoutes);
