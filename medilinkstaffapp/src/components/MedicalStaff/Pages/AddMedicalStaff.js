@@ -97,7 +97,6 @@ function AddMedicalStaff({ toggleLoading }) {
 
   return (
     <main id="main" className="main">
-      <PageTitle title={"Add Medical Staff(Doctors/Nurses)"} />
       <Form onSubmit={handleSubmit(onSubmit)}>
         <h3>
           <Button
