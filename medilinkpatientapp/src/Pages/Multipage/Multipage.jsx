@@ -8,7 +8,6 @@ import Spacing from '../../Components/Spacing/Spacing';
 import About6 from '../../Components/About/About6';
 import Iconbox from '../../Components/Iconbox/Iconbox';
 
-
 const heroData = [
   {
     title: "Safe your own health. <br /> Get best Service.",

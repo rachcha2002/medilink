@@ -1,5 +1,6 @@
 import React from 'react';
 import parse from 'html-react-parser';
+import logo from '../../assets/images/common/logo.png';
 
 const SectionHeading = ({ title, subTitle }) => {
   return (
@@ -10,11 +11,11 @@ const SectionHeading = ({ title, subTitle }) => {
         }
         {
           subTitle ? <div className="st-seperator">
-            <div className="st-seperator-left wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s" />
+            <div className="st-seperator-left wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s" style={{ backgroundColor: 'red' }} />
             <div className="st-seperator-center">
-              <img src="/icons/4.png" alt="icon" />
+              <img src={logo} alt="icon" />
             </div>
-            <div className="st-seperator-right wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.2s" />
+            <div className="st-seperator-right wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.2s" style={{ backgroundColor: 'red' }} />
           </div> : ""
         }
         {
