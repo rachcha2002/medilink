@@ -14,6 +14,7 @@ import Channelinglist from "./Appointments/Pages/Channelinglist";
 import Cliniclist from "./Appointments/Pages/Cliniclist";
 import TestsandScans from "./Appointments/Pages/TestsandScans";
 
+
 const HospitalAdmin = () => {
   return (
     <div>
@@ -30,7 +31,6 @@ const HospitalAdmin = () => {
           <Route path="Channelingappointments" element={<Channelinglist/>} />
           <Route path="Clinicappointments" element={<Cliniclist/>} />
           <Route path="TestsandScansappointments" element={<TestsandScans/>} />
-          
           
         </Routes>
       </>

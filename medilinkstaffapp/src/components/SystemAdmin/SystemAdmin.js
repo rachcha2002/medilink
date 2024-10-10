@@ -1,11 +1,34 @@
-import React from "react";
+import {React, useState} from "react";
+import { Route, Routes } from "react-router-dom";
+import Header from "../Header/Header";
+import SystemAdminSideBar from "./Sidebar/SystemAdminSideBar";
+import PageTitle from "../Common/PageTitle";
+import HospitalRegistration from "./Pages/HospitalRegistration";
+import HospitalDetails from "./Pages/HospitalDetails";
+import HospitalAdminDetails from "./Pages/HospitalAdminDetails";
 
-const SystemAdmin = () => {
+const SystemAdmin = ({ toggleLoading }) => {
+ 
   return (
-    <div>
-      <h1>System Admin</h1>
-      <p>Content for System Admin</p>
-    </div>
+    <>
+      <PageTitle title="System Admin Dashboard" url="/systemadmin" />
+      <Header />
+      <SystemAdminSideBar/>
+      <Routes>
+        <Route
+        path="/registerhospital/*"
+        element={<HospitalRegistration toggleLoading={toggleLoading} />}
+        />
+         <Route
+        path="/hospitaldetails/*"
+        element={<HospitalDetails toggleLoading={toggleLoading} />}
+        />
+        <Route
+        path="/admindetails/*"
+        element={<HospitalAdminDetails toggleLoading={toggleLoading} />}
+        />
+      </Routes>
+    </>
   );
 };
 
