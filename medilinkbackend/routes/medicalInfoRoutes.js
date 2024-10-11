@@ -84,6 +84,18 @@ router.put(
   reportController.updateReportById
 );
 
+// Route to get all laboratory reports by hospital
+router.get(
+  "/reports/laboratory/:hospital",
+  reportController.getLaboratoryReportsByHospital
+);
+
+// Route to get all radiology reports by hospital
+router.get(
+  "/reports/radiology/:hospital",
+  reportController.getRadiologyReportsByHospital
+);
+
 /*-------Medical Record Routes-------*/
 
 // Route to create a new medical record with a file upload

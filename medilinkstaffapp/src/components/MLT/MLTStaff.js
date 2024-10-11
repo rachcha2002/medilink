@@ -15,6 +15,7 @@ import CreateReportForm from "./Pages/CreateReportForm";
 import ReportList from "./Pages/ReportList";
 import UpdateReportForm from "./Pages/UpdateReportForm";
 import MLTStaffDashboard from "./Pages/MLTStaffDashboard";
+import AllMedicalReportList from "./Pages/AllMedicalReports";
 
 const MLTStaff = ({ toggleLoading }) => {
   return (
@@ -32,7 +33,23 @@ const MLTStaff = ({ toggleLoading }) => {
         />
         <Route
           path="/reportlist"
-          element={<ReportList toggleLoading={toggleLoading} />}
+          element={<AllMedicalReportList toggleLoading={toggleLoading} />}
+        />
+        <Route
+          path="/radiologyreportlist"
+          element={
+            <AllMedicalReportList
+              reportType="Radiology"
+              toggleLoading={toggleLoading}
+            />
+          }
+        />
+        <Route
+          path="/labreportlist"
+          reportType="Laboratory"
+          element={
+            <AllMedicalReportList reportType="" toggleLoading={toggleLoading} />
+          }
         />
         <Route
           path="/reportupdate/:reportType/:reportId"
