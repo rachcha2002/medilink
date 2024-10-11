@@ -11,20 +11,19 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false); // State to track successful login
-  const [loading, setLoading] = useState(false); // Loading state
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const bgImageStyle = {
     backgroundImage: `url(${require('../../assets/images/common/bg.jpg')})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    width: '100%',
-    minHeight: '100vh',
+    backgroundRepeat: 'no-repeat',
+    display: 'block', // Ensure it's displayed on larger screens
   };
-
   const contentStyle = {
     background: '#f6f7fc',
-    padding: '7rem 2rem',
+    padding: '4rem 2rem',
   };
 
   const formControlStyle = {
@@ -34,10 +33,17 @@ const Login = () => {
     height: '54px',
   };
 
+  const logoStyle = {
+    width: '120px', // adjust the size as needed
+    height: 'auto',
+    display: 'block',
+    margin: '0 auto 2rem',
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);  // Set loading true when submitting
-    setError('');      // Clear previous errors
+    setLoading(true);
+    setError('');
 
     const data = {
       email: email,
@@ -55,21 +61,19 @@ const Login = () => {
 
       const result = await response.json();
       if (response.ok) {
-        setSuccess(true);   // Set success state to true
+        setSuccess(true);
         auth.login(result.user, result.token);
-        
-        // Optionally, delay the redirect to display the confirmation message
         setTimeout(() => {
-          navigate('/home');  // Redirect to homepage after a delay
-        }, 2000);  // Redirect after 2 seconds
+          navigate('/home');
+        }, 2000);
       } else {
-        setError(result.message || 'Login failed. Please check your credentials.'); // Handle error
+        setError(result.message || 'Login failed. Please check your credentials.');
         setSuccess(false);
       }
     } catch (error) {
       setError('An error occurred. Please try again later.');
     } finally {
-      setLoading(false);  // Set loading false once the request completes
+      setLoading(false);
     }
   };
 
@@ -77,24 +81,30 @@ const Login = () => {
     <div className="d-flex flex-column flex-lg-row" style={{ height: '100vh' }}>
       {/* Background Image - visible only on larger screens */}
       <div
-        className="bg order-1 order-lg-2 d-none d-lg-block col-lg-4"
+        className="bg order-1 order-lg-2 d-none d-lg-block col-lg-6"
         style={bgImageStyle}
       ></div>
 
       {/* Form Contents */}
       <div
-        className="contents order-2 order-lg-1 d-flex align-items-center justify-content-center col-lg-8"
+        className="contents order-2 order-lg-1 d-flex align-items-center justify-content-center col-lg-6"
         style={contentStyle}
       >
         <Container>
           <Row className="align-items-center justify-content-center">
             <Col xs={12} md={8} lg={9}>
+              {/* Logo */}
+              <img
+                src={require('../../assets/images/common/logo.png')} // Replace with your logo path
+                alt="Logo"
+                style={logoStyle}
+              />
+
               <h3 className="text-center text-lg-left">
-                Login to <strong>Colorlib</strong>
+                Login to <strong>MediLink</strong>
               </h3>
               <p className="mb-4 text-center text-lg-left">
-                Lorem ipsum dolor sit amet elit. Sapiente sit aut eos consectetur
-                adipisicing.
+              Bringing you closer to better health by making your healthcare experience simpler and more personal, with care and ease guiding every step of the way.
               </p>
 
               {/* Success Message */}
@@ -122,7 +132,7 @@ const Login = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     style={formControlStyle}
                     required
-                    disabled={loading} // Disable input while loading
+                    disabled={loading}
                   />
                 </Form.Group>
 
@@ -136,7 +146,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     style={formControlStyle}
                     required
-                    disabled={loading} // Disable input while loading
+                    disabled={loading}
                   />
                 </Form.Group>
 
@@ -167,15 +177,25 @@ const Login = () => {
                   </span>
                 </div>
 
-                {/* Submit Button */}
-                <Button
-                  type="submit"
-                  className="btn btn-block btn-primary"
-                  style={{ height: '54px', width: '100%' }}
-                  disabled={loading} // Disable button while loading
-                >
-                  {loading ? 'Logging in...' : 'Log In'}
-                </Button>
+                {/* Submit and Sign Up Buttons */}
+                <div className="d-flex justify-content-between">
+                  <Button
+                    type="submit"
+                    className="btn btn-primary"
+                    style={{ height: '54px', width: '45%' }}
+                    disabled={loading}
+                  >
+                    {loading ? 'Logging in...' : 'Log In'}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    className="btn btn-secondary"
+                    style={{ height: '54px', width: '45%' }}
+                    onClick={() => navigate('/createaccount')}
+                  >
+                    Sign Up
+                  </Button>
+                </div>
               </Form>
             </Col>
           </Row>
