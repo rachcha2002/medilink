@@ -76,9 +76,10 @@ exports.deleteappointment = async (req, res) => {
 
 exports.approveappointment = async (req, res) => {
     const { type, id } = req.params;
+    const { payment } = req.body;
     try {
         const AppointmentModel = AppointmentFactory.getModel(type);
-        const appointment = await AppointmentModel.findByIdAndUpdate(id, { status: "approved" }, { new: true });
+        const appointment = await AppointmentModel.findByIdAndUpdate(id, { status: "approved", payment  }, { new: true });
         if (!appointment) {
             return res.status(404).json({ message: "Appointment not found" });
         }

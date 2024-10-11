@@ -28,6 +28,7 @@ function TestsandScans() {
 
   return (
     <main id="main" className="main">
+       <div  style={{ marginTop: "30px" }}>
       <PageTitle title="Tests and Scans appointments" url="/hospitaladmin/TestsandScansappointments" />
       <Container
       className="mt-3"
@@ -59,6 +60,7 @@ function TestsandScans() {
         </Tab>
       </Tabs>
       </Container>
+      </div>
     </main>
   );
 }
