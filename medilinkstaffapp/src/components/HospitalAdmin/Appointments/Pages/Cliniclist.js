@@ -28,6 +28,7 @@ function Cliniclist() {
   
     return (
       <main id="main" className="main">
+         <div  style={{ marginTop: "30px" }}>
         <PageTitle title="Clinic Appointments" url="/hospitaladmin/clinicappointments" />
         <Container
       className="mt-3"
@@ -59,6 +60,7 @@ function Cliniclist() {
           </Tab>
         </Tabs>
         </Container>
+        </div>
       </main>
     );
 }

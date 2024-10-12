@@ -58,6 +58,7 @@ const Appointment3 = () => {
       });
     }
     setLoading(false);
+    window.location.reload();
   };
 
   return (

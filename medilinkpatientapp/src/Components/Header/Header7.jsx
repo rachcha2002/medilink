@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Link as ScrollLink } from "react-scroll";
 import { useAuthContext } from "../../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { IMAGES } from "../../constants/images";
@@ -169,12 +168,7 @@ const Header7 = ({ data }) => {
               </div>
             </div>
             <div className="st-main-header-right">
-              <ScrollLink
-                to="appointment"
-                className="st-btn st-style1 st-color4 st-smooth-move st-size-medium w-100"
-              >
-                Book An Appointment
-              </ScrollLink>
+             
             </div>
           </div>
         </div>

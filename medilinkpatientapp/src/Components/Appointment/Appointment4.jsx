@@ -102,6 +102,7 @@ const Appointment4 = () => {
       setScanNameOptions([]); // Reset scan name options
     }
     setLoading(false);
+    window.location.reload();
   };
 
   return (
