@@ -116,24 +116,29 @@ export default function HospitalDetails() {
   };
 
    // Function to handle hospital deletion
-   const handleDeleteClick = (id) => {
+   const handleDeleteClick = (registrationID) => {
     if (window.confirm("Are you sure you want to delete this hospital?")) {
-      // Send delete request to the backend
-      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/hospital/deletehospital/${id}`, {
+      try{
+        const encodedID = encodeURIComponent(registrationID);
+        // Send delete request to the backend
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/hospital/deletehospitalByID/${encodedID}`, {
         method: "DELETE",
       })
+      
         .then((response) => {
           if (response.ok) {
             alert("Hospital deleted successfully!");
             // Remove the hospital from the state after deletion
             setHospitalData((prevData) =>
-              prevData.filter((hospital) => hospital._id !== id)
+              prevData.filter((hospital) => hospital.registrationID !== registrationID)
             );
           } else {
             alert("Failed to delete the hospital.");
           }
-        })
-        .catch((error) => console.error("Error deleting hospital:", error));
+        })}
+        catch(error) { 
+          console.error("Error deleting hospital:", error)};
+          //alert("An error occurred while deleting the hospital.");
     }
   };
 
@@ -149,7 +154,8 @@ export default function HospitalDetails() {
             <th><center>Hospital Email</center></th>
             <th><center>Contact Number</center></th>
             <th><center>Hospital Type</center></th>
-            <th><center>Services Provided</center></th>
+            <th><center>Test Details</center></th>
+            <th><center>Scan Details</center></th>
             <th><center>Action</center></th>
           </tr>
         </thead>
@@ -164,12 +170,23 @@ export default function HospitalDetails() {
                 <td>{hospital.contactNumber}</td>
                 <td>{hospital.hospitalType}</td>
                 <td>
-                  {/* Display serviceDetails as a list */}
+                  {/* Display testDetails as a list */}
                   <ul>
-                    {hospital.serviceDetails &&
-                      hospital.serviceDetails.map((service, idx) => (
+                    {hospital.tests &&
+                      hospital.tests.map((test, idx) => (
                         <li key={idx}>
-                          <strong>{service.heading}</strong>: {service.description}
+                          {test.test_heading}
+                        </li>
+                      ))}
+                  </ul>
+                </td>
+                <td>
+                  {/* Display scanDetails as a list */}
+                  <ul>
+                    {hospital.scans &&
+                      hospital.scans.map((scan, idx) => (
+                        <li key={idx}>
+                          {scan.scan_heading}
                         </li>
                       ))}
                   </ul>
@@ -179,7 +196,7 @@ export default function HospitalDetails() {
                     <Button variant="primary" style={{ marginBottom: 2 }} onClick={() => handleShowDetails(hospital._id)}>
                       Details
                     </Button>
-                    <Button variant="danger" style={{ marginTop: 2 }} onClick={() => handleDeleteClick(hospital._id)}>
+                    <Button variant="danger" style={{ marginTop: 2 }} onClick={() => handleDeleteClick(hospital.registrationID)}>
                       Delete
                     </Button>
                   </center>
@@ -265,6 +282,34 @@ export default function HospitalDetails() {
             <option value="laboratory">Laboratory</option>
           </Form.Control>
         </Form.Group>
+
+        {/* Test Details */}
+    <Form.Group className="mb-2">
+      <Form.Label>Test Details</Form.Label>
+      <ul>
+        {selectedHospital?.tests && selectedHospital.tests.length > 0 ? (
+          selectedHospital.tests.map((test, idx) => (
+            <li key={idx}>{test.test_heading}</li>
+          ))
+        ) : (
+          <p>No Test Details available</p>
+        )}
+      </ul>
+    </Form.Group>
+
+    {/* Scan Details */}
+    <Form.Group className="mb-2">
+      <Form.Label>Scan Details</Form.Label>
+      <ul>
+        {selectedHospital?.scans && selectedHospital.scans.length > 0 ? (
+          selectedHospital.scans.map((scan, idx) => (
+            <li key={idx}>{scan.scan_heading}</li>
+          ))
+        ) : (
+          <p>No Scan Details available</p>
+        )}
+      </ul>
+    </Form.Group>
       </Modal.Body>
     </Modal>
     </main>

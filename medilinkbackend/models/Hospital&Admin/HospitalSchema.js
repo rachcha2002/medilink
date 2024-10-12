@@ -30,12 +30,16 @@ const HospitalSchema = new mongoose.Schema({
         type: String,
         required: false,
       },
-      serviceDetails: [
+    tests: [
         {
-          heading: {
+          test_heading: {
+        }, 
         },
-          description: {
-          },  
+      ],
+    scans: [
+        {
+          scan_heading: {
+        }, 
         },
       ],
 }, { timestamps: true });

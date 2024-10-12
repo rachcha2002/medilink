@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const connectDB = require("./config/db");
 const helmet = require("helmet");
+const axios = require('axios');
 
 const staffRoutes = require("./routes/staffRoutes");
 const medicalInfoRoutes = require("./routes/medicalInfoRoutes");
@@ -48,6 +49,8 @@ app.use(
     },
   })
 );
+
+
 
 // Routes
 app.use("/api/staffroutes", staffRoutes);
