@@ -1,3 +1,8 @@
+import "bootstrap-icons/font/bootstrap-icons.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+//Import CSS
+import "./App.css";
 import React, { useCallback, useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Loader from "./components/util/Loader";
@@ -9,8 +14,7 @@ import MLTStaff from "./components/MLT/MLTStaff";
 import HospitalAdmin from "./components/HospitalAdmin/HospitalAdmin";
 import SystemAdmin from "./components/SystemAdmin/SystemAdmin";
 import LoginForm from "./components/Common/Login";
-import { AuthContext ,useAuthContext} from "./context/AuthContext"; // Import AuthContext
-
+import { AuthContext, useAuthContext } from "./context/AuthContext"; // Import AuthContext
 
 let logoutTimer;
 
@@ -23,8 +27,6 @@ function App() {
   const [token, setToken] = useState(null);
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
   const navigate = useNavigate();
-
-  
 
   const toggleLoading = (status) => {
     setLoading(status);
@@ -63,9 +65,6 @@ function App() {
     setTokenExpirationDate(null);
     localStorage.removeItem("userData");
     navigate("/login");
-
-
-  
   }, []);
 
   // Handle automatic logout when token expires
@@ -109,36 +108,33 @@ function App() {
           logout,
         }}
       >
-       
-          <Routes>
-            <Route
-              path="/"
-              element={<LandingPage toggleLoading={toggleLoading} />}
-            />
-            <Route
-              path="/login"
-              element={<LoginForm toggleLoading={toggleLoading} />}
-            />
+        <Routes>
+          <Route
+            path="/"
+            element={<LandingPage toggleLoading={toggleLoading} />}
+          />
+          <Route
+            path="/login"
+            element={<LoginForm toggleLoading={toggleLoading} />}
+          />
 
-            
-            <Route
-              path="/medicalstaff/*"
-              element={<MedicalStaff toggleLoading={toggleLoading} />}
-            />
-            <Route
-              path="/mltstaff/*"
-              element={<MLTStaff toggleLoading={toggleLoading} />}
-            />
-            <Route
-              path="/hospitaladmin/*"
-              element={<HospitalAdmin toggleLoading={toggleLoading} />}
-            />
-            <Route
-              path="/systemadmin/*"
-              element={<SystemAdmin toggleLoading={toggleLoading} />}
-            />
-          </Routes>
-        
+          <Route
+            path="/medicalstaff/*"
+            element={<MedicalStaff toggleLoading={toggleLoading} />}
+          />
+          <Route
+            path="/mltstaff/*"
+            element={<MLTStaff toggleLoading={toggleLoading} />}
+          />
+          <Route
+            path="/hospitaladmin/*"
+            element={<HospitalAdmin toggleLoading={toggleLoading} />}
+          />
+          <Route
+            path="/systemadmin/*"
+            element={<SystemAdmin toggleLoading={toggleLoading} />}
+          />
+        </Routes>
       </AuthContext.Provider>
     </>
   );
