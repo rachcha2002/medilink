@@ -14,7 +14,7 @@ function NavItem({ nav }) {
           <i className="bi bi-chevron-down ms-auto"></i>
         </NavLink>
       ) : (
-        <NavLink href="#" icon={nav.icon} title={nav.name} />
+        <NavLink href={nav.href} icon={nav.icon} title={nav.name} />
       )}
 
       {nav.children && nav.children.length > 0 && (

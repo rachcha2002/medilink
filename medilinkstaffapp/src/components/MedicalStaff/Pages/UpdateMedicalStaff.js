@@ -5,8 +5,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import ImageUpload from "./ImageUpload";
 import { BsArrowLeft } from "react-icons/bs";
 import { BiHide, BiShow } from "react-icons/bi";
-import "./Main.css";
-import PageTitle from "../../Main/PageTitle";
+import "../../Main/Main.css";
+import PageTitle from "../../Common/PageTitle";
 
 function UpdateMedicalStaff({ toggleLoading }) {
   const { id, position } = useParams();
@@ -112,9 +112,7 @@ function UpdateMedicalStaff({ toggleLoading }) {
 
       if (response.status === 200) {
         alert(`${selectedPosition} updated successfully!`);
-        navigate(
-          `/staff/hr/${selectedPosition === "Doctor" ? "doctors" : "nurses"}`
-        );
+        navigate(-1);
       } else {
         const errorData = await response.json();
         alert("Update failed:", errorData.message);
@@ -128,18 +126,22 @@ function UpdateMedicalStaff({ toggleLoading }) {
 
   return (
     <main id="main" className="main">
-      <PageTitle />
+      <PageTitle
+        title="Update Medical Staff"
+        url="/hospitaladmin/updatemediaclstaff"
+      />
       <Form onSubmit={handleSubmit(onSubmit)}>
         <h3>
           <Button
             variant="dark"
-            onClick={() => navigate("/staff/hr/employee")}
+            onClick={() => navigate("/hospitaladmin/medicalstaff")}
             style={{ margin: "10px" }}
           >
             <BsArrowLeft /> Back
           </Button>
           Update Medical Staff Account
         </h3>
+        <hr />
 
         <Row className="mb-3">
           {/* Name (disabled) */}

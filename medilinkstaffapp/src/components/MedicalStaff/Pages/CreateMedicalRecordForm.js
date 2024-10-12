@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { Form, Button, Row, Col, Container, Alert } from "react-bootstrap";
-import "./Main.css";
-import PageTitle from "../../Main/PageTitle";
+import "../../Main/Main.css";
+import PageTitle from "../../Common/PageTitle";
+import { useNavigate } from "react-router-dom";
 
 function CreateMedicalRecordForm() {
   const [file, setFile] = useState(null);
   const [feedbackMessage, setFeedbackMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Form state management with default values for hospital, createdBy, and createdByPosition
   const [formData, setFormData] = useState({
@@ -106,6 +108,7 @@ function CreateMedicalRecordForm() {
         createdByPosition: "Senior Doctor", // Reset to dummy value
       });
       event.target.reset(); // Reset form fields
+      navigate("/medicalstaff/medicalrecords");
     } catch (error) {
       console.error("Failed to submit the form:", error);
       setErrorMessage("Failed to create medical record. Please try again.");
@@ -116,7 +119,14 @@ function CreateMedicalRecordForm() {
 
   return (
     <main id="main" className="main">
-      <PageTitle />
+      <PageTitle
+        title="Create Medical Record"
+        url="/medicalstaff/addprescription"
+      />
+
+      <h4>Create New Medical Record</h4>
+      <hr />
+
       <Container fluid style={{ backgroundColor: "rgba(255, 255, 255, 0.6)" }}>
         <Row>
           <Col md={12}>

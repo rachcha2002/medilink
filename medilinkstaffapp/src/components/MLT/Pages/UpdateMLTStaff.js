@@ -5,8 +5,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import ImageUpload from "../../MedicalStaff/Pages/ImageUpload";
 import { BsArrowLeft } from "react-icons/bs";
 import { BiHide, BiShow } from "react-icons/bi";
-import "./Main.css";
-import PageTitle from "../../Main/PageTitle";
+import "../../Main/Main.css";
+import PageTitle from "../../Common/PageTitle";
 
 function UpdateMLTStaff({ toggleLoading }) {
   const { id } = useParams();
@@ -102,12 +102,12 @@ function UpdateMLTStaff({ toggleLoading }) {
 
   return (
     <main id="main" className="main">
-      <PageTitle />
+      <PageTitle title="Update MLT Staff" url="/hospitaladmin/updatemltstaff" />
       <Form onSubmit={handleSubmit(onSubmit)}>
         <h3>
           <Button
             variant="dark"
-            onClick={() => navigate("/staff/hr/mlt")}
+            onClick={() => navigate("/hospitaladmin/mltstaff")}
             style={{ margin: "10px" }}
           >
             <BsArrowLeft /> Back
