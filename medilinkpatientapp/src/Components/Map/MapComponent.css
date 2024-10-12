@@ -1,0 +1,70 @@
+.container {
+    padding: 16px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .search-bar input {
+    width: 100%;
+    padding: 8px;
+    margin: 16px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .category-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 16px;
+  }
+  
+  .category-btn {
+    padding: 8px 16px;
+    border: none;
+    background-color: #F1F1F1;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  
+  .category-btn.active {
+    background-color: #6200EE;
+    color: white;
+  }
+  
+  .map-container {
+    margin-bottom: 10px;
+  }
+  
+  .facility-list {
+    margin-top: 16px;
+  }
+  
+  .facility-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .facility-image {
+    width: 60px;
+    height: 60px;
+    margin-right: 12px;
+  }
+  
+  .facility-details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .facility-details h3 {
+    margin: 0;
+  }
+  
+  .facility-details p {
+    margin: 4px 0 0;
+  }
+  
