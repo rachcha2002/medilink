@@ -1,4 +1,4 @@
-import {React,useState} from 'react'
+import {React,useState, useEffect} from 'react'
 import {
     Container,
     Form,
@@ -25,10 +25,28 @@ export default function HospitalRegistration() {
         handleSubmit,
         register,
         reset,
+        setValue,
         formState: { errors },
       } = useForm();
-      const [serviceDetails, setServiceDetails] = useState([{ heading: "", description: "" }]);
+      const [testDetails, setTestDetails] = useState([{ test_heading: ""}]);
+      const [scanDetails, setScanDetails] = useState([{ scan_heading: ""}]);
       const navigate = useNavigate();
+
+      useEffect(() => {
+        // Generate a dynamic admin ID
+        const generateAdminID = async () => {
+          try {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/hospitaladmin/gethospitaladmins`);
+            const adminCount = response.data.length;
+            const newAdminID = `H${String(adminCount + 1).padStart(3, "0")}`; // Admin ID format: A001, A002, etc.
+            setValue("adminID", newAdminID); // Set the generated admin ID in the form
+          } catch (error) {
+            console.error("Error generating admin ID", error);
+          }
+        };
+        
+        generateAdminID();
+      }, [setValue]); // Runs once when the component mounts
 
       const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -42,8 +60,11 @@ export default function HospitalRegistration() {
         reader.readAsDataURL(file);
       };
     
-      const handleAddService = () => {
-        setServiceDetails([...serviceDetails, { heading: "", description: "" }]);
+      const handleAddTest = () => {
+        setTestDetails([...testDetails, { test_heading: ""}]);
+      };
+      const handleAddScan = () => {
+        setScanDetails([...scanDetails, {scan_heading: ""}]);
       };
     
     const onSubmit = async (data) => {
@@ -57,7 +78,8 @@ export default function HospitalRegistration() {
     formData.append("contactNumber", data.contactNumber);
     formData.append("hospitalEmail", data.hospitalEmail);
     formData.append("hospitalType", data.hospitalType);
-    formData.append("serviceDetails", JSON.stringify(serviceDetails)); // Send service details as a string
+    formData.append("tests", JSON.stringify(testDetails)); // Send test details as a string
+    formData.append("scans", JSON.stringify(scanDetails)); // Send scan details as a string
     formData.append("hospitalImage", image); // Append the selected image
     
         const adminData = {
@@ -240,54 +262,70 @@ export default function HospitalRegistration() {
             </Row>
           
          
-          {/* Hospital Services Details */}
+          {/* Hospital tests Details */}
           <h5 className="mt-2 mb-3"><b>Service Details</b></h5>
-          {serviceDetails.map((service, index) => (
-            <Row className="mb-3" key={index}>
-              <Col md={5}>
+          <h6 className="mt-2 mb-3"><b>Tests Details</b></h6>
+            <Row className="mb-3">
+            {testDetails.map((test, index) => (
+              <Col md={6}>
               <Form.Group>
-                  <Form.Label>Service Heading</Form.Label>
+                  <Form.Label>Test Heading</Form.Label>
                   <InputGroup>
                   <Form.Control
                     type="text"
-                    value={service.heading}
+                    value={test.test_heading}
                     onChange={(e) => {
-                      const updatedServices = [...serviceDetails];
-                      updatedServices[index].heading = e.target.value;
-                      setServiceDetails(updatedServices);
+                      const updatedTests = [...testDetails];
+                      updatedTests[index].test_heading = e.target.value;
+                      setTestDetails(updatedTests);
                     }}
                   />
                   <InputGroup.Text>
-                      <BsInfoCircle title="Provide a title for the service" />
+                      <BsInfoCircle title="Provide a title for the test" />
+                    </InputGroup.Text>
+                    </InputGroup>
+                </Form.Group>
+              </Col> 
+            ))}
+            <Row>
+            <Col md={6}>
+            <Button variant="secondary" onClick={handleAddTest} className="mb-3 mt-3">
+                <FaPlusCircle /> Add Test Details
+            </Button>
+            </Col>
+            </Row>
+            </Row>
+            <h6 className="mt-2 mb-3"><b>Scan Details</b></h6>
+            <Row className="mb-3">
+            {scanDetails.map((scan, index) => (
+              <Col md={6}>
+              <Form.Group>
+                  <Form.Label>Scan Heading</Form.Label>
+                  <InputGroup>
+                  <Form.Control
+                    type="text"
+                    value={scan.scan_heading}
+                    onChange={(e) => {
+                      const updatedScans = [...scanDetails];
+                      updatedScans[index].scan_heading = e.target.value;
+                      setScanDetails(updatedScans);
+                    }}
+                  />
+                  <InputGroup.Text>
+                      <BsInfoCircle title="Provide a title for the scan" />
                     </InputGroup.Text>
                     </InputGroup>
                 </Form.Group>
               </Col>
-              <Col md={7}>
-              <Form.Group>
-                  <Form.Label>Service Description</Form.Label>
-                  <InputGroup>
-                    <Form.Control
-                      type="text"
-                      value={service.description}
-                      onChange={(e) => {
-                        const updatedServices = [...serviceDetails];
-                        updatedServices[index].description = e.target.value;
-                        setServiceDetails(updatedServices);
-                      }}
-                    />
-                    <InputGroup.Text>
-                      <BsInfoCircle title="Provide a brief description of the service" />
-                    </InputGroup.Text>
-                  </InputGroup>
-                </Form.Group>
-                
+              ))}
+               <Row>
+               <Col md={6}>
+              <Button variant="secondary" onClick={handleAddScan} className="mb-3 mt-3">
+              <FaPlusCircle /> Add Scan Details
+              </Button>
               </Col>
+              </Row>
             </Row>
-          ))}
-          <Button variant="secondary" onClick={handleAddService} className="mb-3">
-            <FaPlusCircle /> Add Service
-          </Button>
 
           {/* Hospital Admin Information */}
           <h5 className="mt-2 mb-2"><b>Hospital Admin Information</b></h5>
@@ -298,8 +336,9 @@ export default function HospitalRegistration() {
                 <Form.Control
                   type="text"
                   {...register("adminID", {
-                    required: "Total amount is required",
+                    required: "Admin ID is required",
                   })}
+                  readOnly
                 />
                 {errors.adminID && (
                   <small className="text-danger">

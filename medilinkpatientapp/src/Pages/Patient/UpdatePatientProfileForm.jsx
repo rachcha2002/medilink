@@ -2,8 +2,12 @@ import React, { useState, useEffect } from "react";
 import SectionHeading from "../../Components/SectionHeading/SectionHeading";
 import Spacing from "../../Components/Spacing/Spacing";
 import { useParams } from "react-router-dom"; // To get the patient ID from URL
+import { useAuthContext } from "../../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const UpdatePatientProfileForm = () => {
+  const navigate = useNavigate();
+  const {login,logout} = useAuthContext();
   const { id } = useParams(); // Get patient ID from URL params
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -27,29 +31,46 @@ const UpdatePatientProfileForm = () => {
   // Fetch patient details and pre-fill the form
   useEffect(() => {
     const fetchPatientDetails = async () => {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/patients/getbyid/${id}`
-      );
-      const data = await res.json();
-      setFormData({
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        dateOfBirth: new Date(data.dateOfBirth).toISOString().substr(0, 10),
-        gender: data.gender,
-        idNumber: data.idNumber,
-        address: data.address,
-        emergencyContact: data.emergencyContact,
-        medicalHistory: data.medicalHistory,
-        currentDiagnoses: data.currentDiagnoses,
-        currentMedications: data.currentMedications,
-        allergies: data.allergies,
-        photoPreview: data.photoURL, // Set the existing photo URL as preview
-      });
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/patients/getbyid/${id}`
+        );
+  
+        // Check if response is ok
+        if (!res.ok) {
+          throw new Error("Failed to fetch patient details");
+        }
+  
+        const data = await res.json();
+  
+      
+        // Update formData with the patient's details
+        setFormData({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          dateOfBirth: new Date(data.dateOfBirth).toISOString().substr(0, 10),
+          gender: data.gender,
+          idNumber: data.idNumber,
+          address: data.address,
+          emergencyContact: data.emergencyContact,
+          medicalHistory: data.medicalHistory,
+          currentDiagnoses: data.currentDiagnoses,
+          currentMedications: data.currentMedications,
+          allergies: data.allergies,
+          photoPreview: data.photoURL, // Set the existing photo URL as preview
+        });
+  
+        // Optionally handle token or user data if needed
+       
+      } catch (error) {
+        console.error("Error fetching patient details:", error);
+      }
     };
-
+  
     fetchPatientDetails();
   }, [id]);
+  
 
   // Handler for input field changes
   const handleInputChange = (event) => {
@@ -92,22 +113,34 @@ const UpdatePatientProfileForm = () => {
     });
 
     // Send update request to the backend
-    const res = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/api/patients/update/${id}`,
-      {
-        method: "PUT", // Use PUT for updating
-        body: formDataObject,
-      }
-    );
+    try {
+      setLoading(true); // Start loading
+    
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/patients/update/${id}`,
+        {
+          method: "PUT", // Use PUT for updating
+          body: formDataObject,
+        }
+      );
+    
+      if (res.ok) {
 
-    if (res.ok) {
-      alert("Patient profile updated successfully.");
-      setLoading(false);
-    } else {
-      setErrorMessage("Failed to update profile.");
-      setLoading(false);
+        logout()
+    
+        alert("Patient profile updated successfully. Please Login Again");
+      } else {
+        setErrorMessage("Failed to update profile.");
+      }
+
+
+    } catch (error) {
+      console.error("Error updating patient profile:", error);
+      setErrorMessage("An error occurred while updating the profile.");
+    } finally {
+      setLoading(false); // Ensure loading is stopped regardless of success or failure
     }
-  };
+  }    
 
   return (
     <>

@@ -1,23 +1,17 @@
 import React from "react";
 import Header from "../Header/Header";
 import SideBar from "./Sidebar/SideBar";
-//import Main from "../Main/Main";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
-import AddMedicalStaff from "./Pages/AddMedicalStaff";
-import DoctorsList from "./Pages/DoctorsList";
-import NursesList from "./Pages/NursesList";
-import UpdateMedicalStaff from "./Pages/UpdateMedicalStaff";
+
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import PrescriptionForm from "./Pages/PrescriptionForm";
 import PrescriptionsByHospital from "./Pages/PrescriptionsByHospital";
 import PrescriptionUpdateForm from "./Pages/PrescriptionUpdateForm";
 import CreateMedicalRecordForm from "./Pages/CreateMedicalRecordForm";
 import MedicalRecords from "./Pages/MedicalRecords";
 import UpdateMedicalRecordForm from "./Pages/UpdateMedicalRecordForm";
+import MedicalStaffDashboard from "./Pages/MedicalStaffDashboard";
+import AllMedicalRecords from "./Pages/AllMedicalRecords";
+import AllPrescriptions from "./Pages/AllPrescriptions";
 
 const MedicalStaff = ({ toggleLoading }) => {
   return (
@@ -27,28 +21,24 @@ const MedicalStaff = ({ toggleLoading }) => {
       <Routes>
         <Route
           path="/"
-          element={<AddMedicalStaff toggleLoading={toggleLoading} />}
-        />
-        <Route
-          path="/doctors"
-          element={<DoctorsList toggleLoading={toggleLoading} />}
-        />
-        <Route
-          path="/nurses"
-          element={<NursesList toggleLoading={toggleLoading} />}
-        />
-        <Route
-          path="/update/:position/:id"
-          element={<UpdateMedicalStaff toggleLoading={toggleLoading} />}
+          element={<MedicalStaffDashboard toggleLoading={toggleLoading} />}
         />
         <Route
           path="/addprescription"
           element={<PrescriptionForm toggleLoading={toggleLoading} />}
         />
         <Route
-          path="/prescriptionbyhospital"
-          element={<PrescriptionsByHospital toggleLoading={toggleLoading} />}
+          path="/prescriptions"
+          element={<AllPrescriptions toggleLoading={toggleLoading} />}
         />
+
+        <Route
+          path="/prescriptionbystaff"
+          element={
+            <AllPrescriptions type="byid" toggleLoading={toggleLoading} />
+          }
+        />
+
         <Route
           path="/updateprescription/:id"
           element={<PrescriptionUpdateForm toggleLoading={toggleLoading} />}
@@ -61,7 +51,14 @@ const MedicalStaff = ({ toggleLoading }) => {
 
         <Route
           path="/medicalrecords"
-          element={<MedicalRecords toggleLoading={toggleLoading} />}
+          element={<AllMedicalRecords toggleLoading={toggleLoading} />}
+        />
+
+        <Route
+          path="/medicalrecordsbystaff"
+          element={
+            <AllMedicalRecords type="byid" toggleLoading={toggleLoading} />
+          }
         />
 
         <Route

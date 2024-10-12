@@ -16,15 +16,44 @@ const navList = [
     name: "Appointments",
     icon: "bi bi-ui-checks",
     children: [
-      { _id: 21, name: "Channeling", icon: "bi bi-circle",href: "/hospitaladmin/Channelingappointments" },
-      { _id: 22, name: "Clinic", icon: "bi bi-circle",href: "/hospitaladmin/Clinicappointments" },
-      { _id: 23, name: "Tests & Scans", icon: "bi bi-circle",href: "/hospitaladmin/TestsandScansappointments" },
+      {
+        _id: 21,
+        name: "Channeling",
+        icon: "bi bi-circle",
+        href: "/hospitaladmin/Channelingappointments",
+      },
+      {
+        _id: 22,
+        name: "Clinic",
+        icon: "bi bi-circle",
+        href: "/hospitaladmin/Clinicappointments",
+      },
+      {
+        _id: 23,
+        name: "Tests & Scans",
+        icon: "bi bi-circle",
+        href: "/hospitaladmin/TestsandScansappointments",
+      },
     ],
   },
   {
     _id: 4,
-    name: "Forms",
-    icon: "bi bi-journal-text",
+    name: "Staff Management",
+    icon: "bi bi-person-badge-fill",
+    children: [
+      {
+        _id: 31,
+        name: "Medical Staff",
+        icon: "bi bi-circle",
+        href: "/hospitaladmin/medicalstaff",
+      },
+      {
+        _id: 32,
+        name: "MLT Staff",
+        icon: "bi bi-circle",
+        href: "/hospitaladmin/mltstaff",
+      },
+    ],
   },
   {
     _id: 5,

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Container, Alert } from "react-bootstrap";
-import "./Main.css";
-import PageTitle from "../../Main/PageTitle";
+import PageTitle from "../../Common/PageTitle";
+import "../../Main/Main.css";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { BsArrowLeft } from "react-icons/bs";
 
 function UpdateReportForm() {
   const { reportType, reportId } = useParams();
@@ -10,6 +12,7 @@ function UpdateReportForm() {
   const [feedbackMessage, setFeedbackMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const [reportData, setReportData] = useState({
     patientId: "",
@@ -104,6 +107,7 @@ function UpdateReportForm() {
 
       // Reset file input
       setFile(null);
+      navigate(-1);
     } catch (error) {
       console.error("Failed to submit the form:", error);
       setErrorMessage("Failed to update the report. Please try again.");
@@ -120,8 +124,28 @@ function UpdateReportForm() {
 
   return (
     <main id="main" className="main">
-      <PageTitle />
+      <PageTitle
+        title="Update Report"
+        url={`/reportupdate/${reportType}/${reportId}`}
+      />
+
       <Container fluid style={{ backgroundColor: "rgba(255, 255, 255, 0.6)" }}>
+        <Row className="align-items-center">
+          <Col xs="auto">
+            <Button
+              variant="dark"
+              onClick={() => navigate(-1)}
+              style={{ margin: "10px" }}
+            >
+              <BsArrowLeft /> Back
+            </Button>
+          </Col>
+          <Col>
+            <h3>Update {reportType} report</h3>
+          </Col>
+        </Row>
+        <hr />
+
         <Row>
           <Col md={12}>
             {feedbackMessage && (
@@ -131,6 +155,7 @@ function UpdateReportForm() {
 
             <Form onSubmit={handleSubmit}>
               {/* Patient Information */}
+
               <h5>Patient Information</h5>
               <Row>
                 <Col md={6}>

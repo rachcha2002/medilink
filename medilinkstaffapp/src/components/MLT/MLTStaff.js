@@ -1,7 +1,6 @@
- import React from "react";
+import React from "react";
 import Header from "../Header/Header";
 import SideBar from "./Sidebar/SideBar";
-//import Main from "../Main/Main";
 import {
   BrowserRouter as Router,
   Route,
@@ -14,6 +13,8 @@ import UpdateMLTStaff from "./Pages/UpdateMLTStaff";
 import CreateReportForm from "./Pages/CreateReportForm";
 import ReportList from "./Pages/ReportList";
 import UpdateReportForm from "./Pages/UpdateReportForm";
+import MLTStaffDashboard from "./Pages/MLTStaffDashboard";
+import AllMedicalReportList from "./Pages/AllMedicalReports";
 
 const MLTStaff = ({ toggleLoading }) => {
   return (
@@ -23,15 +24,7 @@ const MLTStaff = ({ toggleLoading }) => {
       <Routes>
         <Route
           path="/"
-          element={<AddMLTStaff toggleLoading={toggleLoading} />}
-        />
-        <Route
-          path="/mltstafflist"
-          element={<MLTStaffList toggleLoading={toggleLoading} />}
-        />
-        <Route
-          path="/update/:id"
-          element={<UpdateMLTStaff toggleLoading={toggleLoading} />}
+          element={<MLTStaffDashboard toggleLoading={toggleLoading} />}
         />
         <Route
           path="/createreport"
@@ -39,7 +32,25 @@ const MLTStaff = ({ toggleLoading }) => {
         />
         <Route
           path="/reportlist"
-          element={<ReportList toggleLoading={toggleLoading} />}
+          element={<AllMedicalReportList toggleLoading={toggleLoading} />}
+        />
+        <Route
+          path="/radiologyreportlist"
+          element={
+            <AllMedicalReportList
+              reportType="Radiology"
+              toggleLoading={toggleLoading}
+            />
+          }
+        />
+        <Route
+          path="/labreportlist"
+          element={
+            <AllMedicalReportList
+              reportType="Laboratory"
+              toggleLoading={toggleLoading}
+            />
+          }
         />
         <Route
           path="/reportupdate/:reportType/:reportId"

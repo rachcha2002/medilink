@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Col, Row } from "react-bootstrap";
 import axios from "axios";
-import "./Main.css";
-import PageTitle from "../../Main/PageTitle";
+import "../../Main/Main.css";
+import PageTitle from "../../Common/PageTitle";
 import { useNavigate, useParams } from "react-router-dom";
+import { BsArrowLeft } from "react-icons/bs";
 
 function PrescriptionUpdateForm() {
   const { id } = useParams();
@@ -19,6 +20,7 @@ function PrescriptionUpdateForm() {
     medications: [{ drugName: "", dosage: "", frequency: "", duration: "" }],
     remarks: "",
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch prescription by its ID when the component mounts
@@ -69,6 +71,7 @@ function PrescriptionUpdateForm() {
       );
 
       alert("Prescription updated successfully!");
+      navigate(-1); // Redirect to the prescriptions page
     } catch (error) {
       console.error("Error updating prescription:", error);
       alert("Failed to update prescription. Please try again.");
@@ -77,7 +80,23 @@ function PrescriptionUpdateForm() {
 
   return (
     <main id="main" className="main">
-      <PageTitle />
+      <PageTitle title="Update Prescription" url="/mltstaff" />
+      <Row className="align-items-center">
+        <Col xs="auto">
+          <Button
+            variant="dark"
+            onClick={() => navigate(-1)}
+            style={{ margin: "10px" }}
+          >
+            <BsArrowLeft /> Back
+          </Button>
+        </Col>
+        <Col>
+          <h3>Update Prescriptions</h3>
+        </Col>
+      </Row>
+      <hr />
+
       <Form onSubmit={handleUpdate}>
         <h5 className="mt-2">Patient Details</h5>
         <Row>

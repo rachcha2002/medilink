@@ -161,6 +161,7 @@ export default function HospitalAdminDetails() {
                     })
                   }
                   required
+                  readOnly
                 />
               </Form.Group>
 
