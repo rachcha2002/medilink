@@ -8,6 +8,7 @@ const {
 const firebaseApp = require("../config/firebase");
 const { v4: uuidv4 } = require("uuid");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 // Initialize Firebase storage using the app from your Firebase config
 const storage = getStorage(firebaseApp);
@@ -94,7 +95,14 @@ exports.create = async (req, res) => {
     });
 
     await patientProfile.save();
-    res.status(201).json(patientProfile);
+
+    token = jwt.sign(
+      { userId: patientProfile.id, email: patientProfile.email },
+      "medilinksecretkey",
+      { expiresIn: "1h" }
+    );
+    console.log(patientProfile,token)
+    res.status(201).json({ user: patientProfile, token: token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error creating patient profile" });
@@ -225,5 +233,39 @@ exports.deleteById = async (req, res) => {
     res.status(200).json({ message: "Patient profile deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error deleting patient profile" });
+  }
+};
+
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    let user;
+
+    if (/^\S+@\S+\.\S+$/.test(email)) {
+      user = await PatientProfile.findOne({ email: email });
+    } else {
+      return res.status(404).json({ message: "Not an email format" });
+    }
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      "medilinksecretkey",
+      { expiresIn: "1h" }
+    );
+    console.log(user,token)
+    res.status(200).json({ user: user, token: token });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: error });
   }
 };

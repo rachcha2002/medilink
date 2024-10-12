@@ -1,73 +1,61 @@
 import React from "react";
+import { Dropdown, Image } from "react-bootstrap";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { IMAGES } from "../../../constants/images";
+import { useAuthContext } from "../../../context/AuthContext";
+
 function NavAvatar() {
+  const { user, logout, usertype } = useAuthContext(); // Assuming logout is part of the context
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  const handleLogout = () => {
+    // Show confirmation dialog before logging out
+    const confirmed = window.confirm("Are you sure you want to log out?");
+    if (confirmed) {
+      // Call the logout function from AuthContext
+      logout();
+      // Navigate to login page after logout
+      navigate("/login");
+    }
+  };
+
+  // Determine the name to display based on usertype
+  const displayName = usertype === "hospitaladmin" ? user?.adminName : user?.name;
+
   return (
-    <li className="nav-item dropdown pe-3">
-      <a
+    <Dropdown align="end" className="nav-item pe-3">
+      <Dropdown.Toggle
+        as="a"
         className="nav-link nav-profile d-flex align-items-center pe-0"
-        href="#"
-        data-bs-toggle="dropdown"
+        id="dropdown-custom-components"
       >
-        <img src={IMAGES.user} alt="Profile" className="rounded-circle" />
-        <span className="d-none d-md-block dropdown-toggle ps-2">F. David</span>
-      </a>
+        <Image
+          src={IMAGES.user}
+          alt="Profile"
+          className="rounded-circle"
+          width="40"
+          height="40"
+        />
+        <span className="d-none d-md-block ps-2">{displayName ? displayName : "F. David"}</span>
+      </Dropdown.Toggle>
 
-      <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-        <li className="dropdown-header">
-          <h6>David</h6>
-          <span>Web Developer</span>
-        </li>
-        <li>
-          <hr className="dropdown-divider" />
-        </li>
+      <Dropdown.Menu className="dropdown-menu-end dropdown-menu-arrow profile">
+        <Dropdown.Header>
+          <h6>{displayName ? displayName : "David"}</h6>
+          <span>{user ? user.role : "Web Developer"}</span>
+        </Dropdown.Header>
+        <Dropdown.Divider />
 
-        <li>
-          <a
-            className="dropdown-item d-flex align-items-center"
-            href="users-profile.html"
-          >
-            <i className="bi bi-person"></i>
-            <span>My Profile</span>
-          </a>
-        </li>
-        <li>
-          <hr className="dropdown-divider" />
-        </li>
+        <Dropdown.Item href="/users-profile">
+          <i className="bi bi-person"></i> My Profile
+        </Dropdown.Item>
+        <Dropdown.Divider />
 
-        <li>
-          <a
-            className="dropdown-item d-flex align-items-center"
-            href="users-profile.html"
-          >
-            <i className="bi bi-gear"></i>
-            <span>Account Settings</span>
-          </a>
-        </li>
-        <li>
-          <hr className="dropdown-divider" />
-        </li>
-
-        <li>
-          <a
-            className="dropdown-item d-flex align-items-center"
-            href="pages-faq.html"
-          >
-            <i className="bi bi-question-circle"></i>
-            <span>Need Help?</span>
-          </a>
-        </li>
-        <li>
-          <hr className="dropdown-divider" />
-        </li>
-
-        <li>
-          <a className="dropdown-item d-flex align-items-center" href="#">
-            <i className="bi bi-box-arrow-right"></i>
-            <span>Sign Out</span>
-          </a>
-        </li>
-      </ul>
-    </li>
+        <Dropdown.Item onClick={handleLogout}>
+          <i className="bi bi-box-arrow-right"></i> Sign Out
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
   );
 }
 
