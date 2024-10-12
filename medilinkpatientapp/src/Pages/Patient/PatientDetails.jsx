@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useHistory to navigate
 import { Modal, Button } from "react-bootstrap";
+import { useAuthContext } from "../../Context/AuthContext";
 
 import SectionHeading from "../../Components/SectionHeading/SectionHeading";
 import Spacing from "../../Components/Spacing/Spacing";
 
 const PatientDetails = ({ match }) => {
+  const {user,logout} = useAuthContext();
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate(); // Use history to navigate
@@ -22,7 +24,7 @@ const PatientDetails = ({ match }) => {
   useEffect(() => {
     const fetchPatientDetails = async () => {
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/patients/getbyid/P00000003`
+        `${process.env.REACT_APP_BACKEND_URL}/api/patients/getbyid/${user.patientID}`
       );
       const data = await res.json();
       setPatient(data);
@@ -36,12 +38,12 @@ const PatientDetails = ({ match }) => {
   const handleDelete = async () => {
     try {
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/patients/delete/${patient.patientID}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/patients/delete/${user.patientID}`,
         { method: "DELETE" }
       );
       if (res.ok) {
         alert("Patient profile deleted successfully.");
-        navigate("/patients"); // Redirect after deletion
+       logout()// Redirect after deletion
       } else {
         alert("Failed to delete the profile.");
       }
@@ -54,7 +56,7 @@ const PatientDetails = ({ match }) => {
 
   // Navigate to the update form
   const handleUpdate = () => {
-    navigate(`/patient/update/${patient.patientID}`); // Navigate to the update form
+    navigate(`/patient/update/${user.patientID}`); // Navigate to the update form
   };
 
   if (loading) {
