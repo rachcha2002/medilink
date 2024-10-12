@@ -3,7 +3,7 @@ import { Tabs, Tab, Button, Container } from "react-bootstrap";
 import DoctorsList from "./DoctorsList";
 import NursesList from "./NursesList";
 import { useNavigate } from "react-router-dom";
-import "./Main.css";
+import "../../Main/Main.css";
 import PageTitle from "../../Common/PageTitle";
 
 const MedicalStaffPage = () => {

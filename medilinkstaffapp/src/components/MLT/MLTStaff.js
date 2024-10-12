@@ -1,7 +1,6 @@
 import React from "react";
 import Header from "../Header/Header";
 import SideBar from "./Sidebar/SideBar";
-//import Main from "../Main/Main";
 import {
   BrowserRouter as Router,
   Route,
@@ -46,9 +45,11 @@ const MLTStaff = ({ toggleLoading }) => {
         />
         <Route
           path="/labreportlist"
-          reportType="Laboratory"
           element={
-            <AllMedicalReportList reportType="" toggleLoading={toggleLoading} />
+            <AllMedicalReportList
+              reportType="Laboratory"
+              toggleLoading={toggleLoading}
+            />
           }
         />
         <Route

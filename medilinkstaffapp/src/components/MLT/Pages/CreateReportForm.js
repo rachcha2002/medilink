@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Form, Button, Row, Col, Container, Alert } from "react-bootstrap";
-import "./Main.css";
-import PageTitle from "../../Main/PageTitle";
+import PageTitle from "../../Common/PageTitle";
+import "../../Main/Main.css";
+import { useNavigate } from "react-router-dom";
 
 // Dummy patient data
 const patientData = {
@@ -15,7 +16,7 @@ function CreateReportForm() {
   const [feedbackMessage, setFeedbackMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   const [patientId, setPatientId] = useState("");
   const [patientName, setPatientName] = useState("");
   const [age, setAge] = useState("");
@@ -115,6 +116,7 @@ function CreateReportForm() {
       // Reset form and clear file
       setFile(null);
       event.target.reset(); // Reset form fields
+      navigate("/mltstaff/reportlist");
     } catch (error) {
       console.error("Failed to submit the form:", error);
       setErrorMessage("Failed to create report. Please try again.");
@@ -125,7 +127,7 @@ function CreateReportForm() {
 
   return (
     <main id="main" className="main">
-      <PageTitle />
+      <PageTitle title="Create Medical Report" url="/mltstaff/createreport" />
       <Container fluid style={{ backgroundColor: "rgba(255, 255, 255, 0.6)" }}>
         <Row>
           <Col md={12}>
@@ -133,10 +135,10 @@ function CreateReportForm() {
               <Alert variant="success">{feedbackMessage}</Alert>
             )}
             {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+            <h3>Create medical report (Radiology/Laboratory)</h3>
+            <hr />
 
             <Form onSubmit={handleSubmit}>
-              {/* Report Type Section */}
-              <h5>Report Type</h5>
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3">

@@ -7,17 +7,20 @@ import {
   Row,
   Col,
   Alert,
+  Form,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
-import PageTitle from "../../Common/PageTitle";
-import "./Main.css";
+import { FaFilePdf } from "react-icons/fa";
 
 function MedicalRecords({ apiUrl, title }) {
   const [records, setRecords] = useState([]); // State to hold medical records
   const [showModal, setShowModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(""); // State for search text
+  const [searchDate, setSearchDate] = useState(""); // State for date picker
+  const [filteredRecords, setFilteredRecords] = useState([]); // State for filtered records
   const navigate = useNavigate();
 
   // Fetch medical records from the backend
@@ -30,6 +33,7 @@ function MedicalRecords({ apiUrl, title }) {
         }
         const data = await response.json();
         setRecords(data);
+        setFilteredRecords(data); // Set filtered records initially
       } catch (err) {
         setError(err.message);
       }
@@ -37,6 +41,28 @@ function MedicalRecords({ apiUrl, title }) {
 
     fetchRecords();
   }, [apiUrl]); // Dependency array includes apiUrl to refetch if it changes
+
+  // Handle search query changes and filter records
+  useEffect(() => {
+    const filtered = records.filter((record) => {
+      const isTextMatch =
+        record.patientId
+          .toString()
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        record.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        record.doctorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        record.diagnosis.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const isDateMatch = searchDate
+        ? new Date(record.date).toLocaleDateString() ===
+          new Date(searchDate).toLocaleDateString()
+        : true;
+
+      return isTextMatch && isDateMatch;
+    });
+    setFilteredRecords(filtered);
+  }, [searchQuery, searchDate, records]);
 
   // Handle modal opening and set selected record data
   const handleShowModal = (record) => {
@@ -47,6 +73,13 @@ function MedicalRecords({ apiUrl, title }) {
   // Handle modal close
   const handleCloseModal = () => {
     setShowModal(false);
+  };
+
+  // Handle reset of the search and filters
+  const handleResetSearch = () => {
+    setSearchQuery("");
+    setSearchDate("");
+    setFilteredRecords(records); // Reset filtered records to the full list
   };
 
   // Handle record deletion
@@ -64,6 +97,7 @@ function MedicalRecords({ apiUrl, title }) {
 
       // Optionally, remove the record from the local state after successful deletion
       setRecords(records.filter((record) => record._id !== id));
+      setFilteredRecords(filteredRecords.filter((record) => record._id !== id)); // Remove from filtered results
       setShowModal(false); // Close the modal after deletion
     } catch (error) {
       alert(error.message);
@@ -72,12 +106,34 @@ function MedicalRecords({ apiUrl, title }) {
 
   return (
     <Container
-      className="p-4"
+      className="p-1"
       style={{ background: "rgba(255, 255, 255, 0.4)", borderRadius: "10px" }}
     >
-      <h3 className="mt-4">{title} Table</h3>
-
       {error && <Alert variant="danger">Error fetching records: {error}</Alert>}
+
+      {/* Search Input and Date Picker */}
+      <Row className="mb-3">
+        <Col md={6}>
+          <Form.Control
+            type="text"
+            placeholder="Search by Patient ID, Name, Doctor, or Diagnosis"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </Col>
+        <Col md={3}>
+          <Form.Control
+            type="date"
+            value={searchDate}
+            onChange={(e) => setSearchDate(e.target.value)}
+          />
+        </Col>
+        <Col md={2}>
+          <Button variant="secondary" onClick={handleResetSearch}>
+            Reset Search
+          </Button>
+        </Col>
+      </Row>
 
       <Table striped bordered hover>
         <thead>
@@ -92,8 +148,8 @@ function MedicalRecords({ apiUrl, title }) {
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(records) && records.length > 0 ? (
-            records.map((record) => (
+          {Array.isArray(filteredRecords) && filteredRecords.length > 0 ? (
+            filteredRecords.map((record) => (
               <tr key={record._id}>
                 <td>{record.patientId}</td>
                 <td>{record.patientName}</td>
@@ -185,14 +241,19 @@ function MedicalRecords({ apiUrl, title }) {
             <Row className="mt-1">
               <Col>
                 <strong>Medical Document:</strong>{" "}
-                <a
-                  href={selectedRecord.medicalDocument.fileUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="color-blue"
+                <Button
+                  variant="link"
+                  style={{ textDecoration: "none", paddingLeft: 0 }}
+                  onClick={() =>
+                    window.open(
+                      selectedRecord.medicalDocument.fileUrl,
+                      "_blank"
+                    )
+                  }
                 >
-                  Download PDF
-                </a>
+                  <FaFilePdf style={{ marginRight: 5 }} />
+                  Open Record Document
+                </Button>
               </Col>
             </Row>
             <Row className="mt-1">

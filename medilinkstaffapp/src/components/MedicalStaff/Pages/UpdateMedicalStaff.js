@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ImageUpload from "./ImageUpload";
 import { BsArrowLeft } from "react-icons/bs";
 import { BiHide, BiShow } from "react-icons/bi";
-import "./Main.css";
+import "../../Main/Main.css";
 import PageTitle from "../../Common/PageTitle";
 
 function UpdateMedicalStaff({ toggleLoading }) {
@@ -112,9 +112,7 @@ function UpdateMedicalStaff({ toggleLoading }) {
 
       if (response.status === 200) {
         alert(`${selectedPosition} updated successfully!`);
-        navigate(
-          `/staff/hr/${selectedPosition === "Doctor" ? "doctors" : "nurses"}`
-        );
+        navigate(-1);
       } else {
         const errorData = await response.json();
         alert("Update failed:", errorData.message);
@@ -143,6 +141,7 @@ function UpdateMedicalStaff({ toggleLoading }) {
           </Button>
           Update Medical Staff Account
         </h3>
+        <hr />
 
         <Row className="mb-3">
           {/* Name (disabled) */}

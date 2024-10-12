@@ -3,7 +3,7 @@ const navList = [
     _id: 1,
     name: "Dashboard",
     icon: "bi bi-grid",
-    href: "/mltstaff/reportlist",
+    href: "/medicalstaff",
   },
   {
     _id: 2,
@@ -11,16 +11,22 @@ const navList = [
     icon: "bi bi-journal-text",
     children: [
       {
+        _id: 20,
+        name: "Add Medical Records",
+        icon: "bi bi-circle",
+        href: "/medicalstaff/addmedicalrecord",
+      },
+      {
         _id: 21,
         name: "All Medical Records",
         icon: "bi bi-circle",
-        href: "/hospitaladmin/medicalstaff",
+        href: "/medicalstaff/medicalrecords",
       },
       {
         _id: 22,
         name: "My Medical Records",
         icon: "bi bi-circle",
-        href: "/hospitaladmin/mltstaff",
+        href: "/medicalstaff/medicalrecordsbystaff",
       },
     ],
   },
@@ -30,16 +36,22 @@ const navList = [
     icon: "bi bi-card-text",
     children: [
       {
+        _id: 30,
+        name: "Add Prescription",
+        icon: "bi bi-circle",
+        href: "/medicalstaff/addprescription",
+      },
+      {
         _id: 31,
         name: "All Prescriptions",
         icon: "bi bi-circle",
-        href: "/hospitaladmin/medicalstaff",
+        href: "/medicalstaff/prescriptions",
       },
       {
         _id: 32,
         name: "My Prescriptions",
         icon: "bi bi-circle",
-        href: "/hospitaladmin/mltstaff",
+        href: "/medicalstaff/prescriptionbystaff",
       },
     ],
   },

@@ -7,17 +7,21 @@ import {
   Row,
   Col,
   Alert,
+  Form,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
-import PageTitle from "../../Common/PageTitle";
-import "./Main.css";
+import "../../Main/Main.css";
+import { FaFilePdf } from "react-icons/fa";
 
 function ReportList({ apiUrl, title, toggleLoading }) {
   const [reports, setReports] = useState([]); // State to hold combined lab and radiology reports
+  const [filteredReports, setFilteredReports] = useState([]); // State for filtered reports
   const [showModal, setShowModal] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(""); // State for search input
+  const [searchDate, setSearchDate] = useState(""); // State for date selector
   const navigate = useNavigate();
 
   // Fetch reports from the passed API endpoint
@@ -31,8 +35,16 @@ function ReportList({ apiUrl, title, toggleLoading }) {
         const data = await response.json();
 
         // Combine the labReports and radiologyReports into one array, if applicable
-        const combinedReports = [...data.labReports, ...data.radiologyReports];
+        let combinedReports = [];
+        if (title === "All Reports") {
+          combinedReports = [...data.labReports, ...data.radiologyReports];
+        } else if (title === "Radiology Reports") {
+          combinedReports = data.radiologyReports;
+        } else if (title === "Laboratory Reports") {
+          combinedReports = data.labReports;
+        }
         setReports(combinedReports);
+        setFilteredReports(combinedReports); // Set filtered reports initially
       } catch (err) {
         setError(err.message);
       }
@@ -40,6 +52,26 @@ function ReportList({ apiUrl, title, toggleLoading }) {
 
     fetchReports();
   }, [apiUrl]);
+
+  // Handle search query changes and filter reports
+  useEffect(() => {
+    const filtered = reports.filter((report) => {
+      const isTextMatch = [
+        report.patientId,
+        report.patientName,
+        report.doctor,
+        report.testName,
+      ].some((field) =>
+        field.toString().toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      const isDateMatch = searchDate
+        ? new Date(report.date).toLocaleDateString() ===
+          new Date(searchDate).toLocaleDateString()
+        : true;
+      return isTextMatch && isDateMatch;
+    });
+    setFilteredReports(filtered);
+  }, [searchQuery, searchDate, reports]);
 
   // Handle modal opening and set selected report data
   const handleShowModal = (report) => {
@@ -50,6 +82,13 @@ function ReportList({ apiUrl, title, toggleLoading }) {
   // Handle modal close
   const handleCloseModal = () => {
     setShowModal(false);
+  };
+
+  // Handle reset search functionality
+  const handleResetSearch = () => {
+    setSearchQuery("");
+    setSearchDate("");
+    setFilteredReports(reports); // Reset the filtered reports to the full list
   };
 
   const handleDelete = async (id, type) => {
@@ -66,6 +105,7 @@ function ReportList({ apiUrl, title, toggleLoading }) {
 
       // Optionally, remove the report from the local state after successful deletion
       setReports(reports.filter((report) => report._id !== id));
+      setFilteredReports(filteredReports.filter((report) => report._id !== id));
       setShowModal(false); // Close the modal after deletion
     } catch (error) {
       alert(error.message);
@@ -74,12 +114,41 @@ function ReportList({ apiUrl, title, toggleLoading }) {
 
   return (
     <Container
-      className="p-4"
+      className="p-2"
       style={{ background: "rgba(255, 255, 255, 0.4)", borderRadius: "10px" }}
     >
-      <h3 className="mt-4">Reports Table</h3>
+      <h3 className="mt-1">Reports Table</h3>
 
       {error && <Alert variant="danger">Error fetching reports: {error}</Alert>}
+
+      {/* Search input */}
+      <Row className="mb-3">
+        <Col md={6}>
+          <Form.Group controlId="searchText">
+            <Form.Control
+              type="text"
+              placeholder="Search by Patient ID, Name, Doctor, or Test Name"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </Form.Group>
+        </Col>
+        <Col md={4}>
+          <Form.Group controlId="searchDate">
+            <Form.Control
+              type="date"
+              placeholder="Search by Date"
+              value={searchDate}
+              onChange={(e) => setSearchDate(e.target.value)}
+            />
+          </Form.Group>
+        </Col>
+        <Col md={2}>
+          <Button variant="secondary" onClick={handleResetSearch}>
+            Reset Search
+          </Button>
+        </Col>
+      </Row>
 
       <Table striped bordered hover>
         <thead>
@@ -94,8 +163,8 @@ function ReportList({ apiUrl, title, toggleLoading }) {
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(reports) && reports.length > 0 ? (
-            reports.map((report) => (
+          {Array.isArray(filteredReports) && filteredReports.length > 0 ? (
+            filteredReports.map((report) => (
               <tr key={report._id}>
                 <td>{report.patientId}</td>
                 <td>{report.patientName}</td>
@@ -186,13 +255,16 @@ function ReportList({ apiUrl, title, toggleLoading }) {
             <Row className="mt-1">
               <Col>
                 <strong>Result Report:</strong>{" "}
-                <a
-                  href={selectedReport.resultPdf}
-                  target="_blank"
-                  rel="noreferrer"
+                <Button
+                  variant="link"
+                  style={{ textDecoration: "none", paddingLeft: 0 }}
+                  onClick={() =>
+                    window.open(selectedReport.resultPdf, "_blank")
+                  }
                 >
-                  Download PDF
-                </a>
+                  <FaFilePdf style={{ marginRight: 5 }} />
+                  Open Report
+                </Button>
               </Col>
             </Row>
             <Row className="mt-1">

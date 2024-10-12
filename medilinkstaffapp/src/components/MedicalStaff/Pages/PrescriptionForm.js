@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Col, Row } from "react-bootstrap";
 import axios from "axios"; // For making API requests
-import "./Main.css";
-import PageTitle from "../../Main/PageTitle";
+import "../../Main/Main.css";
+import PageTitle from "../../Common/PageTitle";
+import { useNavigate } from "react-router-dom";
 
 const hardCodedDoctorId = "D0000001"; // Hardcoded doctor ID
 
@@ -18,6 +19,7 @@ function PrescriptionForm() {
     medications: [{ drugName: "", dosage: "", frequency: "", duration: "" }],
     remarks: "",
   });
+  const navigate = useNavigate();
 
   // Dummy patient data
   const dummyPatient = {
@@ -94,6 +96,7 @@ function PrescriptionForm() {
       // Handle successful response
       console.log("Prescription successfully submitted:", response.data);
       alert("Prescription submitted successfully!");
+      navigate("/medicalstaff/prescriptions"); // Redirect to the prescriptions page
 
       // Optionally, reset the form fields after successful submission
       setPrescription({
@@ -118,7 +121,9 @@ function PrescriptionForm() {
 
   return (
     <main id="main" className="main">
-      <PageTitle />
+      <PageTitle title="Add Prescription" url="/medicalstaff/addprescription" />
+      <h4>Add New Prescription</h4>
+      <hr />
       <Form onSubmit={handleSubmit}>
         <h5 className="mt-2">Patient Details</h5>
         <Row>

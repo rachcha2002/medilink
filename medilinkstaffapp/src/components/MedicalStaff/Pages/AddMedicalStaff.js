@@ -77,7 +77,7 @@ function AddMedicalStaff({ toggleLoading }) {
       if (response.status === 201) {
         const result = await response.json();
         alert("Employee Registered Successfully!");
-        navigate("/staff/hr/employee");
+        navigate("/hospitaladmin/medicalstaff");
       } else if (response.status === 400) {
         alert("Employee Registration Failed!", response.data.message);
       } else {
@@ -112,6 +112,7 @@ function AddMedicalStaff({ toggleLoading }) {
           </Button>
           Create Medical Staff Account
         </h3>
+        <hr />
 
         <Row className="mb-3">
           {/* Name */}

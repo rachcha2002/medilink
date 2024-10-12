@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Spinner, Alert, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import "./Main.css";
+import "../../Main/Main.css";
 import PageTitle from "../../Common/PageTitle";
 
 function MLTStaffList({ toggleLoading }) {
@@ -99,7 +99,7 @@ function MLTStaffList({ toggleLoading }) {
                     <Image
                       src={mlt.photoUrl}
                       alt={mlt.name}
-                      roundedCircle
+                      className="border border-10"
                       style={{ width: "50px", height: "50px" }}
                     />{" "}
                     {/* Display MLT staff image */}

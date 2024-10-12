@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import ImageUpload from "../../ImageUpload/ImageUpload";
 import { BsArrowLeft } from "react-icons/bs";
 import { BiCheckCircle, BiHide, BiShow } from "react-icons/bi";
-import "./Main.css";
+import "../../Main/Main.css";
 import PageTitle from "../../Common/PageTitle";
 
 function AddMLTStaff({ toggleLoading }) {

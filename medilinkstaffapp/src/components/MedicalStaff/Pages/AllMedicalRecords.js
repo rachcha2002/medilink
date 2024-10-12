@@ -1,7 +1,7 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import PageTitle from "../../Common/PageTitle";
-import "./Main.css";
+import "../../Main/Main.css";
 import MedicalRecords from "./MedicalRecords";
 
 function AllMedicalRecords({ type, toggleLoading }) {

@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ImageUpload from "../../MedicalStaff/Pages/ImageUpload";
 import { BsArrowLeft } from "react-icons/bs";
 import { BiHide, BiShow } from "react-icons/bi";
-import "./Main.css";
+import "../../Main/Main.css";
 import PageTitle from "../../Common/PageTitle";
 
 function UpdateMLTStaff({ toggleLoading }) {

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Table, Spinner, Alert, Button, Modal } from "react-bootstrap";
 import axios from "axios";
-import "./Main.css";
+import "../../Main/Main.css";
+
 import PageTitle from "../../Main/PageTitle";
 import { useNavigate } from "react-router-dom";
 
