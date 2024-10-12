@@ -1,25 +1,85 @@
-import React from 'react'
-import LocationInMap from '../../Components/Map/LocationInMap';
-import Contact4 from '../../Components/Contact/Contact4';
-import MultiplePageHeading from '../../Components/Hero/MultiplePageHeading';
+import React, { useState, useEffect } from 'react';
+import { UserLocationContext } from '../../context/UserLocationContext';
+//import MainHeader from '../../components/MainHeader';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css'; // Import Leaflet styles
+import MapComponent from '../../Components/Map/MapComponent';
 
-const heroData = {
-  bgImg: `/images/hero-bg5.jpg`,
-  title: `Stay connect with us`,
-  subTitle: `Our dedicated team is available 20/7.`
-}
+const LocationScreen = () => {
+  const [selectedFacility, setSelectedFacility] = useState('hospital');
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [locationList, setLocationList] = useState([]);
+  const [placeList, setPlaceList] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredLocationList, setFilteredLocationList] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
-const mapLocationURL =
-  'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d193175.30893635444!2d-74.373409!3d40.841927!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c3a82f1352d0dd%3A0x81d4f72c4435aab5!2sTroy%20Meadows%20Wetlands!5e0!3m2!1sen!2sbd!4v1701067943819!5m2!1sen!2sbd';
+  useEffect(() => {
+    (async () => {
+      try {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              setLocation({
+                coords: {
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                },
+              });
+            },
+            (error) => {
+              setErrorMsg('Could not fetch location');
+              console.log('Error getting location: ', error);
+            }
+          );
+        } else {
+          setErrorMsg('Geolocation is not supported by this browser.');
+        }
+      } catch (error) {
+        console.log('Error getting location: ', error);
+        setErrorMsg('Could not fetch location');
+      }
+    })();
+  }, []);
 
-const ContactPage = () => {
+
+  if (errorMsg) {
+    return <p>{errorMsg}</p>;
+  }
+
+  if (!location) {
+    return <p>Loading location...</p>;
+  }
+
   return (
-    <>
-      <MultiplePageHeading {...heroData} />
-      <Contact4 />
-      <LocationInMap data={mapLocationURL} />
-    </>
-  )
-}
+    <div className="bg-white h-full">
+     {/* <MainHeader title="Nearest Health Facilities" />*/}
+      <UserLocationContext.Provider value={{ location, setLocation }}>
+       <MapComponent />
+      </UserLocationContext.Provider>
+    </div>
+  );
+};
 
-export default ContactPage
+const styles = {
+  input: {
+    width: '100%',
+    padding: '10px',
+    marginBottom: '10px',
+    borderRadius: '5px',
+    border: '1px solid #6D31ED',
+  },
+  searchSection: {
+    margin: '10px',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  mapTitle: {
+    fontSize: '18px',
+    fontWeight: 'bold',
+    marginLeft: '10px',
+  },
+};
+
+export default LocationScreen;

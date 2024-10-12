@@ -1,4 +1,5 @@
 const Hospital = require("../../models/Hospital&Admin/HospitalSchema");
+const HospitalAdmin = require("../../models/Hospital&Admin/HospitalAdminSchema");
 const app = require("../../config/firebase");
 const {
   getStorage,
@@ -56,10 +57,14 @@ const upload = multer({ storage: multer.memoryStorage() }).single(
   
         console.log("File successfully uploaded to Firebase Storage.");
 
-         // Parse and format service details from request body
-      const serviceDetails = req.body.serviceDetails
-      ? JSON.parse(req.body.serviceDetails)
+         // Parse and format test details from request body
+      const tests = req.body.tests
+      ? JSON.parse(req.body.tests)
       : [];
+       // Parse and format scan details from request body
+       const scans = req.body.scans
+       ? JSON.parse(req.body.scans)
+       : [];
   
         // Create a new hospital document with the received form data and the image URL
         const newHospitalData = {
@@ -71,7 +76,8 @@ const upload = multer({ storage: multer.memoryStorage() }).single(
           hospitalType: req.body.hospitalType,
           imageURL: downloadURL, // Save the Firebase Storage URL
           hospitalType: req.body.hospitalType,
-          serviceDetails: serviceDetails,
+          tests: tests,
+          scans:scans
         };
   
         // Save the new hospital to MongoDB
@@ -127,7 +133,8 @@ exports.updateHospitalById = async (req, res) => {
       hospitalEmail,
       hospitalType,
       imageURL,
-      serviceDetails,
+      tests,
+      scans
     } = req.body;
 
     // Find hospital by ID and update
@@ -141,7 +148,8 @@ exports.updateHospitalById = async (req, res) => {
         hospitalEmail,
         hospitalType,
         imageURL,
-        serviceDetails, // Assuming serviceDetails will be an array of objects with heading and description
+        tests, // Assuming tests and scans will be an array of objects with heading
+        scans,
       },
       { new: true } // Return the updated document
     );
@@ -167,6 +175,25 @@ exports.deleteHospitalById = async (req, res) => {
     }
 
     res.status(200).json({ message: "Hospital deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Delete a Hospital by Registration ID
+exports.deleteHospitalByRegistrationID = async (req, res) => {
+  try {
+    // Find the hospital by registrationID and delete it
+    const registrationID = decodeURIComponent(req.params.registrationID);
+    const deletedHospital = await Hospital.findOneAndDelete({ registrationID });
+
+    if (!deletedHospital) {
+      return res.status(404).json({ error: "Hospital not found" });
+    }
+    // Delete related hospital admin(s)
+   const deletedAdmins = await HospitalAdmin.deleteMany({ hospitalName: deletedHospital.hospitalName });
+
+    res.status(200).json({ message: "Hospital and related admins deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
