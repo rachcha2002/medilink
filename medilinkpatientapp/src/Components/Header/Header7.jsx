@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Link as ScrollLink } from "react-scroll";
 import { useAuthContext } from "../../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { IMAGES } from "../../constants/images";
 
 
 const Header7 = ({ data }) => {
@@ -69,14 +70,20 @@ const Header7 = ({ data }) => {
       Logout
     </button>
 
-    {/* Profile Button */}
-    <button
-      className="st-btn st-style1 st-color1 st-size-medium"
+    {/* Profile Photo */}
+    <img
+      src={auth.user?.photoURL||IMAGES.profile} // Display profile photo if available, otherwise display default profile photo
+      alt="Profile"
+      className="rounded-circle"
+      style={{
+        width: "40px", 
+        height: "40px", 
+        borderRadius: "50%", 
+        marginLeft: "20px", 
+        cursor: "pointer"
+      }}
       onClick={() => { navigate("/patient/patientdetails") }} // Navigate to patient details
-      style={{ marginLeft: "20px" }} // Add space between buttons
-    >
-      Profile
-    </button>
+    />
   </div>
 ) : (
   <button
