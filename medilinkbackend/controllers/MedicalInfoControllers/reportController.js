@@ -248,3 +248,35 @@ exports.updateReportById = async (req, res) => {
       .json({ message: "Error updating report", error: error.message });
   }
 };
+
+// Get all laboratory reports by hospital
+exports.getLaboratoryReportsByHospital = async (req, res) => {
+  const { hospital } = req.params; // Get the hospital name from the request parameters
+  try {
+    const labReports = await LabReport.find({ hospital }); // Query lab reports by hospital
+    res.status(200).json({ labReports });
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: "Error fetching laboratory reports",
+        error: error.message,
+      });
+  }
+};
+
+// Get all radiology reports by hospital
+exports.getRadiologyReportsByHospital = async (req, res) => {
+  const { hospital } = req.params; // Get the hospital name from the request parameters
+  try {
+    const radiologyReports = await RadiologyReport.find({ hospital }); // Query radiology reports by hospital
+    res.status(200).json({ radiologyReports });
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: "Error fetching radiology reports",
+        error: error.message,
+      });
+  }
+};

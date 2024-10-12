@@ -3,36 +3,57 @@ const navList = [
     _id: 1,
     name: "Dashboard",
     icon: "bi bi-grid",
+    href: "/medicalstaff",
   },
   {
     _id: 2,
-    name: "Documents",
-    icon: "bi bi-menu-button-wide",
+    name: "Medical Records",
+    icon: "bi bi-journal-text",
     children: [
-      { _id: 21, name: "Customers", icon: "bi bi-circle" },
-      { _id: 22, name: "Suppliers", icon: "bi bi-circle" },
-      { _id: 23, name: "Logistic", icon: "bi bi-circle" },
+      {
+        _id: 20,
+        name: "Add Medical Records",
+        icon: "bi bi-circle",
+        href: "/medicalstaff/addmedicalrecord",
+      },
+      {
+        _id: 21,
+        name: "All Medical Records",
+        icon: "bi bi-circle",
+        href: "/medicalstaff/medicalrecords",
+      },
+      {
+        _id: 22,
+        name: "My Medical Records",
+        icon: "bi bi-circle",
+        href: "/medicalstaff/medicalrecordsbystaff",
+      },
     ],
   },
   {
     _id: 3,
-    name: "Forms",
-    icon: "bi bi-journal-text",
-  },
-  {
-    _id: 4,
-    name: "Tables",
-    icon: "bi bi-layout-text-window-reverse",
-  },
-  {
-    _id: 5,
-    name: "Charts",
-    icon: "bi bi-bar-chart",
-  },
-  {
-    _id: 6,
-    name: "Icons",
-    icon: "bi bi-gem",
+    name: "Prescriptions",
+    icon: "bi bi-card-text",
+    children: [
+      {
+        _id: 30,
+        name: "Add Prescription",
+        icon: "bi bi-circle",
+        href: "/medicalstaff/addprescription",
+      },
+      {
+        _id: 31,
+        name: "All Prescriptions",
+        icon: "bi bi-circle",
+        href: "/medicalstaff/prescriptions",
+      },
+      {
+        _id: 32,
+        name: "My Prescriptions",
+        icon: "bi bi-circle",
+        href: "/medicalstaff/prescriptionbystaff",
+      },
+    ],
   },
 ];
 

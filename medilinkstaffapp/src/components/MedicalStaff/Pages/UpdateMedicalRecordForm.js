@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Container, Alert } from "react-bootstrap";
-import { useParams } from "react-router-dom";
-import "./Main.css";
-import PageTitle from "../../Main/PageTitle";
+import { useNavigate, useParams } from "react-router-dom";
+import "../../Main/Main.css";
+import PageTitle from "../../Common/PageTitle";
+import { BsArrowLeft } from "react-icons/bs";
 
 function UpdateMedicalRecordForm() {
   const { id } = useParams(); // Get the record ID from the route params
@@ -26,6 +27,7 @@ function UpdateMedicalRecordForm() {
     createdBy: "",
     createdByPosition: "",
   });
+  const navigate = useNavigate();
 
   // Fetch the medical record by ID when the component mounts
   useEffect(() => {
@@ -102,6 +104,7 @@ function UpdateMedicalRecordForm() {
       const result = await response.json();
       setFeedbackMessage("Medical record updated successfully!");
       setErrorMessage(null);
+      navigate(-1); // Redirect to the medical records page
     } catch (error) {
       console.error("Failed to update the medical record:", error);
       setErrorMessage("Failed to update medical record. Please try again.");
@@ -112,7 +115,23 @@ function UpdateMedicalRecordForm() {
 
   return (
     <main id="main" className="main">
-      <PageTitle />
+      <PageTitle title="Update Records" url={`/updatemedicalrecords/${id}`} />
+
+      <Row className="align-items-center">
+        <Col xs="auto">
+          <Button
+            variant="dark"
+            onClick={() => navigate(-1)}
+            style={{ margin: "10px" }}
+          >
+            <BsArrowLeft /> Back
+          </Button>
+        </Col>
+        <Col>
+          <h3>Update Medical Records</h3>
+        </Col>
+      </Row>
+      <hr />
       <Container fluid style={{ backgroundColor: "rgba(255, 255, 255, 0.6)" }}>
         <Row>
           <Col md={12}>
