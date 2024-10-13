@@ -116,12 +116,12 @@ export default function HospitalDetails() {
   };
 
    // Function to handle hospital deletion
-   const handleDeleteClick = (registrationID) => {
+   const handleDeleteClick = (id) => {
     if (window.confirm("Are you sure you want to delete this hospital?")) {
       try{
-        const encodedID = encodeURIComponent(registrationID);
+        //const encodedID = encodeURIComponent(registrationID);
         // Send delete request to the backend
-      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/hospital/deletehospitalByID/${encodedID}`, {
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/hospital/deletehospital/${id}`, {
         method: "DELETE",
       })
       
@@ -130,7 +130,7 @@ export default function HospitalDetails() {
             alert("Hospital deleted successfully!");
             // Remove the hospital from the state after deletion
             setHospitalData((prevData) =>
-              prevData.filter((hospital) => hospital.registrationID !== registrationID)
+              prevData.filter((hospital) => hospital._id !== id)
             );
           } else {
             alert("Failed to delete the hospital.");
@@ -196,7 +196,7 @@ export default function HospitalDetails() {
                     <Button variant="primary" style={{ marginBottom: 2 }} onClick={() => handleShowDetails(hospital._id)}>
                       Details
                     </Button>
-                    <Button variant="danger" style={{ marginTop: 2 }} onClick={() => handleDeleteClick(hospital.registrationID)}>
+                    <Button variant="danger" style={{ marginTop: 2 }} onClick={() => handleDeleteClick(hospital._id)}>
                       Delete
                     </Button>
                   </center>

@@ -42,6 +42,10 @@ const HospitalSchema = new mongoose.Schema({
         }, 
         },
       ],
+      adminID: {
+        type: String,
+        required: true,
+      },
 }, { timestamps: true });
 
 const Hospital = mongoose.model("HospitalDetails", HospitalSchema);

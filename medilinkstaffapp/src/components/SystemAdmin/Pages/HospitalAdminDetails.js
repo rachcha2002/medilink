@@ -102,12 +102,15 @@ export default function HospitalAdminDetails() {
                   <center>
                     <Button 
                       variant="warning" 
-                      style={{ marginRight: 5 }} 
+                      style={{ marginBottom: 2, marginRight: 2 }} 
                       onClick={() => handleUpdateClick(admin)}
                     >
                       Update
                     </Button>
-                    <Button variant="danger" style={{ marginLeft:5 }} onClick={() => handleDeleteClick(admin._id)}>
+                    <Button 
+                    variant="danger"  
+                    //style={{ marginTop: 2 }}
+                    onClick={() => handleDeleteClick(admin._id)}>
                       Delete
                     </Button>
                   </center>

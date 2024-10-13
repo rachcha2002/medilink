@@ -81,8 +81,11 @@ export default function HospitalRegistration() {
     formData.append("tests", JSON.stringify(testDetails)); // Send test details as a string
     formData.append("scans", JSON.stringify(scanDetails)); // Send scan details as a string
     formData.append("hospitalImage", image); // Append the selected image
-    
-        
+
+    console.log("Admin ID: ", data.adminID);
+    formData.append("adminID", data.adminID);
+
+
         try {
           // API call to add hospital information
           const hospitalResponse = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/hospital/addhospital`, formData, {
@@ -106,6 +109,7 @@ export default function HospitalRegistration() {
       
 
     
+
           // API call to add hospital admin information
           await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/hospitaladmin/addhospitaladmin`, adminData);
           alert("Hospital registered successfully");

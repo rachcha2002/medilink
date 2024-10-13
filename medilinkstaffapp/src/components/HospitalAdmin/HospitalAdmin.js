@@ -19,6 +19,7 @@ import AddMedicalStaff from "../MedicalStaff/Pages/AddMedicalStaff";
 import AddMLTStaff from "../MLT/Pages/AddMLTStaff";
 import UpdateMLTStaff from "../MLT/Pages/UpdateMLTStaff";
 import UpdateMedicalStaff from "../MedicalStaff/Pages/UpdateMedicalStaff";
+import HospitalRecords from "./HospitalRecords/HospitalRecords";
 
 const HospitalAdmin = ({ toggleLoading }) => {
   return (
@@ -64,6 +65,12 @@ const HospitalAdmin = ({ toggleLoading }) => {
           <Route
             path="updatemltstaff/:id"
             element={<UpdateMLTStaff toggleLoading={toggleLoading} />}
+          />
+
+        {/* Hospital Routes */}
+          <Route
+            path="hospitaldetails"
+            element={<HospitalRecords toggleLoading={toggleLoading} />}
           />
         </Routes>
       </>

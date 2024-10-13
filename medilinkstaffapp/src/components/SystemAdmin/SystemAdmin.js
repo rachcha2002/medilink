@@ -6,6 +6,7 @@ import PageTitle from "../Common/PageTitle";
 import HospitalRegistration from "./Pages/HospitalRegistration";
 import HospitalDetails from "./Pages/HospitalDetails";
 import HospitalAdminDetails from "./Pages/HospitalAdminDetails";
+import SystemAdminDashboard from "./DashBoard/SystemAdminDashboard";
 
 const SystemAdmin = ({ toggleLoading }) => {
  
@@ -28,7 +29,7 @@ const SystemAdmin = ({ toggleLoading }) => {
         element={<HospitalAdminDetails toggleLoading={toggleLoading} />}
         />
       </Routes>
-    </>
+      </>
   );
 };
 
