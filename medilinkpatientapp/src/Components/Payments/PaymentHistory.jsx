@@ -24,7 +24,7 @@ const PaymentHistory = () => {
         console.error('Error fetching payment history:', error);
         setLoading(false);
       });
-  }, []);
+  }, [user.patientID]);
 
   const handleShowModal = (payment) => {
     setSelectedPayment(payment);
@@ -133,6 +133,16 @@ const PaymentHistory = () => {
                 </li>
               ))}
             </ul>
+
+            {/* Show download URL if payment is paid */}
+            {selectedPayment.paymentStatus === 'Paid' && selectedPayment.downloadURL && (
+              <p>
+                <strong>Invoice:</strong>{' '}
+                <a href={selectedPayment.downloadURL} target="_blank" rel="noopener noreferrer">
+                  Download Invoice
+                </a>
+              </p>
+            )}
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleCloseModal}>
