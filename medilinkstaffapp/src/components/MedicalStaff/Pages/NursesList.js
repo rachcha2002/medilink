@@ -1,22 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Spinner, Alert, Form } from "react-bootstrap";
 import axios from "axios";
+import { useAuthContext } from "../../../context/AuthContext"; // Assuming you have AuthContext
 
 function NursesList({ toggleLoading }) {
+  const { user } = useAuthContext(); // Get user from context
   const [nurses, setNurses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const [filteredNurses, setFilteredNurses] = useState([]); // State for filtered nurses
+  const [hospitalName, setHospitalName] = useState(""); // Hospital name from user data
+  const [isUserLoading, setIsUserLoading] = useState(true); // Loading state for user data
 
-  // Fetch nurses data
+  // Wait for user data to load and assign hospital name
+  useEffect(() => {
+    if (user && user.hospitalName) {
+      setHospitalName(user.hospitalName);
+      setIsUserLoading(false); // Mark user data as loaded
+    }
+  }, [user]);
+
+  // Fetch nurses data when hospitalName is assigned
   useEffect(() => {
     const fetchNurses = async () => {
+      if (!hospitalName) return; // Wait until hospitalName is assigned
+
       try {
         setLoading(true);
         const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/staffroutes/nurses`
-        ); // Make sure the endpoint matches the API
+          `${process.env.REACT_APP_BACKEND_URL}/api/staffroutes/nurses/hospital/${hospitalName}`
+        );
         setNurses(response.data);
         setFilteredNurses(response.data); // Set filtered nurses initially
         setLoading(false);
@@ -26,8 +40,10 @@ function NursesList({ toggleLoading }) {
       }
     };
 
-    fetchNurses();
-  }, []);
+    if (!isUserLoading) {
+      fetchNurses(); // Fetch nurses only after user data is loaded
+    }
+  }, [hospitalName, isUserLoading]);
 
   // Handle search query changes and filter nurses
   useEffect(() => {
@@ -71,6 +87,15 @@ function NursesList({ toggleLoading }) {
     // Redirect to update nurse form or open a modal
     window.location.href = `/hospitaladmin/updatemedicalstaff/Nurse/${nurseId}`; // Adjust this as per your routing
   };
+
+  // Wait until user data is loaded
+  if (isUserLoading) {
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading user data...</span>
+      </Spinner>
+    );
+  }
 
   return (
     <div className="container">

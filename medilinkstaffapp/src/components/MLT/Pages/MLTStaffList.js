@@ -3,19 +3,33 @@ import { Table, Button, Spinner, Alert, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "../../Main/Main.css";
 import PageTitle from "../../Common/PageTitle";
+import { useAuthContext } from "../../../context/AuthContext"; // Assuming you have AuthContext
 
 function MLTStaffList({ toggleLoading }) {
+  const { user } = useAuthContext(); // Get user from context
   const [mltStaff, setMltStaff] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [hospitalName, setHospitalName] = useState(""); // Hospital from user context
+  const [isUserLoading, setIsUserLoading] = useState(true); // User loading state
   const navigate = useNavigate();
 
+  // Wait for user data to load and set hospital name
+  useEffect(() => {
+    if (user && user.hospitalName) {
+      setHospitalName(user.hospitalName);
+      setIsUserLoading(false); // Mark user as loaded
+    }
+  }, [user]);
+
+  // Fetch MLT staff based on hospital once the hospital name is set
   useEffect(() => {
     const fetchMLTStaff = async () => {
+      if (!hospitalName) return; // Only fetch if hospital name is set
       try {
         setLoading(true);
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/staffroutes/mltstaff`
+          `${process.env.REACT_APP_BACKEND_URL}/api/staffroutes/mltstaff/hospital/${hospitalName}`
         );
         const data = await response.json();
         setMltStaff(data);
@@ -26,8 +40,10 @@ function MLTStaffList({ toggleLoading }) {
       }
     };
 
-    fetchMLTStaff();
-  }, []);
+    if (!isUserLoading) {
+      fetchMLTStaff(); // Fetch MLT staff only after user is fully loaded
+    }
+  }, [hospitalName, isUserLoading]);
 
   const handleDelete = async (mltId) => {
     if (window.confirm("Are you sure you want to delete this MLT staff?")) {
@@ -55,9 +71,20 @@ function MLTStaffList({ toggleLoading }) {
     navigate(`/hospitaladmin/updatemltstaff/${mltId}`);
   };
 
+  // Show loading spinner while user data is being fetched
+  if (isUserLoading) {
+    return (
+      <main id="main" className="main">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </main>
+    );
+  }
+
   return (
     <main id="main" className="main">
-      <PageTitle title="MLT Satff" url="/hospitaladmin/mltstaff" />
+      <PageTitle title="MLT Staff" url="/hospitaladmin/mltstaff" />
       <Button
         variant="dark"
         onClick={() => navigate("/hospitaladmin/addmltstaff")}

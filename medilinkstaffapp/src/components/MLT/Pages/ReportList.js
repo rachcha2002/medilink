@@ -13,8 +13,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import "../../Main/Main.css";
 import { FaFilePdf } from "react-icons/fa";
+import { useAuthContext } from "../../../context/AuthContext"; // Assuming you have AuthContext
 
 function ReportList({ apiUrl, title, toggleLoading }) {
+  const { user } = useAuthContext(); // Get user from context
   const [reports, setReports] = useState([]); // State to hold combined lab and radiology reports
   const [filteredReports, setFilteredReports] = useState([]); // State for filtered reports
   const [showModal, setShowModal] = useState(false);
@@ -22,7 +24,17 @@ function ReportList({ apiUrl, title, toggleLoading }) {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState(""); // State for search input
   const [searchDate, setSearchDate] = useState(""); // State for date selector
+  const [mltId, setMltId] = useState(null); // State to hold mltId
+  const [isUserLoading, setIsUserLoading] = useState(true); // Loading state for user data
   const navigate = useNavigate();
+
+  // Wait for user to be fully loaded and assign mltId
+  useEffect(() => {
+    if (user && user.mltId) {
+      setMltId(user.mltId);
+      setIsUserLoading(false); // Set loading state to false once user is loaded
+    }
+  }, [user]);
 
   // Fetch reports from the passed API endpoint
   useEffect(() => {
@@ -57,19 +69,24 @@ function ReportList({ apiUrl, title, toggleLoading }) {
   useEffect(() => {
     const filtered = reports.filter((report) => {
       const isTextMatch = [
-        report.patientId,
-        report.patientName,
-        report.doctor,
-        report.testName,
+        report.patientId || "", // Provide a fallback empty string if the value is undefined
+        report.patientName || "",
+        report.doctor || "",
+        report.testName || "",
+        report.laboratoristId || "",
+        report.radiologistId || "",
       ].some((field) =>
         field.toString().toLowerCase().includes(searchQuery.toLowerCase())
       );
+
       const isDateMatch = searchDate
         ? new Date(report.date).toLocaleDateString() ===
           new Date(searchDate).toLocaleDateString()
         : true;
+
       return isTextMatch && isDateMatch;
     });
+
     setFilteredReports(filtered);
   }, [searchQuery, searchDate, reports]);
 
@@ -94,7 +111,7 @@ function ReportList({ apiUrl, title, toggleLoading }) {
   const handleDelete = async (id, type) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/medicalinfo/reports/${type}/${id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/medicalinfo/reports/${type}/${id}`,
         {
           method: "DELETE",
         }
@@ -112,6 +129,15 @@ function ReportList({ apiUrl, title, toggleLoading }) {
     }
   };
 
+  // Wait until user data (mltId) is loaded
+  if (isUserLoading) {
+    return (
+      <Container>
+        <h4>Loading...</h4>
+      </Container>
+    );
+  }
+
   return (
     <Container
       className="p-2"
@@ -127,7 +153,7 @@ function ReportList({ apiUrl, title, toggleLoading }) {
           <Form.Group controlId="searchText">
             <Form.Control
               type="text"
-              placeholder="Search by Patient ID, Name, Doctor, or Test Name"
+              placeholder="Search by Patient ID, Name, Doctor, Test Name, or ID"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -295,24 +321,33 @@ function ReportList({ apiUrl, title, toggleLoading }) {
             </Row>
           </Modal.Body>
           <Modal.Footer>
-            <Button
-              variant="warning"
-              onClick={() =>
-                navigate(
-                  `/mltstaff/reportupdate/${selectedReport.reportType}/${selectedReport._id}`
-                )
-              } // Navigates to the update form
-            >
-              Update
-            </Button>
-            <Button
-              variant="danger"
-              onClick={() =>
-                handleDelete(selectedReport._id, selectedReport.reportType)
-              }
-            >
-              Delete
-            </Button>
+            {mltId &&
+              (selectedReport.laboratoristId === mltId ||
+                selectedReport.radiologistId === mltId) && (
+                <>
+                  <Button
+                    variant="warning"
+                    onClick={() =>
+                      navigate(
+                        `/mltstaff/reportupdate/${selectedReport.reportType}/${selectedReport._id}`
+                      )
+                    } // Navigates to the update form
+                  >
+                    Update
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={() =>
+                      handleDelete(
+                        selectedReport._id,
+                        selectedReport.reportType
+                      )
+                    }
+                  >
+                    Delete
+                  </Button>
+                </>
+              )}
           </Modal.Footer>
         </Modal>
       )}

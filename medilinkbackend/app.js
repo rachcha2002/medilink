@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const connectDB = require("./config/db");
 const helmet = require("helmet");
-const axios = require('axios');
+const axios = require("axios");
 
 const staffRoutes = require("./routes/staffRoutes");
 const medicalInfoRoutes = require("./routes/medicalInfoRoutes");
@@ -30,17 +30,15 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: [
-          "'self'", 
-          "https://sandbox.payhere.lk",  // Allow PayHere sandbox scripts
-          "https://www.google-analytics.com" // Allow Google Analytics scripts
+          "'self'",
+          "https://sandbox.payhere.lk", // Allow PayHere sandbox scripts
+          "https://www.google-analytics.com", // Allow Google Analytics scripts
         ],
         connectSrc: ["'self'", "https://sandbox.payhere.lk"],
         imgSrc: ["'self'", "data:"], // Allow images from your domain and data URIs
@@ -50,12 +48,10 @@ app.use(
   })
 );
 
-
-
 // Routes
 app.use("/api/staffroutes", staffRoutes);
 
-app.use("/api/staffprofile",staffProfileRoutes);
+app.use("/api/staffprofile", staffProfileRoutes);
 
 app.use("/api/medicalinfo", medicalInfoRoutes);
 
@@ -65,11 +61,9 @@ app.use("/api/hospital", hospitalRoutes);
 
 app.use("/api/hospitaladmin", hospitaladminRoutes);
 
-
 app.use("/api/patients", patientRoutes);
 
 app.use("/api/appointment", appointmentRoutes);
-
 
 // Custom error handling middleware
 
