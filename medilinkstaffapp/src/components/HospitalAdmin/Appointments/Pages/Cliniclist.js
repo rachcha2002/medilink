@@ -17,7 +17,7 @@ function Cliniclist() {
       if (!hospitalId) return; 
       const fetchAppointments = async () => {
         try {
-          const response = await axios.get(`http://localhost:5000/api/appointment/hospitalappointments/clinic/${hospitalId}`);
+          const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/appointment/hospitalappointments/clinic/${hospitalId}`);
           const allAppointments = response.data;
           
           // Filter appointments based on selected tab (status)

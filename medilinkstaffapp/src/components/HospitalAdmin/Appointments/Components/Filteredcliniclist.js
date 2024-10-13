@@ -70,7 +70,7 @@ function Filteredcliniclist({ appointments }) {
             if (payment) {
                 console.log('Approving appointment:', selectedAppointment._id);
                 try {
-                    const response = await fetch(`http://localhost:5000/api/appointment/approveappointment/clinic/${selectedAppointment._id}`, {
+                    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/appointment/approveappointment/clinic/${selectedAppointment._id}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
@@ -95,7 +95,7 @@ function Filteredcliniclist({ appointments }) {
         if (selectedAppointment) {
             console.log('Rejecting appointment:', selectedAppointment._id);
             try {
-                const response = await fetch(`http://localhost:5000/api/appointment/rejectappointment/clinic/${selectedAppointment._id}`, {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/appointment/rejectappointment/clinic/${selectedAppointment._id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'

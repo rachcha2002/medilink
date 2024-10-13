@@ -59,7 +59,7 @@ const Appointment4 = () => {
     };
     console.log(dataToSubmit);
 
-    const res = await fetch("http://localhost:5000/api/appointment/makeappointment", {
+    const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/appointment/makeappointment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -87,7 +87,7 @@ const Appointment4 = () => {
 
   const fetchHospitalsByType = async (type) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/appointment/gethospitalsbytype/${type}`);
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/appointment/gethospitalsbytype/${type}`);
       const data = await response.json();
       if (data) {
         setHospitalList(data);
@@ -129,7 +129,7 @@ const Appointment4 = () => {
 
   const fetchHospitalScansAndTests = async (hospitalId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/hospital/gethospital/${hospitalId}`);
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/hospital/gethospital/${hospitalId}`);
       const data = await response.json();
       if (data) {
           setScans(data.tests);
@@ -306,4 +306,3 @@ const Appointment4 = () => {
 };
 
 export default Appointment4;
-//const response = await fetch(`http://localhost:5000/api/hospital/gethospital/${hospitalId}`);

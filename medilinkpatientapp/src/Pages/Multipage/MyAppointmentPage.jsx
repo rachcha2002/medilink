@@ -25,7 +25,7 @@ const MyAppointmentPage = () => {
 
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/appointment/getappointmentlist/${userid}`);
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/appointment/getappointmentlist/${userid}`);
         console.log('API Response:', response.data);
 
         // Ensure response data has the expected properties

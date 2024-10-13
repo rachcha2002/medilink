@@ -46,7 +46,7 @@ const Appointment3 = () => {
     };
     console.log(dataToSubmit);
 
-    const res = await fetch("http://localhost:5000/api/appointment/makeappointment", {
+    const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/appointment/makeappointment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -73,7 +73,7 @@ const Appointment3 = () => {
 
   const fetchHospitalsByType = async (type) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/appointment/gethospitalsbytype/${type}`);
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/appointment/gethospitalsbytype/${type}`);
       const data = await response.json();
       if (data) {
         setHospitalList(data);
@@ -88,7 +88,7 @@ const Appointment3 = () => {
 
   const fetchDoctorsByHospital = async (hospitalName) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/appointment/getdoctorbyhospital/${hospitalName}`);
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/appointment/getdoctorbyhospital/${hospitalName}`);
       const data = await response.json();
       if (data) {
         setDoctorList(data);
@@ -105,7 +105,7 @@ const Appointment3 = () => {
 
   const fetchDoctorsBySpeciality = async (hospitalName, speciality) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/appointment/getdoctorbyspeciality/${hospitalName}/${speciality}`);
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/appointment/getdoctorbyspeciality/${hospitalName}/${speciality}`);
       const data = await response.json();
       if (data) {
         setDoctorList(data);
