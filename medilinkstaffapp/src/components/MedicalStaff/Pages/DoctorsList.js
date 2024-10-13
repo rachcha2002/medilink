@@ -1,21 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Spinner, Alert, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom"; // Use this to handle the update navigation
+import { useAuthContext } from "../../../context/AuthContext"; // Assuming you have AuthContext
 
 function DoctorsList({ toggleLoading }) {
+  const { user } = useAuthContext(); // Fetch user data from context
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const [filteredDoctors, setFilteredDoctors] = useState([]); // State for filtered doctors
+  const [hospitalName, setHospitalName] = useState(""); // Hospital name from user data
+  const [isUserLoading, setIsUserLoading] = useState(true); // Loading state for user data
   const navigate = useNavigate(); // Initialize navigation for update
+
+  // Wait for user data to load and assign hospital name
+  useEffect(() => {
+    if (user && user.hospitalName) {
+      setHospitalName(user.hospitalName);
+      setIsUserLoading(false); // Mark user data as loaded
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchDoctors = async () => {
+      if (!hospitalName) return; // Wait until hospitalName is assigned
+
       try {
         setLoading(true);
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/staffroutes/doctors`
+          `${process.env.REACT_APP_BACKEND_URL}/api/staffroutes/doctors/hospital/${hospitalName}`
         );
         const data = await response.json();
         setDoctors(data);
@@ -27,8 +41,10 @@ function DoctorsList({ toggleLoading }) {
       }
     };
 
-    fetchDoctors();
-  }, []);
+    if (!isUserLoading) {
+      fetchDoctors(); // Fetch doctors only after user data is loaded
+    }
+  }, [hospitalName, isUserLoading]);
 
   // Handle search query changes and filter the doctors
   useEffect(() => {
@@ -73,6 +89,14 @@ function DoctorsList({ toggleLoading }) {
     // Navigate to the update page for the selected doctor
     navigate(`/hospitaladmin/updatemedicalstaff/Doctor/${doctorId}`);
   };
+
+  if (isUserLoading) {
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading user data...</span>
+      </Spinner>
+    );
+  }
 
   return (
     <div className="container">

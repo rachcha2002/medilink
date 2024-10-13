@@ -30,7 +30,7 @@ function UpdateReportForm() {
     const fetchReport = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/medicalinfo/reports/page/${reportType}/${reportId}`
+          `${process.env.REACT_APP_BACKEND_URL}/api/medicalinfo/reports/page/${reportType}/${reportId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -90,7 +90,7 @@ function UpdateReportForm() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `http://localhost:5000/api/medicalinfo/reports/${reportType}/${reportId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/medicalinfo/reports/${reportType}/${reportId}`,
         {
           method: "PUT",
           body: formData,

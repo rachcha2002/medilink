@@ -1,62 +1,95 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Container, Alert } from "react-bootstrap";
 import PageTitle from "../../Common/PageTitle";
 import "../../Main/Main.css";
 import { useNavigate } from "react-router-dom";
-
-// Dummy patient data
-const patientData = {
-  P12345: { name: "John Doe", age: 35, contact: "1234567890" },
-  P1002: { name: "Jane Smith", age: 29, contact: "0987654321" },
-  P1003: { name: "Michael Johnson", age: 42, contact: "1122334455" },
-};
+import { useAuthContext } from "../../../context/AuthContext"; // Assuming you have AuthContext
 
 function CreateReportForm() {
+  const { user } = useAuthContext(); // Get user from context
   const [file, setFile] = useState(null);
   const [feedbackMessage, setFeedbackMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  const [isUserLoading, setIsUserLoading] = useState(true); // Loading state for user data
   const [patientId, setPatientId] = useState("");
   const [patientName, setPatientName] = useState("");
   const [age, setAge] = useState("");
   const [patientContact, setPatientContact] = useState("");
-  const [reportType, setReportType] = useState("laboratory");
+  const [reportType, setReportType] = useState(""); // Set based on user subject
+  const [doctor, setDoctor] = useState("");
+  const [labName, setLabName] = useState("");
+  const [labContact, setLabContact] = useState("");
+  const [testName, setTestName] = useState("");
+  const [remarks, setRemarks] = useState("");
+  const navigate = useNavigate();
+
+  // Function to calculate age based on dateOfBirth
+  const calculateAge = (dateOfBirth) => {
+    const dob = new Date(dateOfBirth);
+    const diffMs = Date.now() - dob.getTime();
+    const ageDate = new Date(diffMs);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  };
 
   // Handle file selection and validation
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
-      // Validate file type (PDF) and size (max 5MB)
       if (selectedFile.type !== "application/pdf") {
         setErrorMessage("Please upload a valid PDF file.");
         setFile(null);
         return;
       }
-
       if (selectedFile.size > 5 * 1024 * 1024) {
         setErrorMessage("File size should be less than 5 MB.");
         setFile(null);
         return;
       }
-
-      setErrorMessage(null); // Clear error if validation passes
+      setErrorMessage(null);
       setFile(selectedFile);
     }
   };
 
-  // Auto-fill patient details when patient ID is entered
-  const handlePatientIdChange = (event) => {
+  // Wait for user to be fully loaded and assign reportType
+  useEffect(() => {
+    if (user) {
+      if (user && user.subject === "Laboratory") {
+        setReportType("laboratory"); // Get report type from user context
+      } else if (user && user.subject === "Radiology") {
+        setReportType("radiology"); // Get report type from user context
+      }
+      setIsUserLoading(false); // Set user loading state to false once user is loaded
+    }
+  }, [user]);
+
+  // Fetch patient details from backend when patient ID is entered
+  const handlePatientIdChange = async (event) => {
     const enteredPatientId = event.target.value;
     setPatientId(enteredPatientId);
 
-    const patient = patientData[enteredPatientId];
-    if (patient) {
-      setPatientName(patient.name);
-      setAge(patient.age);
-      setPatientContact(patient.contact);
+    if (enteredPatientId) {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/patients/getbyid/${enteredPatientId}`
+        );
+        if (!response.ok) {
+          throw new Error("Patient not found");
+        }
+        const patient = await response.json();
+        setPatientName(patient.name);
+        setPatientContact(patient.phone);
+
+        // Calculate age from dateOfBirth
+        const derivedAge = calculateAge(patient.dateOfBirth);
+        setAge(derivedAge);
+      } catch (error) {
+        setErrorMessage("Error fetching patient details. Please try again.");
+        setPatientName("");
+        setAge("");
+        setPatientContact("");
+      }
     } else {
-      // Reset patient fields if ID doesn't match
       setPatientName("");
       setAge("");
       setPatientContact("");
@@ -71,33 +104,34 @@ function CreateReportForm() {
       return;
     }
 
-    const formData = new FormData(event.currentTarget);
-    //formData.append("resultPdf", file);
+    const formData = new FormData();
+    formData.append("reportType", reportType);
+    formData.append("patientId", patientId);
     formData.append("patientName", patientName);
     formData.append("age", age);
     formData.append("patientContact", patientContact);
+    formData.append("doctor", doctor);
+    formData.append("hospital", user.hospital); // From user context
+    formData.append("labName", labName);
+    formData.append("labContact", labContact);
+    formData.append("testName", testName);
+    formData.append("remarks", remarks);
+    formData.append("date", new Date().toISOString()); // Current date
+    formData.append("resultPdf", file);
 
-    // Add current date
-    const currentDate = new Date().toISOString();
-    formData.append("date", currentDate);
-
-    // Add laboratorist/radiologist details based on report type
+    // Add laboratorist/radiologist details based on the reportType
     if (reportType === "laboratory") {
-      formData.append("laboratoristId", "LAB123");
-      formData.append("laboratoristName", "Dr. Lab Specialist");
+      formData.append("laboratoristId", user.mltId);
+      formData.append("laboratoristName", user.name);
     } else if (reportType === "radiology") {
-      formData.append("radiologistId", "RAD456");
-      formData.append("radiologistName", "Dr. Radiology Expert");
-    }
-
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
+      formData.append("radiologistId", user.mltId);
+      formData.append("radiologistName", user.name);
     }
 
     try {
       setIsLoading(true);
       const response = await fetch(
-        "http://localhost:5000/api/medicalinfo/reports/createWithFile",
+        `${process.env.REACT_APP_BACKEND_URL}/api/medicalinfo/reports/createWithFile`,
         {
           method: "POST",
           body: formData,
@@ -109,21 +143,27 @@ function CreateReportForm() {
       }
 
       const result = await response.json();
-      console.log(result);
       setFeedbackMessage("Report created successfully!");
       setErrorMessage(null);
 
-      // Reset form and clear file
       setFile(null);
-      event.target.reset(); // Reset form fields
+      event.target.reset();
       navigate("/mltstaff/reportlist");
     } catch (error) {
-      console.error("Failed to submit the form:", error);
       setErrorMessage("Failed to create report. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Wait until user data is loaded
+  if (isUserLoading) {
+    return (
+      <main id="main" className="main">
+        <h4>Loading...</h4>
+      </main>
+    );
+  }
 
   return (
     <main id="main" className="main">
@@ -139,23 +179,8 @@ function CreateReportForm() {
             <hr />
 
             <Form onSubmit={handleSubmit}>
-              <Row>
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Report Type</Form.Label>
-                    <Form.Control
-                      as="select"
-                      name="reportType"
-                      value={reportType}
-                      onChange={(e) => setReportType(e.target.value)}
-                      required
-                    >
-                      <option value="laboratory">Laboratory</option>
-                      <option value="radiology">Radiology</option>
-                    </Form.Control>
-                  </Form.Group>
-                </Col>
-              </Row>
+              {/* Report Type is automatically set based on user context */}
+              <h5>Report Type: {reportType}</h5>
 
               {/* Patient Information Section */}
               <h5>Patient Information</h5>
@@ -169,12 +194,8 @@ function CreateReportForm() {
                       value={patientId}
                       onChange={handlePatientIdChange}
                       required
-                      //pattern="\d+"
                       placeholder="Enter Patient ID"
                     />
-                    <Form.Text className="text-muted">
-                      Patient ID must be numeric.
-                    </Form.Text>
                   </Form.Group>
                 </Col>
                 <Col md={6}>
@@ -230,19 +251,10 @@ function CreateReportForm() {
                     <Form.Control
                       type="text"
                       name="doctor"
+                      value={doctor}
+                      onChange={(e) => setDoctor(e.target.value)}
                       required
                       placeholder="Enter Doctor Name"
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Hospital</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="hospital"
-                      required
-                      placeholder="Enter Hospital Name"
                     />
                   </Form.Group>
                 </Col>
@@ -255,6 +267,8 @@ function CreateReportForm() {
                     <Form.Control
                       type="text"
                       name="labName"
+                      value={labName}
+                      onChange={(e) => setLabName(e.target.value)}
                       required
                       placeholder="Enter Lab Name"
                     />
@@ -266,6 +280,8 @@ function CreateReportForm() {
                     <Form.Control
                       type="text"
                       name="labContact"
+                      value={labContact}
+                      onChange={(e) => setLabContact(e.target.value)}
                       required
                       pattern="^\d{10}$"
                       placeholder="Enter Lab Contact (10 digits)"
@@ -286,6 +302,8 @@ function CreateReportForm() {
                     <Form.Control
                       type="text"
                       name="testName"
+                      value={testName}
+                      onChange={(e) => setTestName(e.target.value)}
                       required
                       placeholder="Enter Test Name"
                     />
@@ -298,6 +316,8 @@ function CreateReportForm() {
                       as="textarea"
                       rows={3}
                       name="remarks"
+                      value={remarks}
+                      onChange={(e) => setRemarks(e.target.value)}
                       placeholder="Enter any remarks"
                     />
                   </Form.Group>

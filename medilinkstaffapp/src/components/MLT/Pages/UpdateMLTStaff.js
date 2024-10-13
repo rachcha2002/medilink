@@ -88,7 +88,7 @@ function UpdateMLTStaff({ toggleLoading }) {
 
       if (response.status === 200) {
         alert("MLT Staff updated successfully!");
-        navigate("/staff/hr/mlt");
+        navigate("/hospitaladmin/mltstaff");
       } else {
         const errorData = await response.json();
         alert("Update failed:", errorData.message);

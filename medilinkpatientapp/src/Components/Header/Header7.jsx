@@ -53,6 +53,8 @@ const Header7 = ({ data }) => {
                   </g>
                 </svg>
                 <span style={{ marginRight: "20px" }}>+94 71 152 1161</span>
+
+
               </li>
             </ul>
           </div>
@@ -112,6 +114,14 @@ const Header7 = ({ data }) => {
                       </li>
                     </ul>
                   </li>
+                  <li className="menu-item-has-children">
+                    <Link
+                      to="health/healthsummery"
+                      onClick={() => setMobileToggle(false)}
+                    >
+                      Health
+                    </Link>
+                  </li>
                   <li>
                     <Link to="contact" onClick={() => setMobileToggle(false)}>
                       Contact
@@ -128,6 +138,7 @@ const Header7 = ({ data }) => {
                 </div>
               </div>
             </div>
+
 
             <div className="st-main-header-right">
               {auth.isLoggedIn ? (
@@ -170,6 +181,7 @@ const Header7 = ({ data }) => {
                 </button>
               )}
             </div>
+
           </div>
         </div>
       </div>
