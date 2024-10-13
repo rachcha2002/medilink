@@ -3,16 +3,21 @@ import {Tab,Container,Tabs} from 'react-bootstrap';
 import PageTitle from "../../../Common/PageTitle";
 import Filteredcliniclist from "../Components/Filteredcliniclist"; // Assuming this is the table component to display records
 import axios from 'axios';
+import { useAuthContext } from "../../../../context/AuthContext"; 
 
 function Cliniclist() {
     const [selectedTab, setSelectedTab] = useState('pending');
     const [appointments, setAppointments] = useState([]);
+    const auth= useAuthContext();
+    const hospitalId = auth.user?.registrationID || '';
+    
   
     // Fetch data whenever the tab (status) changes
     useEffect(() => {
+      if (!hospitalId) return; 
       const fetchAppointments = async () => {
         try {
-          const response = await axios.get('http://localhost:5000/api/appointment/hospitalappointments/clinic/H001');
+          const response = await axios.get(`http://localhost:5000/api/appointment/hospitalappointments/clinic/${hospitalId}`);
           const allAppointments = response.data;
           
           // Filter appointments based on selected tab (status)
@@ -24,7 +29,7 @@ function Cliniclist() {
       };
   
       fetchAppointments();
-    }, [selectedTab]); // Re-fetch whenever `selectedTab` changes
+    }, [selectedTab,hospitalId]); // Re-fetch whenever `selectedTab` changes
   
     return (
       <main id="main" className="main">

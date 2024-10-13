@@ -50,7 +50,7 @@ const PayOnline = () => {
     <section
       id="pay-online"
       className="st-shape-wrap st-gray-bg"
-      style={{ marginBottom: billDetails ? '50px' : '300px' }}
+      style={{ marginBottom: billDetails ? '50px' : '100px' }}
     >
       <div className="st-shape4">
         <img src="/shape/section_shape.png" alt="/shape/section_shape.png" />

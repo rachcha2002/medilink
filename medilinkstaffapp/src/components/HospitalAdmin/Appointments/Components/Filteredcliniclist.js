@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Table, Button, Modal, Badge, Form, Row, Col } from 'react-bootstrap';
 import html2pdf from "html2pdf.js";
 import image from "../../../../images/logo.png";
+import { useAuthContext } from "../../../../context/AuthContext"; 
+import { submitBilling } from '../../../../Service/billService';
 
 function Filteredcliniclist({ appointments }) {
     const [show, setShow] = useState(false);
@@ -9,6 +11,10 @@ function Filteredcliniclist({ appointments }) {
     const [searchName, setSearchName] = useState(''); // Search by patient/doctor name
     const [searchDate, setSearchDate] = useState(''); // Search by date
     const [searchTime, setSearchTime] = useState(''); // Search by time
+    const auth = useAuthContext();
+    const hospital = auth.user?.hospitalName || '';
+    const type = 'clinic';
+
 
     const handleClose = () => setShow(false);
     const handleShow = (appointment) => {
@@ -23,9 +29,10 @@ function Filteredcliniclist({ appointments }) {
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
               <div>
                 <img src="${image}" alt="Hospital Logo" style="width: 150px;">
+                <h4 style="color: #333; margin: 0;">${hospital}</h4>
+                <h5 style="color: #555; margin: 0;">Clinic Appointment List</h5>
               </div>
               <div style="text-align: right;">
-                <h2 style="color: #555; margin: 0;">Appointment List</h2>
                 <p style="margin: 5px 0;"><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
               </div>
             </div>
@@ -34,6 +41,7 @@ function Filteredcliniclist({ appointments }) {
                 <tr>
                   <th style="padding: 10px; border: 1px solid #ddd;">Patient Name</th>
                   <th style="padding: 10px; border: 1px solid #ddd;">Doctor Name</th>
+                  <th style="padding: 10px; border: 1px solid #ddd;">Attendance</th>
                 </tr>
               </thead>
               <tbody>
@@ -41,6 +49,7 @@ function Filteredcliniclist({ appointments }) {
                   <tr>
                     <td style="padding: 10px; border: 1px solid #ddd;">${appointment.username}</td>
                     <td style="padding: 10px; border: 1px solid #ddd;">${appointment.doctorName}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">  </td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -73,6 +82,7 @@ function Filteredcliniclist({ appointments }) {
                     });
 
                     if (response.ok) {
+                        await submitBilling(type,selectedAppointment, payment, auth.user);
                         setShow(false);
                         window.location.reload(); // Refresh the page
                     } else {

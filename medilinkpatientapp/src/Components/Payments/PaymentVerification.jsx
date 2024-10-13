@@ -176,6 +176,19 @@ const PaymentVerification = () => {
           // Set isUploaded to true to prevent future uploads and show the success screen
           setIsUploaded(true);
           setShowSuccess(true);
+
+
+          if (billData.isAppointment) {
+               
+
+            await axios.put(
+              `${process.env.REACT_APP_BACKEND_URL}/api/appointment/completeappointment/${billData.appointmentType}/${billData.appointmentID}`,
+              {
+                payment: billData.totalAmount, // Save the invoice URL
+              }
+            );
+          }
+
         });
     } catch (error) {
       console.error("Error uploading the bill:", error);

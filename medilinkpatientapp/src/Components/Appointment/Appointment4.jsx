@@ -1,50 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SectionHeading from '../SectionHeading/SectionHeading';
-
-const scanOptions = {
-  scan: [
-    { value: 'x-ray', label: 'X-Ray' },
-    { value: 'ct-scan', label: 'CT Scan' },
-    { value: 'mri', label: 'MRI' },
-    { value: 'ultrasound', label: 'Ultrasound' },
-    { value: 'pet-scan', label: 'PET Scan' },
-    { value: 'bone-density', label: 'Bone Density Scan (DEXA)' },
-    { value: 'mammography', label: 'Mammography' },
-    { value: 'fluoroscopy', label: 'Fluoroscopy' },
-    { value: 'echocardiogram', label: 'Echocardiogram' },
-    { value: 'nuclear-medicine', label: 'Nuclear Medicine Scan' },
-  ],
-  test: [
-    { value: 'blood-test', label: 'Blood Test' },
-    { value: 'urinalysis', label: 'Urinalysis' },
-    { value: 'biopsy', label: 'Biopsy' },
-    { value: 'allergy-test', label: 'Allergy Test' },
-    { value: 'thyroid-function', label: 'Thyroid Function Test' },
-    { value: 'stool-test', label: 'Stool Test' },
-    { value: 'electrocardiogram', label: 'Electrocardiogram (ECG)' },
-    { value: 'pulmonary-function', label: 'Pulmonary Function Test (PFT)' },
-    { value: 'pap-smear', label: 'Pap Smear' },
-    { value: 'prostate-specific-antigen', label: 'Prostate-Specific Antigen (PSA) Test' },
-    { value: 'genetic-testing', label: 'Genetic Testing' },
-    { value: 'pregnancy-test', label: 'Pregnancy Test' },
-  ],
-};
+import { useAuthContext } from "../../Context/AuthContext";
 
 const Appointment4 = () => {
+  const auth = useAuthContext();
+  const patientname = auth.user?.name || '';
+  const patientemail = auth.user?.email || '';
+  const patientid = auth.user?.patientID || '';
+
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     mobile: '',
     appointmentDate: '',
     appointmentTime: '',
     hospitalType: '',
+    hospitalId: '',
     hospitalName: '',
     payment: '',
     scanType: '',
     scanName: '',
   });
 
+  const [hospitalList, setHospitalList] = useState([]);
   const [scanNameOptions, setScanNameOptions] = useState([]);
-
+  const[scans, setScans] = useState([]);
+  const[tests, setTests] = useState([]);
   // Handler for input field changes
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -56,9 +36,9 @@ const Appointment4 = () => {
     // Update scan name options based on scan type selected
     if (name === 'scanType') {
       if (value === 'scan') {
-        setScanNameOptions(scanOptions.scan);
+        setScanNameOptions(scans);
       } else if (value === 'test') {
-        setScanNameOptions(scanOptions.test);
+        setScanNameOptions(tests);
       } else {
         setScanNameOptions([]); // Reset options if no valid scan type is selected
       }
@@ -71,11 +51,10 @@ const Appointment4 = () => {
     setLoading(true);
     const dataToSubmit = {
       ...formData,
-      userid: 'u003',
-      type:"testscan",
-      username: 'Kamal',
-      email: 'Kamal@gmail.com',
-      hospitalId: 'H001',
+      userid: patientid,
+      type: "testscan",
+      username: patientname,
+      email: patientemail,
       status: 'pending',
     };
     console.log(dataToSubmit);
@@ -94,6 +73,7 @@ const Appointment4 = () => {
         appointmentDate: '',
         appointmentTime: '',
         hospitalType: '',
+        hospitalId: '',
         hospitalName: '',
         payment: '',
         scanType: '',
@@ -103,6 +83,64 @@ const Appointment4 = () => {
     }
     setLoading(false);
     window.location.reload();
+  };
+
+  const fetchHospitalsByType = async (type) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/appointment/gethospitalsbytype/${type}`);
+      const data = await response.json();
+      if (data) {
+        setHospitalList(data);
+        console.log(data);
+      } else {
+        console.error("No hospitals found or invalid response format", data);
+      }
+    } catch (error) {
+      console.error("Error fetching hospitals:", error);
+    }
+  };
+
+  const handleHospitalTypeChange = (event) => {
+    const { value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      hospitalType: value,
+    }));
+
+    if (value) {
+      fetchHospitalsByType(value);
+    } else {
+      setHospitalList([]);
+    }
+  };
+
+  const handleHospitalChange = (event) => {
+    const { value } = event.target;
+    const selectedHospital = hospitalList.find(hospital => hospital.hospitalName === value);
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      hospitalName: value,
+      hospitalId: selectedHospital ? selectedHospital._id : ''
+    }));
+    if (selectedHospital) {
+      fetchHospitalScansAndTests(selectedHospital._id);
+    }
+  };
+
+  const fetchHospitalScansAndTests = async (hospitalId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/hospital/gethospital/${hospitalId}`);
+      const data = await response.json();
+      if (data) {
+          setScans(data.tests);
+          setTests(data.scans);
+          console.log(data.tests, "Scans ",data.scans);
+      } else {
+        console.error("No scans or tests found for the selected hospital", data);
+      }
+    } catch (error) {
+      console.error("Error fetching scans and tests:", error);
+    }
   };
 
   return (
@@ -136,6 +174,10 @@ const Appointment4 = () => {
                       onChange={handleInputChange}
                       value={formData.mobile}
                       required
+                      pattern="[0-9]{10}"
+                      title="Phone number must be 10 digits"
+                      maxLength="10"
+                      disabled={formData.mobile.length === 10}
                     />
                   </div>
                 </div>
@@ -173,27 +215,39 @@ const Appointment4 = () => {
                     <select
                       name="hospitalType"
                       id="hospitalType"
-                      onChange={handleInputChange}
+                      onChange={handleHospitalTypeChange}
                       value={formData.hospitalType}
                       required
                     >
                       <option value="">Select Hospital Type</option>
                       <option value="government">Government</option>
-                      <option value="non-government">Non-Government</option>
+                      <option value="private">Non-Government</option>
                     </select>
                   </div>
                 </div>
                 <div className="col-lg-6">
                   <div className="st-form-field st-style1">
                     <label>Hospital Name</label>
-                    <input
+                    <select
                       name="hospitalName"
-                      type="text"
                       id="hospitalName"
-                      onChange={handleInputChange}
+                      onChange={handleHospitalChange}
                       value={formData.hospitalName}
                       required
-                    />
+                    >
+                      <option value="">Select Hospital</option>
+                      {hospitalList.length > 0 ? (
+                        hospitalList.map((hospital) => (
+                          <option key={hospital._id} value={hospital.hospitalName}>
+                            {hospital.hospitalName}
+                          </option>
+                        ))
+                      ) : (
+                        <option value="" disabled>
+                          No hospitals available
+                        </option>
+                      )}
+                    </select>
                   </div>
                 </div>
                 <div className="col-lg-6">
@@ -225,7 +279,9 @@ const Appointment4 = () => {
                     >
                       <option value="">Select {formData.scanType === 'scan' ? 'Scan' : 'Test'} Name</option>
                       {scanNameOptions.map(option => (
-                        <option key={option.value} value={option.value}>{option.label}</option>
+                        <option key={option._id} value={option.test_heading || option.scan_heading}>
+                          {option.test_heading || option.scan_heading}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -250,3 +306,4 @@ const Appointment4 = () => {
 };
 
 export default Appointment4;
+//const response = await fetch(`http://localhost:5000/api/hospital/gethospital/${hospitalId}`);
