@@ -4,6 +4,8 @@ import axios from 'axios';
 import { useAuthContext } from "../../Context/AuthContext";
 import { Table, Button, Modal, Row, Col } from 'react-bootstrap';
 
+import PayOnlineCommand from "../../Components/Payments/PayOnlineCommand"
+
 const heroData = {
   bgImg: `/images/hero-bg4.jpg`,
   title: `My Appointments`,
@@ -19,6 +21,9 @@ const MyAppointmentPage = () => {
   const [selectedClinicAppointment, setSelectedClinicAppointment] = useState(null);
   const [selectedScanAppointment, setSelectedScanAppointment] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState('all');
+
+
+  
 
   useEffect(() => {
     if (!userid) return; // Exit if userid is not available
@@ -44,6 +49,33 @@ const MyAppointmentPage = () => {
 
     fetchAppointments();
   }, [userid]);
+
+
+
+  const PayForAppointment = async (selectedAppointment) => {
+    try {
+      console.log('Selected Appointment:', selectedAppointment);
+      
+      // Step 1: Fetch the bill details for the selected appointment
+      const response = await axios.get(`http://localhost:5000/api/payment/billing/appointment/${selectedAppointment._id}`);
+      
+      const billDetails = response.data;
+
+      // Step 2: Ensure bill details are available
+      if (!billDetails || !billDetails.billNo || !billDetails.totalAmount) {
+        throw new Error('Bill details are missing or incomplete');
+      }
+
+      // Step 3: Create an instance of PayOnlineCommand with the fetched bill details
+      const payCommand = new PayOnlineCommand(billDetails);
+
+      // Step 4: Execute the payment initiation process
+      await payCommand.execute();
+    } catch (error) {
+      console.error('Error initiating payment:', error);
+      // Optionally show an alert or handle error gracefully
+    }
+  };
 
   const handleCloseClinicModal = () => setShowClinicModal(false);
   const handleShowClinicModal = (appointment) => {
@@ -109,7 +141,7 @@ const MyAppointmentPage = () => {
                 <td>
                   <Button className="st-btn st-style1 st-color1 st-size-medium" onClick={() => handleShowClinicModal(appointment)}>View</Button>
                   {appointment.status === 'approved' && (
-                     <Button variant="success">Pay</Button>
+                     <Button variant="success" onClick={()=>PayForAppointment(appointment)}>Pay</Button>
                   )}
                 </td>
               </tr>
@@ -142,7 +174,7 @@ const MyAppointmentPage = () => {
                 <td>
                   <Button className="st-btn st-style1 st-color1 st-size-medium" onClick={() => handleShowScanModal(appointment)}>View</Button>
                   {appointment.status === 'approved' && (
-                     <Button variant="success">Pay</Button>
+                     <Button variant="success" onClick={()=>PayForAppointment(appointment)}>Pay</Button>
                   )}
                 </td>
               </tr>
@@ -165,7 +197,7 @@ const MyAppointmentPage = () => {
                 <>
                   <p><strong>Payment:</strong> Rs.{selectedClinicAppointment.payment}</p>
                   {selectedClinicAppointment.status === 'approved' && (
-                     <Button variant="success">Pay</Button>
+                     <Button variant="success" onClick={()=>PayForAppointment(selectedClinicAppointment)}>Pay</Button>
                   )}
                 </>
               )}
@@ -193,7 +225,7 @@ const MyAppointmentPage = () => {
                 <>
                   <p><strong>Payment:</strong> Rs.{selectedScanAppointment.payment}</p>
                   {selectedScanAppointment.status === 'approved' && (
-                    <Button variant="success">Pay</Button>
+                    <Button variant="success" onClick={()=>PayForAppointment(selectedScanAppointment)}>Pay</Button>
                   )}
                 </>
               )}

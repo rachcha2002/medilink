@@ -139,3 +139,26 @@ exports.getPendingBillsByHospitalId = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+//get Bill By Appointment ID  
+// Get a billing record by Appointment ID
+exports.getBillByAppointmentId = async (req, res) => {
+  try {
+    const { appointmentID } = req.params;
+    
+    // Find the billing record using the appointmentID
+    const billing = await Billing.findOne({ appointmentID: appointmentID });
+
+    // If no billing record is found, return a 404 error
+    if (!billing) {
+      return res.status(404).json({ error: "Billing record not found for this appointment" });
+    }
+
+    // If the billing record is found, return it in the response
+    res.status(200).json(billing);
+  } catch (error) {
+    // In case of an error, return a 500 status code with the error message
+    res.status(500).json({ error: error.message });
+  }
+};

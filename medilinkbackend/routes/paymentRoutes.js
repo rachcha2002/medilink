@@ -35,6 +35,11 @@ router.get("/billing/hospital/:hospitalID", billingController.getBillsByHospital
 // Get pending bills by hospital ID
 router.get("/billing/hospital/:hospitalID/pending", billingController.getPendingBillsByHospitalId);
 
+// Get billing record by appointment ID
+router.get("/billing/appointment/:appointmentID", billingController.getBillByAppointmentId); // New Route
+
+
+
 // Upload invoice
 router.post("/billing/upload/uploadInvoice", uploadInvoice);
 
