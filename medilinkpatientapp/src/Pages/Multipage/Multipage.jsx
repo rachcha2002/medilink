@@ -7,6 +7,7 @@ import TestimonialSlider from '../../Components/Slider/TestimonialSlider';
 import Spacing from '../../Components/Spacing/Spacing';
 import About6 from '../../Components/About/About6';
 import Iconbox from '../../Components/Iconbox/Iconbox';
+import { useAuthContext } from "../../Context/AuthContext"; 
 
 const heroData = [
   {
@@ -190,6 +191,7 @@ const testimonialData = [
 ];
 
 const Multipage = () => {
+  const auth = useAuthContext();
   return (
     <>
       <Hero3 data={heroData} />
@@ -200,7 +202,9 @@ const Multipage = () => {
       <Department />
       <hr />
       <SpecialistsSlider data={specialistData} />
+      {auth.isLoggedIn && (
       <Appointment />
+    )}
       <TestimonialSlider data={testimonialData} />
     </>
   )

@@ -125,8 +125,8 @@ const Header7 = ({ data }) => {
                     </Link>
                   </li>
                   <li>
-                    <Link to="pricing" onClick={() => setMobileToggle(false)}>
-                      Pricing
+                    <Link to="myappointments" onClick={() => setMobileToggle(false)}>
+                      My Appointments
                     </Link>
                   </li>
                   <li className="menu-item-has-children">
