@@ -1,5 +1,6 @@
 const AppointmentFactory = require("../../factory/appointmentfactory");
-
+const HospitalSchema = require("../../models/Hospital&Admin/HospitalSchema");
+const DoctorSchema = require("../../models/MedicalStaff/doctorModel");
 
 exports.createAppointment = async (req, res) => {
 
@@ -76,9 +77,10 @@ exports.deleteappointment = async (req, res) => {
 
 exports.approveappointment = async (req, res) => {
     const { type, id } = req.params;
+    const { payment } = req.body;
     try {
         const AppointmentModel = AppointmentFactory.getModel(type);
-        const appointment = await AppointmentModel.findByIdAndUpdate(id, { status: "approved" }, { new: true });
+        const appointment = await AppointmentModel.findByIdAndUpdate(id, { status: "approved", payment  }, { new: true });
         if (!appointment) {
             return res.status(404).json({ message: "Appointment not found" });
         }
@@ -144,3 +146,55 @@ exports.rejectappointment = async (req, res) => {
         });
     }
 }
+
+exports.getHospitalsbytype = async (req, res) => {
+    const { hospitalType } = req.params;
+    try {
+        const hospitals = await HospitalSchema.find({ hospitalType: hospitalType });
+        if (hospitals.length === 0) {
+            return res.status(404).json({ message: "No hospitals found for this type" });
+        }
+        res.status(200).json(hospitals);
+    }
+    catch (error) {
+        res.status(500).json({
+            message: "Error fetching hospitals",
+            error: error.message,
+        });
+    }
+}
+
+exports.getDoctorByHospital = async (req, res) => {
+    const { hospitalName } = req.params;
+    try {
+        const doctors = await DoctorSchema.find({ hospital: hospitalName });
+        if (doctors.length === 0) {
+            return res.status(404).json({ message: "No doctors found for this hospital" });
+        }
+        res.status(200).json(doctors);
+    }
+    catch (error) {
+        res.status(500).json({
+            message: "Error fetching doctors",
+            error: error.message,
+        });
+    }
+}
+
+exports.getDoctorBySpeciality = async (req, res) => {
+    const { hospitalName,speciality } = req.params;
+    try {
+        const doctors = await DoctorSchema.find({ hospital: hospitalName , speciality: speciality });
+        if (doctors.length === 0) {
+            return res.status(404).json({ message: "No doctors found for this hospital" });
+        }
+        res.status(200).json(doctors);
+    }
+    catch (error) {
+        res.status(500).json({
+            message: "Error fetching doctors",
+            error: error.message,
+        });
+    }
+}
+

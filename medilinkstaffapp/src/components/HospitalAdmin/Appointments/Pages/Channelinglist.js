@@ -29,6 +29,7 @@ function Channelinglist() {
 
   return (
     <main id="main" className="main">
+      <div  style={{ marginTop: "30px" }}>
       <PageTitle title="Channeling Appointments" url="/hospitaladmin/channelingappointments" />
       <Container
       className="mt-3"
@@ -60,6 +61,7 @@ function Channelinglist() {
         </Tab>
       </Tabs>
       </Container>
+      </div>
     </main>
   );
 }

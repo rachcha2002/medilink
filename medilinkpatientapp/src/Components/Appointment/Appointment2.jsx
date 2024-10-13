@@ -59,6 +59,7 @@ const Appointment2 = () => {
       });
     }
     setLoading(false);
+    window.location.reload(); // Move this outside the condition to ensure the page refreshes regardless of the response
   };
 
   return (

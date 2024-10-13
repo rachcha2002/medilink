@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { UserLocationContext } from '../../context/UserLocationContext';
+import React, { useState, useEffect } from "react";
+import { UserLocationContext } from "../../Context/UserLocationContext";
 //import MainHeader from '../../components/MainHeader';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css'; // Import Leaflet styles
-import MapComponent from '../../Components/Map/MapComponent';
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css"; // Import Leaflet styles
+import MapComponent from "../../Components/Map/MapComponent";
 
 const LocationScreen = () => {
-  const [selectedFacility, setSelectedFacility] = useState('hospital');
+  const [selectedFacility, setSelectedFacility] = useState("hospital");
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [locationList, setLocationList] = useState([]);
   const [placeList, setPlaceList] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [filteredLocationList, setFilteredLocationList] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
@@ -29,20 +29,19 @@ const LocationScreen = () => {
               });
             },
             (error) => {
-              setErrorMsg('Could not fetch location');
-              console.log('Error getting location: ', error);
+              setErrorMsg("Could not fetch location");
+              console.log("Error getting location: ", error);
             }
           );
         } else {
-          setErrorMsg('Geolocation is not supported by this browser.');
+          setErrorMsg("Geolocation is not supported by this browser.");
         }
       } catch (error) {
-        console.log('Error getting location: ', error);
-        setErrorMsg('Could not fetch location');
+        console.log("Error getting location: ", error);
+        setErrorMsg("Could not fetch location");
       }
     })();
   }, []);
-
 
   if (errorMsg) {
     return <p>{errorMsg}</p>;
@@ -54,9 +53,9 @@ const LocationScreen = () => {
 
   return (
     <div className="bg-white h-full">
-     {/* <MainHeader title="Nearest Health Facilities" />*/}
+      {/* <MainHeader title="Nearest Health Facilities" />*/}
       <UserLocationContext.Provider value={{ location, setLocation }}>
-       <MapComponent />
+        <MapComponent />
       </UserLocationContext.Provider>
     </div>
   );
@@ -64,21 +63,21 @@ const LocationScreen = () => {
 
 const styles = {
   input: {
-    width: '100%',
-    padding: '10px',
-    marginBottom: '10px',
-    borderRadius: '5px',
-    border: '1px solid #6D31ED',
+    width: "100%",
+    padding: "10px",
+    marginBottom: "10px",
+    borderRadius: "5px",
+    border: "1px solid #6D31ED",
   },
   searchSection: {
-    margin: '10px',
-    display: 'flex',
-    alignItems: 'center',
+    margin: "10px",
+    display: "flex",
+    alignItems: "center",
   },
   mapTitle: {
-    fontSize: '18px',
-    fontWeight: 'bold',
-    marginLeft: '10px',
+    fontSize: "18px",
+    fontWeight: "bold",
+    marginLeft: "10px",
   },
 };
 
