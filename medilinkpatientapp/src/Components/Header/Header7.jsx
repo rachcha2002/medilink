@@ -153,7 +153,7 @@ const Header7 = ({ data }) => {
                   </li>
                   <li>
                     <Link to="contact" onClick={() => setMobileToggle(false)}>
-                      Contact
+                      Health Facilities
                     </Link>
                   </li>
                 </ul>

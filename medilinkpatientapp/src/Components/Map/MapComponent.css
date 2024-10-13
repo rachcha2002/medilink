@@ -1,14 +1,14 @@
-.container {
+.map-container {
     padding: 16px;
   }
   
-  .header {
+  .map-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   
-  .search-bar input {
+  .map-search-bar input {
     width: 100%;
     padding: 8px;
     margin: 16px 0;
@@ -16,55 +16,72 @@
     border-radius: 8px;
   }
   
-  .category-buttons {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 16px;
+  .category-buttons-map {
+  display: flex;
+  overflow-x: auto; /* This enables horizontal scrolling */
+  white-space: nowrap; /* Prevents the buttons from wrapping onto a new line */
+  gap: 10px; /* Adds some space between the buttons */
+  padding: 10px 0; /* Optional: Adds padding to the container */
   }
   
-  .category-btn {
-    padding: 8px 16px;
+  .category-btn-map {
+    flex: 0 0 auto; /* Prevents the buttons from shrinking or growing */
+    padding: 10px 20px;
     border: none;
-    background-color: #F1F1F1;
+    background-color: #99969e;
+    color: white;
     border-radius: 20px;
     cursor: pointer;
+    transition: background-color 0.3s;
   }
   
-  .category-btn.active {
+  .category-btn-map.active {
     background-color: #6200EE;
     color: white;
+  }
+
+  .category-buttons-map::-webkit-scrollbar {
+    display: none; /* Hides scrollbar for a cleaner look (optional) */
+  }
+  
+  @media (max-width: 600px) {
+    .category-buttons-map {
+      padding: 10px 5px;
+      gap: 5px; /* Adjust the gap for smaller screens */
+    }
   }
   
   .map-container {
     margin-bottom: 10px;
   }
   
-  .facility-list {
+  .facility-list-map {
     margin-top: 16px;
   }
   
-  .facility-item {
+  .facility-item-map {
     display: flex;
     align-items: center;
     margin-bottom: 16px;
   }
   
-  .facility-image {
+  .facility-image-map {
     width: 60px;
     height: 60px;
     margin-right: 12px;
   }
   
-  .facility-details {
+  .facility-details-map {
     display: flex;
     flex-direction: column;
   }
   
-  .facility-details h3 {
-    margin: 0;
+  .facility-details-map h5 {
+    margin-top: 5px;
+    font-weight: bold;
   }
   
-  .facility-details p {
+  .facility-details-map p {
     margin: 4px 0 0;
   }
   
