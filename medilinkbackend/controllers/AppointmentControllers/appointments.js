@@ -23,10 +23,20 @@ exports.createAppointment = async (req, res) => {
 }
 
 exports.getappointmentlist = async (req, res) => {
-    const { type } = req.params;
+    const { userid } = req.params;
+    console.log(userid);
     try {
-        const AppointmentModel = AppointmentFactory.getModel(type);
-        const appointments = await AppointmentModel.find();
+        let type = "clinic";
+        let AppointmentModel = AppointmentFactory.getModel(type);
+       const clinicappointments = await AppointmentModel.find({ userid: userid });
+        type = "channeling";
+       AppointmentModel = AppointmentFactory.getModel(type);
+       const channelingappointments = await AppointmentModel.find({ userid: userid });
+       type = "testscan";
+       AppointmentModel = AppointmentFactory.getModel(type);
+       const testscanappointments = await AppointmentModel.find({ userid: userid });
+
+        const appointments = { clinicappointments, channelingappointments, testscanappointments };
         res.status(200).json(appointments);
     } catch (error) {
         res.status(500).json({

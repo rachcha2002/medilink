@@ -1,17 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Container, Alert } from "react-bootstrap";
 import "../../Main/Main.css";
 import PageTitle from "../../Common/PageTitle";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from ".././../../context/AuthContext";
 
 function CreateMedicalRecordForm() {
+  const { user, usertype } = useAuthContext(); // This might be loading asynchronously
   const [file, setFile] = useState(null);
   const [feedbackMessage, setFeedbackMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [doctorValidationMessage, setDoctorValidationMessage] = useState(null); // State for doctor validation
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Form state management with default values for hospital, createdBy, and createdByPosition
+  // Set default form data
   const [formData, setFormData] = useState({
     patientId: "",
     patientName: "",
@@ -22,10 +25,22 @@ function CreateMedicalRecordForm() {
     diagnosis: "",
     symptoms: "",
     remarks: "",
-    hospital: "Medi Help", // Assigning dummy value
-    createdBy: "Doctor123", // Assigning dummy value
-    createdByPosition: "Senior Doctor", // Assigning dummy value
+    hospital: "",
+    createdBy: "",
+    createdByPosition: "",
   });
+
+  // Effect to assign values from user when available
+  useEffect(() => {
+    if (user) {
+      setFormData((prevData) => ({
+        ...prevData,
+        hospital: user.hospital || "Heelan",
+        createdBy: user.doctorId || user.nurseId || "Rachith",
+        createdByPosition: usertype || "nurse",
+      }));
+    }
+  }, [user]); // Only runs when the user object is updated
 
   // Handle form input changes
   const handleInputChange = (e) => {
@@ -34,6 +49,89 @@ function CreateMedicalRecordForm() {
       ...formData,
       [name]: value,
     });
+
+    // Fetch patient details when patientId is entered
+    if (name === "patientId" && value) {
+      fetchPatientDetails(value);
+    }
+
+    // Check doctor validity and fetch doctor name when doctorId is entered
+    if (name === "doctorId" && value) {
+      checkDoctorId(value);
+    }
+  };
+
+  // Function to calculate age from date of birth
+  const calculateAge = (dateOfBirth) => {
+    const birthDate = new Date(dateOfBirth);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    if (
+      monthDifference < 0 ||
+      (monthDifference === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+    return age;
+  };
+
+  // Fetch patient details based on patientId
+  const fetchPatientDetails = async (patientId) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/patients/getbyid/${patientId}`
+      );
+      if (!response.ok) {
+        throw new Error("Patient not found");
+      }
+
+      const patient = await response.json();
+      // Populate form fields with patient data
+      setFormData((prevData) => ({
+        ...prevData,
+        patientName: patient.name,
+        patientAge: calculateAge(patient.dateOfBirth),
+        gender: patient.gender,
+      }));
+
+      setFeedbackMessage("Patient details fetched successfully.");
+      setErrorMessage(null);
+    } catch (error) {
+      console.error("Failed to fetch patient details:", error);
+      setErrorMessage("Failed to fetch patient details. Please try again.");
+      setFeedbackMessage(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Check doctor ID validity and fetch doctor name
+  const checkDoctorId = async (doctorId) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/staffroutes/doctors/${doctorId}`
+      );
+      if (!response.ok) {
+        setDoctorValidationMessage("Doctor ID not found"); // Error message if doctor is not found
+        setFormData((prevData) => ({
+          ...prevData,
+          doctorName: "", // Clear doctor name if ID not valid
+        }));
+        throw new Error("Doctor ID not found");
+      }
+
+      const doctor = await response.json();
+      // Populate doctor name if doctor ID is valid
+      setFormData((prevData) => ({
+        ...prevData,
+        doctorName: doctor.name, // Assuming the response contains the doctor's name
+      }));
+      setDoctorValidationMessage("Valid Doctor ID"); // Success message if doctor exists
+    } catch (error) {
+      console.error("Failed to validate doctor ID:", error);
+    }
   };
 
   // Handle file selection and validation
@@ -203,19 +301,6 @@ function CreateMedicalRecordForm() {
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Doctor Name</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="doctorName"
-                      value={formData.doctorName}
-                      onChange={handleInputChange}
-                      required
-                      placeholder="Enter Doctor Name"
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="mb-3">
                     <Form.Label>Doctor ID</Form.Label>
                     <Form.Control
                       type="text"
@@ -224,6 +309,31 @@ function CreateMedicalRecordForm() {
                       onChange={handleInputChange}
                       required
                       placeholder="Enter Doctor ID"
+                    />
+                    {/* Display Doctor Validation Message */}
+                    {doctorValidationMessage && (
+                      <Form.Text
+                        className={
+                          doctorValidationMessage === "Valid Doctor ID"
+                            ? "text-success"
+                            : "text-danger"
+                        }
+                      >
+                        {doctorValidationMessage}
+                      </Form.Text>
+                    )}
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Doctor Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="doctorName"
+                      value={formData.doctorName}
+                      onChange={handleInputChange}
+                      required
+                      placeholder="Enter Doctor Name"
                     />
                   </Form.Group>
                 </Col>

@@ -1,9 +1,9 @@
 const navList = [
   {
     _id: 1,
-    name: "Dashboard",
-    icon: "bi bi-grid",
-    href: "/mltstaff",
+    name: "Medical Reports",
+    icon: "bi bi-journal-text",
+    href: "/mltstaff/reportlist",
   },
   {
     _id: 2,
@@ -13,18 +13,12 @@ const navList = [
   },
   {
     _id: 3,
-    name: "Medical Reports",
-    icon: "bi bi-journal-text",
-    href: "/mltstaff/reportlist",
-  },
-  {
-    _id: 4,
     name: "Radiology Reports",
     icon: "bi bi-broadcast",
     href: "/mltstaff/radiologyreportlist",
   },
   {
-    _id: 5,
+    _id: 4,
     name: "Laboratory Reports",
     icon: "bi bi-clipboard2-data",
     href: "/mltstaff/labreportlist",

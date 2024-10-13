@@ -9,10 +9,12 @@ import { BsArrowLeft } from "react-icons/bs";
 import { BiCheckCircle, BiHide, BiShow } from "react-icons/bi";
 import "../../Main/Main.css";
 import PageTitle from "../../Common/PageTitle";
+import { useAuthContext } from "../../../context/AuthContext";
 
 function AddMedicalStaff({ toggleLoading }) {
-  const cusfrontendurl = `${process.env.React_App_Frontend_URL}/customer`;
-  const stafffrontendurl = `${process.env.React_App_Frontend_URL}/staff/login`;
+  const { user } = useAuthContext();
+  const [isUserLoading, setIsUserLoading] = useState(true); // Loading state for user
+  const [hospital, setHospital] = useState(""); // Hospital value from user
   const [errorMessage, setErrorMessage] = useState("");
   const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +24,14 @@ function AddMedicalStaff({ toggleLoading }) {
   const [workingHours, setWorkingHours] = useState([""]); // Array to handle working hours
 
   const navigate = useNavigate();
+
+  // Fetch user hospital from context once user is loaded
+  useEffect(() => {
+    if (user && user.hospitalName) {
+      setHospital(user.hospitalName);
+      setIsUserLoading(false); // Mark as loaded
+    }
+  }, [user]);
 
   // Handle adding a new working hours field
   const handleAddWorkingHour = () => {
@@ -63,7 +73,7 @@ function AddMedicalStaff({ toggleLoading }) {
         formData.append(key, data[key]);
       });
       formData.append("workingHours", workingHours); // Append working hours array
-      formData.append("hospital", "Medihelp"); // Append hospital name
+      formData.append("hospital", hospital); // Append hospital name
 
       console.log("Form Data:", formData);
 

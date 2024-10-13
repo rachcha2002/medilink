@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import {Tab,Container,Tabs} from 'react-bootstrap';
+import { Tab, Container, Tabs } from 'react-bootstrap';
 import PageTitle from "../../../Common/PageTitle";
 import Filteredtestsandscanslist from "../Components/Filteredtestsandscans"; // Assuming this is the table component to display records
 import axios from 'axios';
+import { useAuthContext } from "../../../../context/AuthContext"; 
 
 function TestsandScans() {
   const [selectedTab, setSelectedTab] = useState('pending');
   const [appointments, setAppointments] = useState([]);
+  const auth = useAuthContext();
+  const hospitalId = auth.user?.registrationID || '';
 
   // Fetch data whenever the tab (status) changes
   useEffect(() => {
+    if (!hospitalId) return;
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/appointment/hospitalappointments/testscan/H001');
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/appointment/hospitalappointments/testscan/${hospitalId}`);
         const allAppointments = response.data;
         
         // Filter appointments based on selected tab (status)
@@ -24,11 +28,11 @@ function TestsandScans() {
     };
 
     fetchAppointments();
-  }, [selectedTab]); // Re-fetch whenever `selectedTab` changes
+  }, [selectedTab,hospitalId]); // Re-fetch whenever `selectedTab` changes
 
   return (
     <main id="main" className="main">
-       <div  style={{ marginTop: "30px" }}>
+       <div style={{ marginTop: "30px" }}>
       <PageTitle title="Tests and Scans appointments" url="/hospitaladmin/TestsandScansappointments" />
       <Container
       className="mt-3"

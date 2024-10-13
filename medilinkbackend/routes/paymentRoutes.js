@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const billingController = require("../controllers/PaymentControllers/Billing");
-const {paymentinitiate,handlePaymentNotification,getPaymentbyOrderID} = require("../controllers/PaymentControllers/OnlinePayments");
-const {uploadInvoice} = require("../controllers/PaymentControllers/UploadBillToFirebase")
+const { paymentinitiate, handlePaymentNotification, getPaymentbyOrderID } = require("../controllers/PaymentControllers/OnlinePayments");
+const { uploadInvoice } = require("../controllers/PaymentControllers/UploadBillToFirebase");
 
 // Create a new billing record
 router.post("/billing", billingController.createBilling);
@@ -29,14 +29,27 @@ router.get("/billing/patient/:patientID", billingController.getBillsByPatientId)
 // Get bills by bill number
 router.get('/billing/billno/:billNo', billingController.getBillByBillNo);
 
+// Get bills by hospital ID
+router.get("/billing/hospital/:hospitalID", billingController.getBillsByHospitalId);
 
-router.post("/billing/upload/uploadInvoice",uploadInvoice);
+// Get pending bills by hospital ID
+router.get("/billing/hospital/:hospitalID/pending", billingController.getPendingBillsByHospitalId);
 
-router.post("/billing/onlinepayment/initiate",paymentinitiate)
-router.post("/billing/onlinepayment/handle",handlePaymentNotification)
-router.get("/billing/onlinepayment/:order_id",getPaymentbyOrderID)
+// Get billing record by appointment ID
+router.get("/billing/appointment/:appointmentID", billingController.getBillByAppointmentId); // New Route
 
 
 
+// Upload invoice
+router.post("/billing/upload/uploadInvoice", uploadInvoice);
+
+// Online payment initiation
+router.post("/billing/onlinepayment/initiate", paymentinitiate);
+
+// Handle payment notification
+router.post("/billing/onlinepayment/handle", handlePaymentNotification);
+
+// Get payment by order ID
+router.get("/billing/onlinepayment/:order_id", getPaymentbyOrderID);
 
 module.exports = router;

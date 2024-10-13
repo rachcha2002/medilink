@@ -6,7 +6,7 @@ import Multipage from "./Pages/Multipage/Multipage";
 import Layout7 from "./Components/Layout/Layout7";
 import AboutPage from "./Pages/Multipage/AboutPage";
 import GalleryPage from "./Pages/Multipage/GalleryPage";
-import PricingPage from "./Pages/Multipage/PricingPage";
+import MyAppointmentPage from "./Pages/Multipage/MyAppointmentPage";
 import PostPage from "./Pages/Multipage/PostPage";
 import ContactPage from "./Pages/Multipage/ContactPage";
 import DoctorProfilePage from "./Pages/DoctorProfilePage";
@@ -19,6 +19,7 @@ import PatientProfileForm from "./Pages/Patient/PatientProfileForm.jsx";
 // AuthContext for authentication
 import { AuthContext } from "./Context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import HealthMain from "./Pages/Health/HealthMain.js";
 
 let logoutTimer;
 
@@ -37,7 +38,7 @@ const App = () => {
 
   // Login function
   const login = useCallback((user, token, expirationDate) => {
-    console.log('Start of login function');
+    console.log("Start of login function");
     console.log(user, token);
     setIsLoggedIn(true);
     setUser(user);
@@ -65,7 +66,6 @@ const App = () => {
     setTokenExpirationDate(null);
     localStorage.removeItem("userData");
     navigate("/login");
-
   }, []);
 
   // Handle automatic logout when token expires
@@ -95,23 +95,22 @@ const App = () => {
     <AuthContext.Provider
       value={{
         isLoggedIn: !!token,
-        user:user,
-        token:token,
-        login:login,
-        logout:logout
+        user: user,
+        token: token,
+        login: login,
+        logout: logout,
       }}
     >
       <Routes>
-        <Route path="/login" element={<Login />}/>
-        <Route path="/createaccount" element={<PatientProfileForm />}/>
-
+        <Route path="/login" element={<Login />} />
+        <Route path="/createaccount" element={<PatientProfileForm />} />
 
         <Route path="/" element={<Layout7 />}>
           <Route index element={<Multipage />} />
           <Route path="home" element={<Multipage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="gallery" element={<GalleryPage />} />
-          <Route path="pricing" element={<PricingPage />} />
+          <Route path="myappointments" element={<MyAppointmentPage />} />
           <Route path="post" element={<PostPage />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="post/:postId" element={<PostDetails />} />
@@ -125,6 +124,9 @@ const App = () => {
 
           {/* Route for Patient */}
           <Route path="patient/*" element={<PatientMain />} />
+
+          {/* Route for Patient */}
+          <Route path="health/*" element={<HealthMain />} />
         </Route>
       </Routes>
     </AuthContext.Provider>

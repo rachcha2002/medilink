@@ -24,7 +24,7 @@ const MLTStaff = ({ toggleLoading }) => {
       <Routes>
         <Route
           path="/"
-          element={<MLTStaffDashboard toggleLoading={toggleLoading} />}
+          element={<AllMedicalReportList toggleLoading={toggleLoading} />}
         />
         <Route
           path="/createreport"
