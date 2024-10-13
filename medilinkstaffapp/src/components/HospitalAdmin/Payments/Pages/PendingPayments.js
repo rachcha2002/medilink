@@ -20,15 +20,14 @@ import image from "../../../../images/logo.png"; // Correctly importing the logo
 import { useAuthContext } from "../../../../context/AuthContext";
 
 const PendingPayments = () => {
-  const {user} = useAuthContext();
+  const { user } = useAuthContext();
   const [pendingPayments, setPendingPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const hospitalID = user.registrationID;
 
   useEffect(() => {
-
-    if (!hospitalID) return; 
+    if (!hospitalID) return;
 
     axios
       .get(
@@ -236,6 +235,17 @@ const PendingPayments = () => {
 
               console.log("PDF uploaded successfully:", downloadURL);
               alert("PDF generated and uploaded to the cloud!");
+
+              if (invoiceData.isAppointment) {
+               
+
+                await axios.put(
+                  `${process.env.REACT_APP_BACKEND_URL}/api/appointment/completeappointment/${invoiceData.appointmentType}/${invoiceData.appointmentID}`,
+                  {
+                    payment: invoiceData.totalAmount, // Save the invoice URL
+                  }
+                );
+              }
             } catch (error) {
               console.error("Error uploading the PDF:", error);
             }

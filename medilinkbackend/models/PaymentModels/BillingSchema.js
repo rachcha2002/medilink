@@ -10,7 +10,7 @@ const BillingSchema = new mongoose.Schema(
     billingType: {
       type: String,
       required: true,
-      enum: ["Channeling", "Admission", "Scan", "Lab Test"],
+      enum: ["Channeling", "Admission", "Scan", "Lab Test","Appointment"],
     },
     patientName: {
       type: String,
@@ -77,7 +77,19 @@ const BillingSchema = new mongoose.Schema(
     },
     hospitalMongoID: {
       type: String,
+    },
+    isAppointment: {
+      type: Boolean,
+      default: false,
+    },
+    appointmentType:{
+      type:String,
+      
+    },
+    appointmentID:{
+      type:String,
     }
+
   },
   { timestamps: true }
 );
