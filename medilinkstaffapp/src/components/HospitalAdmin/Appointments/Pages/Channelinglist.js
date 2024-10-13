@@ -21,7 +21,7 @@ function Channelinglist() {
       try {
         
         console.log(hospitalId);
-        const response = await axios.get(`http://localhost:5000/api/appointment/hospitalappointments/channeling/${hospitalId}`);
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/appointment/hospitalappointments/channeling/${hospitalId}`);
         const allAppointments = response.data;
         
         // Filter appointments based on selected tab (status)
