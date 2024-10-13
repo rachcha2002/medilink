@@ -10,7 +10,7 @@ const BillingSchema = new mongoose.Schema(
     billingType: {
       type: String,
       required: true,
-      enum: ["Channeling", "Admission", "Scan", "Lab Test"],
+      enum: ["Channeling", "Admission", "Scan", "Lab Test","Appointment"],
     },
     patientName: {
       type: String,
@@ -30,23 +30,23 @@ const BillingSchema = new mongoose.Schema(
     },
     hospitalName: {
       type: String,
-      default: "MediLink Hospital",
+     
     },
     hospitalID: {
       type: String,
-      default: "HOSP12345",
+      
     },
     hospitalEmail: {
       type: String,
-      default: "info@medilinkhospital.com",
+      
     },
     hospitalPhone: {
       type: String,
-      default: "011-2345678",
+     
     },
     hospitalAddress: {
       type: String,
-      default: "123 Main Street, Colombo, Sri Lanka",
+     
     },
     serviceDetails: [
       {
@@ -74,7 +74,22 @@ const BillingSchema = new mongoose.Schema(
     },
     downloadURL: {
       type: String,
+    },
+    hospitalMongoID: {
+      type: String,
+    },
+    isAppointment: {
+      type: Boolean,
+      default: false,
+    },
+    appointmentType:{
+      type:String,
+      
+    },
+    appointmentID:{
+      type:String,
     }
+
   },
   { timestamps: true }
 );
