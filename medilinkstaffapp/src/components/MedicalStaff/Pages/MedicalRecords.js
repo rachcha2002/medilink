@@ -12,16 +12,30 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import { FaFilePdf } from "react-icons/fa";
+import { useAuthContext } from "../../../context/AuthContext"; // Assuming you have an AuthContext
 
 function MedicalRecords({ apiUrl, title }) {
+  const { user } = useAuthContext(); // Fetch user from context
+  const [userId, setUserId] = useState(null); // User ID from either doctorId or nurseId
+  const [isUserLoading, setIsUserLoading] = useState(true); // Track user loading state
   const [records, setRecords] = useState([]); // State to hold medical records
   const [showModal, setShowModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState(""); // State for search text
   const [searchDate, setSearchDate] = useState(""); // State for date picker
+  const [searchCreatedBy, setSearchCreatedBy] = useState(""); // State for search by createdBy
   const [filteredRecords, setFilteredRecords] = useState([]); // State for filtered records
   const navigate = useNavigate();
+
+  // Fetch userId based on user context
+  useEffect(() => {
+    if (user) {
+      const id = user.doctorId || user.nurseId; // Get doctorId or nurseId
+      setUserId(id); // Set userId from user context
+      setIsUserLoading(false); // Mark user as loaded
+    }
+  }, [user]);
 
   // Fetch medical records from the backend
   useEffect(() => {
@@ -39,8 +53,10 @@ function MedicalRecords({ apiUrl, title }) {
       }
     };
 
-    fetchRecords();
-  }, [apiUrl]); // Dependency array includes apiUrl to refetch if it changes
+    if (!isUserLoading) {
+      fetchRecords(); // Fetch records only when user has loaded
+    }
+  }, [apiUrl, isUserLoading]); // Dependency array includes apiUrl and isUserLoading
 
   // Handle search query changes and filter records
   useEffect(() => {
@@ -59,10 +75,14 @@ function MedicalRecords({ apiUrl, title }) {
           new Date(searchDate).toLocaleDateString()
         : true;
 
-      return isTextMatch && isDateMatch;
+      const isCreatedByMatch = searchCreatedBy
+        ? record.createdBy.toLowerCase().includes(searchCreatedBy.toLowerCase())
+        : true;
+
+      return isTextMatch && isDateMatch && isCreatedByMatch;
     });
     setFilteredRecords(filtered);
-  }, [searchQuery, searchDate, records]);
+  }, [searchQuery, searchDate, searchCreatedBy, records]);
 
   // Handle modal opening and set selected record data
   const handleShowModal = (record) => {
@@ -79,6 +99,7 @@ function MedicalRecords({ apiUrl, title }) {
   const handleResetSearch = () => {
     setSearchQuery("");
     setSearchDate("");
+    setSearchCreatedBy(""); // Reset createdBy search as well
     setFilteredRecords(records); // Reset filtered records to the full list
   };
 
@@ -86,7 +107,7 @@ function MedicalRecords({ apiUrl, title }) {
   const handleDelete = async (id) => {
     try {
       const response = await fetch(
-        `${apiUrl}/${id}`, // Use the apiUrl for deletion as well
+        `${process.env.REACT_APP_BACKEND_URL}/api/medicalinfo/medical-records/${id}`, // Use the apiUrl for deletion as well
         {
           method: "DELETE",
         }
@@ -104,6 +125,15 @@ function MedicalRecords({ apiUrl, title }) {
     }
   };
 
+  // Wait until user is loaded
+  if (isUserLoading) {
+    return (
+      <Container>
+        <h4>Loading...</h4>
+      </Container>
+    );
+  }
+
   return (
     <Container
       className="p-1"
@@ -111,9 +141,9 @@ function MedicalRecords({ apiUrl, title }) {
     >
       {error && <Alert variant="danger">Error fetching records: {error}</Alert>}
 
-      {/* Search Input and Date Picker */}
+      {/* Search Input, Date Picker, and CreatedBy Filter */}
       <Row className="mb-3">
-        <Col md={6}>
+        <Col md={5}>
           <Form.Control
             type="text"
             placeholder="Search by Patient ID, Name, Doctor, or Diagnosis"
@@ -121,11 +151,19 @@ function MedicalRecords({ apiUrl, title }) {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </Col>
-        <Col md={3}>
+        <Col md={2}>
           <Form.Control
             type="date"
             value={searchDate}
             onChange={(e) => setSearchDate(e.target.value)}
+          />
+        </Col>
+        <Col md={3}>
+          <Form.Control
+            type="text"
+            placeholder="Search by Created By"
+            value={searchCreatedBy}
+            onChange={(e) => setSearchCreatedBy(e.target.value)}
           />
         </Col>
         <Col md={2}>
@@ -264,22 +302,26 @@ function MedicalRecords({ apiUrl, title }) {
             </Row>
           </Modal.Body>
           <Modal.Footer>
-            <Button
-              variant="warning"
-              onClick={() =>
-                navigate(
-                  `/medicalstaff/updatemedicalrecords/${selectedRecord._id}`
-                )
-              } // Navigates to the update form
-            >
-              Update
-            </Button>
-            <Button
-              variant="danger"
-              onClick={() => handleDelete(selectedRecord._id)}
-            >
-              Delete
-            </Button>
+            {userId === selectedRecord.createdBy && (
+              <>
+                <Button
+                  variant="warning"
+                  onClick={() =>
+                    navigate(
+                      `/medicalstaff/updatemedicalrecords/${selectedRecord._id}`
+                    )
+                  } // Navigates to the update form
+                >
+                  Update
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={() => handleDelete(selectedRecord._id)}
+                >
+                  Delete
+                </Button>
+              </>
+            )}
           </Modal.Footer>
         </Modal>
       )}

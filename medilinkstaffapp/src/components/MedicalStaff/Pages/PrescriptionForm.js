@@ -1,72 +1,113 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button, Col, Row } from "react-bootstrap";
+import { Form, Button, Col, Row, Alert } from "react-bootstrap";
 import axios from "axios"; // For making API requests
 import "../../Main/Main.css";
 import PageTitle from "../../Common/PageTitle";
 import { useNavigate } from "react-router-dom";
-
-const hardCodedDoctorId = "D0000001"; // Hardcoded doctor ID
+import { useAuthContext } from ".././../../context/AuthContext"; // Assuming you're using AuthContext for user info
 
 function PrescriptionForm() {
+  const { user, usertype } = useAuthContext(); // Assuming user object is provided by AuthContext
+  const navigate = useNavigate();
+  const [isFormDisabled, setIsFormDisabled] = useState(false);
+  const [loading, setLoading] = useState(true); // Loading state to ensure data is fetched
   const [prescription, setPrescription] = useState({
     patientId: "",
     patientName: "",
-    patientAge: "",
-    doctorId: hardCodedDoctorId,
+    patientAge: "", // Age will be derived from dateOfBirth
+    doctorId: "",
     doctorName: "",
     doctorEmail: "",
     hospital: "",
     medications: [{ drugName: "", dosage: "", frequency: "", duration: "" }],
     remarks: "",
   });
-  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState(null); // For error messages
 
-  // Dummy patient data
-  const dummyPatient = {
-    patientId: "P123456",
-    patientName: "John Doe",
-    patientAge: "35",
+  // Fetch doctor details based on user.doctorId
+  useEffect(() => {
+    // Wait until user object is available
+    if (user && user.doctorId) {
+      const fetchDoctorDetails = async () => {
+        try {
+          const response = await axios.get(
+            `${process.env.REACT_APP_BACKEND_URL}/api/staffroutes/doctors/${user.doctorId}`
+          );
+          const doctorData = response.data;
+          setPrescription((prev) => ({
+            ...prev,
+            doctorId: user.doctorId,
+            doctorName: doctorData.name,
+            doctorEmail: doctorData.email,
+            hospital: doctorData.hospital,
+          }));
+          setLoading(false); // Stop loading once data is fetched
+        } catch (error) {
+          console.error("Error fetching doctor details:", error);
+          setLoading(false); // Stop loading even if there is an error
+        }
+      };
+
+      fetchDoctorDetails();
+    } else if (user && !user.doctorId) {
+      // If user is not a doctor, display an alert and redirect back
+      setErrorMessage("Only doctors can add prescriptions.");
+      setIsFormDisabled(true); // Disable the form
+      setLoading(false); // Stop loading
+    }
+  }, [user, usertype, navigate]);
+
+  // Function to calculate age from dateOfBirth
+  const calculateAge = (dateOfBirth) => {
+    const birthDate = new Date(dateOfBirth);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    if (
+      monthDifference < 0 ||
+      (monthDifference === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+    return age;
   };
 
-  // Fetch doctor details from backend using the hardcoded doctorId
-  useEffect(() => {
-    const fetchDoctorDetails = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/staffroutes/doctors/${hardCodedDoctorId}`
-        );
-        const doctorData = response.data;
-        setPrescription((prev) => ({
-          ...prev,
-          doctorName: doctorData.name,
-          doctorEmail: doctorData.email,
-          hospital: doctorData.hospital,
-        }));
-      } catch (error) {
-        console.error("Error fetching doctor details:", error);
-      }
-    };
-
-    fetchDoctorDetails();
-  }, []);
-
-  const handlePatientIdChange = (e) => {
+  // Handle changes in patient ID and fetch patient details
+  const handlePatientIdChange = async (e) => {
     const patientId = e.target.value;
     setPrescription((prev) => ({
       ...prev,
       patientId: patientId,
-      // Simulate fetching patient details based on patientId
-      patientName: dummyPatient.patientName,
-      patientAge: dummyPatient.patientAge,
     }));
+
+    if (patientId) {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/patients/getbyid/${patientId}`
+        );
+        const patientData = response.data;
+        // Calculate the age from dateOfBirth
+        const age = calculateAge(patientData.dateOfBirth);
+        setPrescription((prev) => ({
+          ...prev,
+          patientName: patientData.name,
+          patientAge: age, // Set the calculated age
+        }));
+      } catch (error) {
+        console.error("Error fetching patient details:", error);
+        setErrorMessage("Patient not found.");
+      }
+    }
   };
 
+  // Handle medication change
   const handleMedicationChange = (index, field, value) => {
     const updatedMedications = [...prescription.medications];
     updatedMedications[index][field] = value;
     setPrescription({ ...prescription, medications: updatedMedications });
   };
 
+  // Add more medication fields
   const addMedication = () => {
     setPrescription((prev) => ({
       ...prev,
@@ -77,54 +118,67 @@ function PrescriptionForm() {
     }));
   };
 
+  // Remove medication field
   const removeMedication = (index) => {
     const updatedMedications = [...prescription.medications];
     updatedMedications.splice(index, 1);
     setPrescription({ ...prescription, medications: updatedMedications });
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent form default submission behavior
+    e.preventDefault(); // Prevent default form submission
 
     try {
       // Make a POST request to the backend to save the prescription
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/api/medicalinfo/prescriptions`, // Backend URL to handle prescription submission
-        prescription // The prescription data from the state
+        `${process.env.REACT_APP_BACKEND_URL}/api/medicalinfo/prescriptions`,
+        prescription
       );
 
       // Handle successful response
-      console.log("Prescription successfully submitted:", response.data);
       alert("Prescription submitted successfully!");
       navigate("/medicalstaff/prescriptions"); // Redirect to the prescriptions page
 
-      // Optionally, reset the form fields after successful submission
+      // Reset form fields
       setPrescription({
         patientId: "",
         patientName: "",
         patientAge: "",
-        doctorId: hardCodedDoctorId,
-        doctorName: prescription.doctorName,
-        doctorEmail: prescription.doctorEmail,
-        hospital: prescription.hospital,
+        doctorId: user?.doctorId || "",
+        doctorName: "",
+        doctorEmail: "",
+        hospital: "",
         medications: [
           { drugName: "", dosage: "", frequency: "", duration: "" },
         ],
         remarks: "",
       });
     } catch (error) {
-      // Handle error response
       console.error("Error submitting prescription:", error.response);
       alert("Failed to submit prescription. Please try again.");
     }
   };
+
+  // Return a loading state while fetching user data
+  if (loading) {
+    return (
+      <main id="main" className="main">
+        <h4>Loading...</h4>
+      </main>
+    );
+  }
 
   return (
     <main id="main" className="main">
       <PageTitle title="Add Prescription" url="/medicalstaff/addprescription" />
       <h4>Add New Prescription</h4>
       <hr />
-      <Form onSubmit={handleSubmit}>
+      {errorMessage && (
+        <Alert variant="danger">{errorMessage} Redirecting back...</Alert>
+      )}
+
+      <Form onSubmit={handleSubmit} disabled={isFormDisabled}>
         <h5 className="mt-2">Patient Details</h5>
         <Row>
           <Col md={6}>
@@ -136,6 +190,7 @@ function PrescriptionForm() {
                 value={prescription.patientId}
                 onChange={handlePatientIdChange}
                 required
+                disabled={isFormDisabled}
               />
             </Form.Group>
           </Col>
@@ -148,6 +203,7 @@ function PrescriptionForm() {
                 value={prescription.patientName}
                 readOnly
                 required
+                disabled={isFormDisabled}
               />
             </Form.Group>
           </Col>
@@ -160,6 +216,7 @@ function PrescriptionForm() {
                 value={prescription.patientAge}
                 readOnly
                 required
+                disabled={isFormDisabled}
               />
             </Form.Group>
           </Col>
@@ -176,6 +233,7 @@ function PrescriptionForm() {
                 value={prescription.doctorName}
                 readOnly
                 required
+                disabled={isFormDisabled}
               />
             </Form.Group>
           </Col>
@@ -187,6 +245,7 @@ function PrescriptionForm() {
                 value={prescription.doctorEmail}
                 readOnly
                 required
+                disabled={isFormDisabled}
               />
             </Form.Group>
           </Col>
@@ -198,6 +257,7 @@ function PrescriptionForm() {
                 value={prescription.hospital}
                 readOnly
                 required
+                disabled={isFormDisabled}
               />
             </Form.Group>
           </Col>
@@ -217,6 +277,7 @@ function PrescriptionForm() {
                     handleMedicationChange(index, "drugName", e.target.value)
                   }
                   required
+                  disabled={isFormDisabled}
                 />
               </Form.Group>
             </Col>
@@ -231,6 +292,7 @@ function PrescriptionForm() {
                     handleMedicationChange(index, "dosage", e.target.value)
                   }
                   required
+                  disabled={isFormDisabled}
                 />
               </Form.Group>
             </Col>
@@ -245,6 +307,7 @@ function PrescriptionForm() {
                     handleMedicationChange(index, "frequency", e.target.value)
                   }
                   required
+                  disabled={isFormDisabled}
                 />
               </Form.Group>
             </Col>
@@ -259,6 +322,7 @@ function PrescriptionForm() {
                     handleMedicationChange(index, "duration", e.target.value)
                   }
                   required
+                  disabled={isFormDisabled}
                 />
               </Form.Group>
             </Col>
@@ -268,6 +332,7 @@ function PrescriptionForm() {
                   variant="danger"
                   onClick={() => removeMedication(index)}
                   className="me-2"
+                  disabled={isFormDisabled}
                 >
                   Remove
                 </Button>
@@ -276,7 +341,12 @@ function PrescriptionForm() {
           </Row>
         ))}
 
-        <Button variant="secondary" onClick={addMedication} className="mt-2">
+        <Button
+          variant="secondary"
+          onClick={addMedication}
+          className="mt-2"
+          disabled={isFormDisabled}
+        >
           Add More Medications
         </Button>
 
@@ -289,10 +359,16 @@ function PrescriptionForm() {
             onChange={(e) =>
               setPrescription({ ...prescription, remarks: e.target.value })
             }
+            disabled={isFormDisabled}
           />
         </Form.Group>
 
-        <Button variant="primary" type="submit" className="mt-3">
+        <Button
+          variant="primary"
+          type="submit"
+          className="mt-3"
+          disabled={isFormDisabled}
+        >
           Submit Prescription
         </Button>
       </Form>

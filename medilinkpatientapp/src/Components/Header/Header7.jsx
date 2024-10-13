@@ -4,13 +4,10 @@ import { useAuthContext } from "../../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { IMAGES } from "../../constants/images";
 
-
 const Header7 = ({ data }) => {
-  
   const { logo } = data;
-  const auth= useAuthContext();
+  const auth = useAuthContext();
   const navigate = useNavigate();
- 
 
   const [mobileToggle, setMobileToggle] = useState(false);
 
@@ -19,10 +16,8 @@ const Header7 = ({ data }) => {
   };
 
   const handleLogout = () => {
-      auth.logout();
-  }
-
-  
+    auth.logout();
+  };
 
   return (
     <header className="st-site-header st-style1 st-type1">
@@ -59,41 +54,44 @@ const Header7 = ({ data }) => {
                 </svg>
                 <span style={{ marginRight: "20px" }}>+94 71 152 1161</span>
                 {auth.isLoggedIn ? (
-  <div>
-    {/* Logout Button */}
-    <button
-      className="st-btn st-style1 st-color1 st-size-medium"
-      onClick={handleLogout}
-      style={{ marginLeft: "20px" }} // Add space between the number and logout button
-    >
-      Logout
-    </button>
+                  <div>
+                    {/* Logout Button */}
+                    <button
+                      className="st-btn st-style1 st-color1 st-size-medium"
+                      onClick={handleLogout}
+                      style={{ marginLeft: "20px" }} // Add space between the number and logout button
+                    >
+                      Logout
+                    </button>
 
-    {/* Profile Photo */}
-    <img
-      src={auth.user?.photoURL||IMAGES.profile} // Display profile photo if available, otherwise display default profile photo
-      alt="Profile"
-      className="rounded-circle"
-      style={{
-        width: "40px", 
-        height: "40px", 
-        borderRadius: "50%", 
-        marginLeft: "20px", 
-        cursor: "pointer"
-      }}
-      onClick={() => { navigate("/patient/patientdetails") }} // Navigate to patient details
-    />
-  </div>
-) : (
-  <button
-    className="st-btn st-style1 st-color1 st-size-medium"
-    onClick={() => { navigate("/login") }} // Navigate to login when clicked
-    style={{ marginLeft: "20px" }}
-  >
-    Log In
-  </button>
-)}
-
+                    {/* Profile Photo */}
+                    <img
+                      src={auth.user?.photoURL || IMAGES.profile} // Display profile photo if available, otherwise display default profile photo
+                      alt="Profile"
+                      className="rounded-circle"
+                      style={{
+                        width: "40px",
+                        height: "40px",
+                        borderRadius: "50%",
+                        marginLeft: "20px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => {
+                        navigate("/patient/patientdetails");
+                      }} // Navigate to patient details
+                    />
+                  </div>
+                ) : (
+                  <button
+                    className="st-btn st-style1 st-color1 st-size-medium"
+                    onClick={() => {
+                      navigate("/login");
+                    }} // Navigate to login when clicked
+                    style={{ marginLeft: "20px" }}
+                  >
+                    Log In
+                  </button>
+                )}
               </li>
             </ul>
           </div>
@@ -151,6 +149,14 @@ const Header7 = ({ data }) => {
                       </li>
                     </ul>
                   </li>
+                  <li className="menu-item-has-children">
+                    <Link
+                      to="health/healthsummery"
+                      onClick={() => setMobileToggle(false)}
+                    >
+                      Health
+                    </Link>
+                  </li>
                   <li>
                     <Link to="contact" onClick={() => setMobileToggle(false)}>
                       Contact
@@ -167,9 +173,7 @@ const Header7 = ({ data }) => {
                 </div>
               </div>
             </div>
-            <div className="st-main-header-right">
-             
-            </div>
+            <div className="st-main-header-right"></div>
           </div>
         </div>
       </div>

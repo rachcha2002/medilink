@@ -7,10 +7,13 @@ import { BsArrowLeft } from "react-icons/bs";
 import { BiCheckCircle, BiHide, BiShow } from "react-icons/bi";
 import "../../Main/Main.css";
 import PageTitle from "../../Common/PageTitle";
+import { useAuthContext } from "../../../context/AuthContext";
 
 function AddMLTStaff({ toggleLoading }) {
-  const cusfrontendurl = `${process.env.React_App_Frontend_URL}/customer`;
-  const stafffrontendurl = `${process.env.React_App_Frontend_URL}/staff/login`;
+  const { user } = useAuthContext(); // Get user from context
+  const [isUserLoading, setIsUserLoading] = useState(true); // Loading state for user
+  const [hospital, setHospital] = useState(""); // Hospital value from user
+
   const [errorMessage, setErrorMessage] = useState("");
   const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -20,13 +23,19 @@ function AddMLTStaff({ toggleLoading }) {
 
   const navigate = useNavigate();
 
+  // Fetch user hospital from context once user is loaded
+  useEffect(() => {
+    if (user && user.hospitalName) {
+      setHospital(user.hospitalName); // Assign hospital name
+      setIsUserLoading(false); // Mark as loaded
+    }
+  }, [user]);
+
   const {
     handleSubmit,
     control,
-    setValue,
     formState: { errors },
     getValues,
-    trigger,
   } = useForm();
 
   const onSubmit = async (data) => {
@@ -48,14 +57,12 @@ function AddMLTStaff({ toggleLoading }) {
       formData.append("speciality", data.speciality);
       formData.append("email", data.email);
       formData.append("password", data.password);
-      formData.append("hospital", "Medihelp");
+      formData.append("hospital", hospital); // Append hospital from state
 
       // Append the photo if it's selected
       if (data.photo) {
         formData.append("photo", data.photo); // No need for [0] if it's a single file
       }
-
-      console.log("photo", data.photo);
 
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/staffroutes/create-mltstaff`,
@@ -67,7 +74,7 @@ function AddMLTStaff({ toggleLoading }) {
 
       if (response.status === 201) {
         alert("MLT Staff Registered Successfully!");
-        navigate("/staff/hr/mlt");
+        navigate("/hospitaladmin/mltstaff");
       } else {
         throw new Error("Failed to submit data");
       }
@@ -81,6 +88,11 @@ function AddMLTStaff({ toggleLoading }) {
   const handleSubjectChange = (e) => {
     setSelectedSubject(e.target.value);
   };
+
+  // Ensure that the form is not shown until the user data (hospital name) is loaded
+  if (isUserLoading) {
+    return <div>Loading hospital information...</div>;
+  }
 
   return (
     <main id="main" className="main">

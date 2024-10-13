@@ -1,15 +1,37 @@
 import React, { useState, useEffect } from "react";
-import { Table, Spinner, Alert, Button, Modal } from "react-bootstrap";
+import {
+  Table,
+  Spinner,
+  Alert,
+  Button,
+  Modal,
+  Form,
+  Row,
+  Col,
+} from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../../context/AuthContext"; // Assuming you have an AuthContext
 
 function Prescriptions({ apiUrl, title }) {
+  const { user } = useAuthContext(); // Fetch user from context
+  const [isUserLoading, setIsUserLoading] = useState(true); // Track if user is loaded
   const [prescriptions, setPrescriptions] = useState([]);
+  const [filteredPrescriptions, setFilteredPrescriptions] = useState([]); // State for filtered prescriptions
   const [selectedPrescription, setSelectedPrescription] = useState(null); // For holding the selected prescription
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false); // To control modal visibility
+  const [searchQuery, setSearchQuery] = useState(""); // State for search text
+  const [searchDate, setSearchDate] = useState(""); // State for date picker
   const navigate = useNavigate();
+
+  // Wait for user to load before fetching prescriptions
+  useEffect(() => {
+    if (user) {
+      setIsUserLoading(false); // Mark user as loaded
+    }
+  }, [user]);
 
   // Fetch prescriptions from the provided apiUrl
   useEffect(() => {
@@ -17,6 +39,7 @@ function Prescriptions({ apiUrl, title }) {
       try {
         const response = await axios.get(apiUrl); // Use the apiUrl prop
         setPrescriptions(response.data); // Set the fetched prescriptions
+        setFilteredPrescriptions(response.data); // Set initial filtered prescriptions
         setLoading(false); // Stop loading once data is fetched
       } catch (error) {
         setError("Failed to fetch prescriptions. Please try again."); // Set error if the request fails
@@ -24,8 +47,10 @@ function Prescriptions({ apiUrl, title }) {
       }
     };
 
-    fetchPrescriptions();
-  }, [apiUrl]); // Refetch data when apiUrl changes
+    if (!isUserLoading) {
+      fetchPrescriptions(); // Fetch only after user is loaded
+    }
+  }, [apiUrl, isUserLoading]); // Refetch data when apiUrl changes or user is loaded
 
   // Handle modal open and close
   const handleShowModal = (prescription) => {
@@ -45,11 +70,16 @@ function Prescriptions({ apiUrl, title }) {
   const handleDelete = async (id) => {
     try {
       // Send DELETE request to the backend to delete the prescription by its ID
-      await axios.delete(`${apiUrl}/${id}`); // Use the same apiUrl for deletion
+      await axios.delete(
+        `${process.env.REACT_APP_BACKEND_URL}/api/medicalinfo/prescriptions/${id}`
+      ); // Use the same apiUrl for deletion
 
       // Update the state to remove the deleted prescription
       setPrescriptions((prevPrescriptions) =>
         prevPrescriptions.filter((prescription) => prescription._id !== id)
+      );
+      setFilteredPrescriptions((prevFiltered) =>
+        prevFiltered.filter((prescription) => prescription._id !== id)
       );
 
       // Close the modal after deletion
@@ -61,8 +91,41 @@ function Prescriptions({ apiUrl, title }) {
     }
   };
 
+  // Filter prescriptions based on search query and date
+  useEffect(() => {
+    const filtered = prescriptions.filter((prescription) => {
+      const isTextMatch =
+        prescription.patientId
+          .toString()
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        prescription.patientName
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        prescription.doctorName
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        prescription.doctorId.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const isDateMatch = searchDate
+        ? new Date(prescription.date).toLocaleDateString() ===
+          new Date(searchDate).toLocaleDateString()
+        : true;
+
+      return isTextMatch && isDateMatch;
+    });
+    setFilteredPrescriptions(filtered);
+  }, [searchQuery, searchDate, prescriptions]);
+
+  // Handle reset of search filters
+  const handleResetSearch = () => {
+    setSearchQuery(""); // Reset search query
+    setSearchDate(""); // Reset search date
+    setFilteredPrescriptions(prescriptions); // Reset filtered prescriptions to the original list
+  };
+
   // Render loading state
-  if (loading) {
+  if (loading || isUserLoading) {
     return (
       <Spinner animation="border" role="status">
         <span className="visually-hidden">Loading...</span>
@@ -80,7 +143,32 @@ function Prescriptions({ apiUrl, title }) {
     <div>
       <h5>Prescription Table</h5>
       <hr />
-      {prescriptions.length > 0 ? (
+
+      {/* Search Input and Date Picker */}
+      <Row className="mb-3">
+        <Col md={6}>
+          <Form.Control
+            type="text"
+            placeholder="Search by Patient ID, Name, Doctor, or Doctor ID"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </Col>
+        <Col md={3}>
+          <Form.Control
+            type="date"
+            value={searchDate}
+            onChange={(e) => setSearchDate(e.target.value)}
+          />
+        </Col>
+        <Col md={3}>
+          <Button variant="secondary" onClick={handleResetSearch}>
+            Reset Search
+          </Button>
+        </Col>
+      </Row>
+
+      {filteredPrescriptions.length > 0 ? (
         <Table
           hover
           responsive
@@ -102,7 +190,7 @@ function Prescriptions({ apiUrl, title }) {
             </tr>
           </thead>
           <tbody>
-            {prescriptions.map((prescription) => (
+            {filteredPrescriptions.map((prescription) => (
               <tr key={prescription._id}>
                 <td>{prescription.patientId}</td>
                 <td>{prescription.patientName}</td>
@@ -175,18 +263,22 @@ function Prescriptions({ apiUrl, title }) {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            variant="warning"
-            onClick={() => handleUpdate(selectedPrescription._id)}
-          >
-            Update
-          </Button>
-          <Button
-            variant="danger"
-            onClick={() => handleDelete(selectedPrescription._id)}
-          >
-            Delete
-          </Button>
+          {user?.doctorId === selectedPrescription?.doctorId && (
+            <>
+              <Button
+                variant="warning"
+                onClick={() => handleUpdate(selectedPrescription._id)}
+              >
+                Update
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => handleDelete(selectedPrescription._id)}
+              >
+                Delete
+              </Button>
+            </>
+          )}
         </Modal.Footer>
       </Modal>
     </div>
