@@ -57,8 +57,9 @@ const navList = [
   },
   {
     _id: 5,
-    name: "Tables",
-    icon: "bi bi-layout-text-window-reverse",
+    name: "Hospital Details",
+    icon: "bi bi-h-circle",
+    href: "/hospitaladmin/hospitaldetails",
   },
   {
     _id: 6,
