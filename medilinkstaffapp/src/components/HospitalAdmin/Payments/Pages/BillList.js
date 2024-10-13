@@ -21,6 +21,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import ".././../../Main/Main.css";
 import { FaFilePdf } from "react-icons/fa";
+import { useAuthContext } from "../../../../context/AuthContext";
 
 
 const BillingList = () => {
@@ -34,10 +35,14 @@ const BillingList = () => {
   const [billingTypeFilter, setBillingTypeFilter] = useState("");
   const [paymentMethodFilter, setPaymentMethodFilter] = useState("");
   const navigate = useNavigate();
+  const {user} = useAuthContext();
+  const hospitalID = user?.registrationID;
 
   useEffect(() => {
+
+    if (!hospitalID) return; 
     axios
-      .get(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing`)
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/hospital/${hospitalID}`)
       .then((response) => {
         setBillingData(response.data);
         setFilteredData(response.data);
@@ -47,7 +52,7 @@ const BillingList = () => {
         console.error("There was an error fetching the billing data!", error);
         setLoading(false);
       });
-  }, []);
+  }, [hospitalID]);
 
   const handleShowModal = (billing) => {
     setSelectedBilling(billing);

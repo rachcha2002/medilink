@@ -11,6 +11,7 @@ import MyPayments from "./MyPayments";
 
 import PaymentFailure from "../../Components/Payments/PaymentFailure";
 import PaymentVerification from "../../Components/Payments/PaymentVerification";
+import PayementsFullPage from "./PayementsFullPage";
 
 export default function PaymentsMain() {
   return (
@@ -19,6 +20,7 @@ export default function PaymentsMain() {
       <Route path="/mypayments" element={<MyPayments />} />
       <Route path="/verifypay/*" element={<PaymentVerification />} />
       <Route path="/failedpay/*" element={<PaymentFailure />} />
+      <Route path="/fullpage" element={<PayementsFullPage />} />
     </Routes>
   );
 }
