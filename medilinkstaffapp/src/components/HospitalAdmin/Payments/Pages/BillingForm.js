@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Form,
-  Row,
-  Col,
-  Button,
-  InputGroup,
-} from "react-bootstrap";
+import { Container, Form, Row, Col, Button, InputGroup } from "react-bootstrap";
 import { useForm, Controller } from "react-hook-form";
 import { FaPlusCircle } from "react-icons/fa";
 import { BsInfoCircle } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../../../context/AuthContext";
 import axios from "axios";
 import moment from "moment"; // Import moment for date handling
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -26,7 +20,15 @@ const BillingForm = () => {
   } = useForm();
   const [serviceDetails, setServiceDetails] = useState([]);
   const [billNo, setBillNo] = useState(""); // State for bill number
+  const [hospitalDetails, setHospitalDetails] = useState({
+    hospitalName: "",
+    hospitalID: "",
+    hospitalEmail: "",
+    hospitalPhone: "",
+    hospitalAddress: "",
+  });
   const navigate = useNavigate();
+  const { user, isLoggedIn } = useAuthContext();
 
   // Generate a unique bill number when the component loads
   useEffect(() => {
@@ -40,6 +42,34 @@ const BillingForm = () => {
     generateBillNo(); // Call the function to set the bill number
   }, []);
 
+  // Fetch hospital details using hospitalID from user context
+  useEffect(() => {
+    const fetchHospitalDetails = async () => {
+      try {
+        const hospitalID = user.registrationID; // Assuming user has registrationID
+        const response = await axios.get(
+          `http://localhost:5000/api/hospital/gethospital/${hospitalID}`
+        );
+        const hospitalData = response.data;
+
+        // Update state with fetched hospital data
+        setHospitalDetails({
+          hospitalName: hospitalData.hospitalName,
+          hospitalID: hospitalData.registrationID,
+          hospitalEmail: hospitalData.hospitalEmail,
+          hospitalPhone: hospitalData.contactNumber,
+          hospitalAddress: hospitalData.address,
+        });
+      } catch (error) {
+        console.error("Error fetching hospital details:", error);
+      }
+    };
+
+    if (user && user.registrationID) {
+      fetchHospitalDetails();
+    }
+  }, [user]);
+
   const handleAddService = () => {
     setServiceDetails([...serviceDetails, { description: "", cost: "" }]);
   };
@@ -47,8 +77,20 @@ const BillingForm = () => {
   const onSubmit = async (data) => {
     try {
       // Combine the form data with service details and billNo
-      const formData = { ...data, serviceDetails, billNo };
+      const formData = {
+        ...data,
+        serviceDetails,
+        billNo,
+        hospitalID: hospitalDetails.hospitalID,
+        hospitalName: hospitalDetails.hospitalName,
+        hospitalEmail: hospitalDetails.hospitalEmail,
+        hospitalPhone: hospitalDetails.hospitalPhone,
+        hospitalAddress: hospitalDetails.hospitalAddress,
+        hospitalMongoID: user.registrationID,
+      };
 
+
+      console.log(formData)
       // Send POST request to the backend API
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/api/payment/billing`,
@@ -89,6 +131,40 @@ const BillingForm = () => {
         }}
       >
         <h3 className="text-center mb-4">Hospital Billing Form</h3>
+        {/* Display Hospital Details */}
+        <h5 className="mb-3">Hospital Information</h5>
+        <Row className="mb-3">
+          <Col md={6}>
+            <p>
+              <b>Hospital Name:</b> {hospitalDetails.hospitalName}
+            </p>
+          </Col>
+          <Col md={6}>
+            <p>
+              <b>Hospital ID:</b> {hospitalDetails.hospitalID}
+            </p>
+          </Col>
+        </Row>
+        <Row className="mb-3">
+          <Col md={6}>
+            <p>
+              <b>Hospital Email:</b> {hospitalDetails.hospitalEmail}
+            </p>
+          </Col>
+          <Col md={6}>
+            <p>
+              <b>Hospital Phone:</b> {hospitalDetails.hospitalPhone}
+            </p>
+          </Col>
+        </Row>
+        <Row className="mb-3">
+          <Col md={6}>
+            <p>
+              <b>Hospital Address:</b> {hospitalDetails.hospitalAddress}
+            </p>
+          </Col>
+        </Row>
+
         <Form onSubmit={handleSubmit(onSubmit)}>
           {/* Billing Type Selection */}
           <h5 className="mb-3">Billing Type</h5>
@@ -108,7 +184,9 @@ const BillingForm = () => {
               )}
             />
             {errors.billingType && (
-              <small className="text-danger">{errors.billingType.message}</small>
+              <small className="text-danger">
+                {errors.billingType.message}
+              </small>
             )}
           </Form.Group>
 
@@ -230,7 +308,11 @@ const BillingForm = () => {
               </Col>
             </Row>
           ))}
-          <Button variant="secondary" onClick={handleAddService} className="mb-3">
+          <Button
+            variant="secondary"
+            onClick={handleAddService}
+            className="mb-3"
+          >
             <FaPlusCircle /> Add Service
           </Button>
 

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Table, Button, Modal, Badge, Form, Row, Col } from 'react-bootstrap';
 import html2pdf from "html2pdf.js";
 import image from "../../../../images/logo.png";
+import { useAuthContext } from "../../../../context/AuthContext"; 
+import { submitBilling } from '../../../../Service/billService';
 
 function Filteredtestandscans({ appointments }) {
     const [show, setShow] = useState(false);
@@ -9,6 +11,10 @@ function Filteredtestandscans({ appointments }) {
     const [searchName, setSearchName] = useState(''); // Search by patient/hospital name
     const [searchDate, setSearchDate] = useState(''); // Search by date
     const [searchTime, setSearchTime] = useState(''); // Search by time
+    const auth = useAuthContext();
+    const hospital = auth.user?.hospitalName || '';
+    const type = 'testscan';
+
 
     const handleClose = () => setShow(false);
     const handleShow = (appointment) => {
@@ -23,9 +29,10 @@ function Filteredtestandscans({ appointments }) {
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
               <div>
                 <img src="${image}" alt="Hospital Logo" style="width: 150px;">
+                <h4 style="color: #333; margin: 0;">${hospital}</h4>
+                <h5 style="color: #555; margin: 0;">Test and Scan Appointment List</h5>
               </div>
               <div style="text-align: right;">
-                <h2 style="color: #555; margin: 0;">Test and Scan Appointment List</h2>
                 <p style="margin: 5px 0;"><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
               </div>
             </div>
@@ -33,16 +40,16 @@ function Filteredtestandscans({ appointments }) {
               <thead style="background-color: #f2f2f2;">
                 <tr>
                   <th style="padding: 10px; border: 1px solid #ddd;">Patient Name</th>
-                  <th style="padding: 10px; border: 1px solid #ddd;">Hospital Name</th>
                   <th style="padding: 10px; border: 1px solid #ddd;">Scan Name</th>
+                  <th style="padding: 10px; border: 1px solid #ddd;">Attendance</th>
                 </tr>
               </thead>
               <tbody>
                 ${filteredAppointments.map(appointment => `
                   <tr>
                     <td style="padding: 10px; border: 1px solid #ddd;">${appointment.username}</td>
-                    <td style="padding: 10px; border: 1px solid #ddd;">${appointment.hospitalName}</td>
                     <td style="padding: 10px; border: 1px solid #ddd;">${appointment.scanName}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">  </td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -75,6 +82,7 @@ function Filteredtestandscans({ appointments }) {
                     });
 
                     if (response.ok) {
+                        await submitBilling(type,selectedAppointment, payment, auth.user);
                         setShow(false);
                         window.location.reload(); // Refresh the page
                     } else {
@@ -126,7 +134,7 @@ function Filteredtestandscans({ appointments }) {
             <Row>
                 <Col>{/* Search by patient or hospital name */}
                     <Form.Group className="mb-3" controlId="searchName">
-                        <Form.Label>Search by Patient/Hospital Name</Form.Label>
+                        <Form.Label>Search by Patient/Scan Name</Form.Label>
                         <Form.Control
                             type="text"
                             placeholder="Enter name"
@@ -174,7 +182,6 @@ function Filteredtestandscans({ appointments }) {
                         <th>Patient name</th>
                         <th>Appointment Date</th>
                         <th>Appointment Time</th>
-                        <th>Hospital</th>
                         <th>Scan</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -186,7 +193,6 @@ function Filteredtestandscans({ appointments }) {
                             <td>{appointment.username}</td>
                             <td>{new Date(appointment.appointmentDate).toLocaleDateString()}</td>
                             <td>{appointment.appointmentTime}</td>
-                            <td>{appointment.hospitalName}</td>
                             <td>{appointment.scanName}</td>
                             <td>
                                 <Badge bg={
@@ -214,7 +220,6 @@ function Filteredtestandscans({ appointments }) {
                             <p><strong>Mobile:</strong> {selectedAppointment.mobile}</p>
                             <p><strong>Appointment Date:</strong> {new Date(selectedAppointment.appointmentDate).toLocaleDateString()}</p>
                             <p><strong>Appointment Time:</strong> {selectedAppointment.appointmentTime}</p>
-                            <p><strong>Hospital:</strong> {selectedAppointment.hospitalName}</p>
                             <p><strong>Scan:</strong> {selectedAppointment.scanName}</p>
                             <p><strong>Status:</strong> {selectedAppointment.status}</p>
                             {(selectedAppointment.status === 'approved' || selectedAppointment.status === 'completed') && (

@@ -6,7 +6,7 @@ import Multipage from "./Pages/Multipage/Multipage";
 import Layout7 from "./Components/Layout/Layout7";
 import AboutPage from "./Pages/Multipage/AboutPage";
 import GalleryPage from "./Pages/Multipage/GalleryPage";
-import PricingPage from "./Pages/Multipage/PricingPage";
+import MyAppointmentPage from "./Pages/Multipage/MyAppointmentPage";
 import PostPage from "./Pages/Multipage/PostPage";
 import ContactPage from "./Pages/Multipage/ContactPage";
 import DoctorProfilePage from "./Pages/DoctorProfilePage";
@@ -110,7 +110,7 @@ const App = () => {
           <Route path="home" element={<Multipage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="gallery" element={<GalleryPage />} />
-          <Route path="pricing" element={<PricingPage />} />
+          <Route path="myappointments" element={<MyAppointmentPage />} />
           <Route path="post" element={<PostPage />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="post/:postId" element={<PostDetails />} />
