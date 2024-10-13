@@ -281,10 +281,30 @@ const deleteMLTStaffById = async (req, res) => {
   }
 };
 
+// Get MLT Staff by Hospital
+const getMLTStaffByHospital = async (req, res) => {
+  try {
+    const { hospital } = req.params; // Get the hospital from request params
+    const mltStaff = await MLTStaff.find({ hospital }); // Query MLT staff by hospital
+
+    if (!mltStaff || mltStaff.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No MLT Staff found for this hospital" });
+    }
+
+    return res.status(200).json(mltStaff); // Return the staff found
+  } catch (error) {
+    console.error("Error fetching MLT staff by hospital:", error);
+    return res.status(500).json({ message: "Server error", error });
+  }
+};
+
 module.exports = {
   createMLTStaff,
   getAllMLTStaff,
   getMLTStaffById,
   updateMLTStaffById,
   deleteMLTStaffById,
+  getMLTStaffByHospital,
 };

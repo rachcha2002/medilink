@@ -82,22 +82,29 @@ export default function HospitalRegistration() {
     formData.append("scans", JSON.stringify(scanDetails)); // Send scan details as a string
     formData.append("hospitalImage", image); // Append the selected image
     
-        const adminData = {
-          adminID: data.adminID,
-          adminName: data.adminName,
-          adminEmail: data.adminEmail,
-          adminContact: data.adminContact,
-          hospitalName:data.hospitalName,
-          registrationID:data.registrationID
-        };
-    
+        
         try {
           // API call to add hospital information
-          await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/hospital/addhospital`, formData, {
+          const hospitalResponse = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/hospital/addhospital`, formData, {
             headers: {
               "Content-Type": "multipart/form-data", // Important to send FormData
             },
           });
+      
+          // Extract the saved hospital ID from the response
+          const savedHospitalId = hospitalResponse.data.savedHospital._id; // Assuming the MongoDB ID is available in this field
+      
+          // Prepare admin data with the retrieved hospital ID as registrationID
+          const adminData = {
+            adminID: data.adminID,
+            adminName: data.adminName,
+            adminEmail: data.adminEmail,
+            adminContact: data.adminContact,
+            hospitalName: data.hospitalName,
+            registrationID: savedHospitalId, // Assign the MongoDB ID to the registration ID
+          };
+      
+
     
           // API call to add hospital admin information
           await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/hospitaladmin/addhospitaladmin`, adminData);

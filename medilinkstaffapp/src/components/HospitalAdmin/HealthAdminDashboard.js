@@ -1,8 +1,12 @@
 import React from "react";
 import "../Main/Main.css";
 import PageTitle from "../Common/PageTitle";
+
 import Container from "react-bootstrap/Container";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
+
+import PendingPayments from "./Payments/Pages/PendingPayments";
+
 
 // Function to generate dummy data
 const generateDummyData = () => {
@@ -68,6 +72,10 @@ const HealthAdminDashboard = () => {
         </ResponsiveContainer>
       </div>
       </Container>
+
+
+      <PendingPayments/>
+
     </main>
   );
 };

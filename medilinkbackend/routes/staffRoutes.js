@@ -10,6 +10,8 @@ const {
   deleteNurseById,
   updateDoctorById,
   updateNurseById,
+  getDoctorsByHospital,
+  getNursesByHospital,
 } = require("../controllers/medicalstaff-controller");
 
 const {
@@ -18,6 +20,7 @@ const {
   getMLTStaffById,
   deleteMLTStaffById,
   updateMLTStaffById,
+  getMLTStaffByHospital,
 } = require("../controllers/mltstaff-controller");
 
 /*-------Medical Staff Routes-------*/
@@ -49,6 +52,12 @@ router.put("/doctors/:id", updateDoctorById);
 // Update nurse by ID
 router.put("/nurses/:id", updateNurseById);
 
+// Route to get doctors by hospital
+router.get("/doctors/hospital/:hospital", getDoctorsByHospital);
+
+// Route to get nurses by hospital
+router.get("/nurses/hospital/:hospital", getNursesByHospital);
+
 /*-------MLT Staff Routes-------*/
 
 // Create a new MLT staff
@@ -65,5 +74,8 @@ router.delete("/mltstaff/:id", deleteMLTStaffById);
 
 // Update MLT staff by ID
 router.put("/mltstaff/:id", updateMLTStaffById);
+
+// New route for getting MLT staff by hospital
+router.get("/mltstaff/hospital/:hospital", getMLTStaffByHospital); // Define the route
 
 module.exports = router;

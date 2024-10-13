@@ -3,6 +3,7 @@ import { Table, Button, Modal, Badge, Form,Row,Col } from 'react-bootstrap';
 import html2pdf from "html2pdf.js";
 import image from "../../../../images/logo.png";
 import { useAuthContext } from "../../../../context/AuthContext"; 
+import { submitBilling } from '../../../../Service/billService';
 
 function Filteredchannelinglist({ appointments }) {
     const [show, setShow] = useState(false);
@@ -12,6 +13,8 @@ function Filteredchannelinglist({ appointments }) {
     const [searchTime, setSearchTime] = useState(''); // Search by time
     const auth = useAuthContext();
     const hospital = auth.user?.hospitalName || '';
+    let type = 'channeling'
+
 
     const handleClose = () => setShow(false);
     const handleShow = (appointment) => {
@@ -79,6 +82,7 @@ function Filteredchannelinglist({ appointments }) {
                     });
 
                     if (response.ok) {
+                        await submitBilling(type,selectedAppointment, payment, auth.user);
                         setShow(false);
                         window.location.reload(); // Refresh the page
                     } else {
@@ -104,6 +108,7 @@ function Filteredchannelinglist({ appointments }) {
 
                 if (response.ok) {
                     setShow(false);
+                 
                     window.location.reload(); // Refresh the page
                 } else {
                     console.error('Failed to reject the appointment');
