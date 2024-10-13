@@ -396,6 +396,39 @@ const updateNurseById = async (req, res) => {
   }
 };
 
+// Get Doctors by Hospital
+const getDoctorsByHospital = async (req, res) => {
+  try {
+    const { hospital } = req.params; // Extract hospital name from params
+    const doctors = await Doctor.find({ hospital }); // Find doctors with the matching hospital
+    if (doctors.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No doctors found for this hospital" });
+    }
+    res.status(200).json(doctors);
+  } catch (error) {
+    console.error("Error fetching doctors by hospital:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+// Get Nurses by Hospital
+const getNursesByHospital = async (req, res) => {
+  try {
+    const { hospital } = req.params; // Extract hospital name from params
+    const nurses = await Nurse.find({ hospital }); // Find nurses with the matching hospital
+    if (nurses.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No nurses found for this hospital" });
+    }
+    res.status(200).json(nurses);
+  } catch (error) {
+    console.error("Error fetching nurses by hospital:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+};
 module.exports = {
   createMedicalStaff,
   getAllDoctors,
@@ -406,4 +439,6 @@ module.exports = {
   deleteNurseById, // Add delete nurse function to module exports
   updateDoctorById,
   updateNurseById,
+  getDoctorsByHospital,
+  getNursesByHospital,
 };

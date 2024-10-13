@@ -4,7 +4,6 @@ import SideBar from "./Sidebar/SideBar";
 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import PrescriptionForm from "./Pages/PrescriptionForm";
-import PrescriptionsByHospital from "./Pages/PrescriptionsByHospital";
 import PrescriptionUpdateForm from "./Pages/PrescriptionUpdateForm";
 import CreateMedicalRecordForm from "./Pages/CreateMedicalRecordForm";
 import MedicalRecords from "./Pages/MedicalRecords";

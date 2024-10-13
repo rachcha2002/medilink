@@ -18,15 +18,9 @@ const navList = [
       },
       {
         _id: 21,
-        name: "All Medical Records",
+        name: "Medical Records",
         icon: "bi bi-circle",
         href: "/medicalstaff/medicalrecords",
-      },
-      {
-        _id: 22,
-        name: "My Medical Records",
-        icon: "bi bi-circle",
-        href: "/medicalstaff/medicalrecordsbystaff",
       },
     ],
   },
@@ -43,15 +37,9 @@ const navList = [
       },
       {
         _id: 31,
-        name: "All Prescriptions",
+        name: "Prescriptions",
         icon: "bi bi-circle",
         href: "/medicalstaff/prescriptions",
-      },
-      {
-        _id: 32,
-        name: "My Prescriptions",
-        icon: "bi bi-circle",
-        href: "/medicalstaff/prescriptionbystaff",
       },
     ],
   },

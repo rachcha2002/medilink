@@ -14,9 +14,11 @@ const generateUniqueMrId = async () => {
 
 // Create new medical record with file upload
 exports.createMedicalRecord = async (req, res) => {
+  console.log(req.body);
   try {
     const mrId = await generateUniqueMrId(); // Generate unique mrId
-
+    console.log(mrId);
+    console.log(req.file);
     let medicalDocument = null;
     if (req.file) {
       const uploadedFile = await uploadFileToFirebase(
@@ -29,7 +31,7 @@ exports.createMedicalRecord = async (req, res) => {
         uploadedDate: new Date(),
       };
     }
-
+    console.log(medicalDocument);
     const medicalRecord = new MedicalRecord({
       ...req.body,
       mrId,
