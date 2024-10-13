@@ -3,6 +3,7 @@ const Billing = require("../../models/PaymentModels/BillingSchema");
 // Create a new billing record
 exports.createBilling = async (req, res) => {
   try {
+    console.log(req.body);
     const billing = new Billing(req.body);
     const savedBilling = await billing.save();
     res.status(201).json(savedBilling);
@@ -66,7 +67,7 @@ exports.deleteBilling = async (req, res) => {
   }
 };
 
-//Get Pending Payments 
+//Get Pending Payments
 exports.getPendingPayments = async (req, res) => {
   try {
     const pendingPayments = await Billing.find({ paymentStatus: "Pending" });
@@ -75,7 +76,6 @@ exports.getPendingPayments = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 exports.getBillsByPatientId = async (req, res) => {
   try {
@@ -99,6 +99,42 @@ exports.getBillByBillNo = async (req, res) => {
       return res.status(404).json({ error: "Billing record not found" });
     }
     res.status(200).json(billing);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getBillsByHospitalId = async (req, res) => {
+  try {
+    const { hospitalID } = req.params;
+    const bills = await Billing.find({
+      hospitalMongoID: hospitalID,
+    });
+    if (bills.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "No bills found for this hospital" });
+    }
+    res.status(200).json(bills);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get pending bills by hospital ID
+exports.getPendingBillsByHospitalId = async (req, res) => {
+  try {
+    const { hospitalID } = req.params;
+    const pendingBills = await Billing.find({
+      hospitalMongoID: hospitalID,
+      paymentStatus: "Pending",
+    });
+    if (pendingBills.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "No pending bills found for this hospital" });
+    }
+    res.status(200).json(pendingBills);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

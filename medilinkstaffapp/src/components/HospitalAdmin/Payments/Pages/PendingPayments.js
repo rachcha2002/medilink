@@ -17,16 +17,22 @@ import {
 } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 import image from "../../../../images/logo.png"; // Correctly importing the logo image
+import { useAuthContext } from "../../../../context/AuthContext";
 
 const PendingPayments = () => {
+  const {user} = useAuthContext();
   const [pendingPayments, setPendingPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const hospitalID = user.registrationID;
 
   useEffect(() => {
+
+    if (!hospitalID) return; 
+
     axios
       .get(
-        `${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/pending/pendingBills`
+        `${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/hospital/${hospitalID}/pending`
       )
       .then((response) => {
         setPendingPayments(response.data);
@@ -39,7 +45,7 @@ const PendingPayments = () => {
         );
         setLoading(false);
       });
-  }, []);
+  }, [hospitalID]);
 
   const handleApprove = (paymentId) => {
     axios

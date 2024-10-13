@@ -3,17 +3,19 @@ import SectionHeading from '../SectionHeading/SectionHeading';
 import { Icon } from '@iconify/react';
 import { Modal, Button } from 'react-bootstrap';
 import axios from 'axios';
+import { useAuthContext } from '../../Context/AuthContext';
 
 const PaymentHistory = () => {
   const [paymentHistory, setPaymentHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const { user } = useAuthContext();
 
   // Fetch payment data from the API
   useEffect(() => {
     axios
-      .get('http://localhost:5000/api/payment/billing/patient/P0203')
+      .get(`http://localhost:5000/api/payment/billing/patient/${user.patientID}`)
       .then((response) => {
         setPaymentHistory(response.data);
         setLoading(false);
@@ -39,7 +41,7 @@ const PaymentHistory = () => {
   }
 
   return (
-    <section className="st-shape-wrap" id="payment-history">
+    <section className="st-shape-wrap" id="payment-history" style={{marginBottom:'200px'}}>
       <div className="st-shape1">
         <img src="/shape/contact-shape1.svg" alt="shape1" />
       </div>
