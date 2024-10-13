@@ -16,7 +16,7 @@ function TestsandScans() {
     if (!hospitalId) return;
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/appointment/hospitalappointments/testscan/${hospitalId}`);
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/appointment/hospitalappointments/testscan/${hospitalId}`);
         const allAppointments = response.data;
         
         // Filter appointments based on selected tab (status)
