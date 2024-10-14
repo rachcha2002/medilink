@@ -250,6 +250,7 @@ const MyAppointmentPage = () => {
                 </>
               ) : selectedClinicAppointment.status === 'rejected' ? (
                 <>
+
                   <p><strong>Appointment Date:</strong> {new Date(selectedClinicAppointment.appointmentDate).toLocaleDateString()}</p>
                   <p><strong>Appointment Time:</strong> {selectedClinicAppointment.appointmentTime}</p>
                   <p><strong>Hospital:</strong>{selectedClinicAppointment.hospitalName}</p>
@@ -269,8 +270,7 @@ const MyAppointmentPage = () => {
                         <Button variant="success" size="lg" onClick={()=>PayForAppointment(selectedClinicAppointment)}>Pay</Button>
                       )}
                     </>
-                  )}
-                </>
+
               )}
             </>
           )}

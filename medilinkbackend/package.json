@@ -7,6 +7,10 @@
     "test-appointment": "jest __tests__/appointment.test.js",
     "test-appointmentfactory":"jest __tests__/appointmentfactory.test.js",
     "test": "jest",
+    "test-hospitaladmin":"jest __tests__/hospitaladmin.test.js",
+    "test-prescript": "jest __tests__/prescription.test.js",
+    "test-reports": "jest __tests__/reports.test.js",
+    "test-billing": "jest __tests__/billing.test.js",
     "start": "nodemon app.js"
   },
   "author": "",

@@ -14,6 +14,7 @@ import MLTStaff from "./components/MLT/MLTStaff";
 import HospitalAdmin from "./components/HospitalAdmin/HospitalAdmin";
 import SystemAdmin from "./components/SystemAdmin/SystemAdmin";
 import LoginForm from "./components/Common/Login";
+import RestrictedPage from "./components/util/RestrictedPage";
 import { AuthContext, useAuthContext } from "./context/AuthContext"; // Import AuthContext
 
 let logoutTimer;
@@ -108,32 +109,51 @@ function App() {
           logout,
         }}
       >
-        <Routes>
+       <Routes>
           <Route
             path="/"
-            element={<LandingPage toggleLoading={toggleLoading} />}
+            element={<LoginForm toggleLoading={toggleLoading} />}
           />
           <Route
             path="/login"
             element={<LoginForm toggleLoading={toggleLoading} />}
           />
 
-          <Route
-            path="/medicalstaff/*"
-            element={<MedicalStaff toggleLoading={toggleLoading} />}
-          />
-          <Route
-            path="/mltstaff/*"
-            element={<MLTStaff toggleLoading={toggleLoading} />}
-          />
-          <Route
-            path="/hospitaladmin/*"
-            element={<HospitalAdmin toggleLoading={toggleLoading} />}
-          />
-          <Route
-            path="/systemadmin/*"
-            element={<SystemAdmin toggleLoading={toggleLoading} />}
-          />
+          {isLoggedIn && (usertype === "doctor" || usertype === "nurse") ? (
+            <Route
+              path="/medicalstaff/*"
+              element={<MedicalStaff toggleLoading={toggleLoading} />}
+            />
+          ) : (
+            <Route path="/medicalstaff/*" element={<RestrictedPage />} />
+          )}
+
+          {isLoggedIn && usertype === "mlt" ? (
+            <Route
+              path="/mltstaff/*"
+              element={<MLTStaff toggleLoading={toggleLoading} />}
+            />
+          ) : (
+            <Route path="/mltstaff/*" element={<RestrictedPage />} />
+          )}
+
+          {isLoggedIn && usertype === "hospitaladmin" ? (
+            <Route
+              path="/hospitaladmin/*"
+              element={<HospitalAdmin toggleLoading={toggleLoading} />}
+            />
+          ) : (
+            <Route path="/hospitaladmin/*" element={<RestrictedPage />} />
+          )}
+
+          {isLoggedIn && usertype === "systemadmin" ? (
+            <Route
+              path="/systemadmin/*"
+              element={<SystemAdmin toggleLoading={toggleLoading} />}
+            />
+          ) : (
+            <Route path="/systemadmin/*" element={<RestrictedPage />} />
+          )}
         </Routes>
       </AuthContext.Provider>
     </>

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import SectionHeading from '../SectionHeading/SectionHeading';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import SectionHeading from "../SectionHeading/SectionHeading";
+import { Link } from "react-router-dom";
 
 const Department = () => {
   const [isActive, setIsActive] = useState(0);
@@ -8,13 +8,17 @@ const Department = () => {
   return (
     <section id="department">
       <div className="st-height-b120 st-height-lg-b80" />
-      <SectionHeading title='Our department'
-        subTitle=
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. <br /> Lorem Ipsum the industry's standard dummy text." />
+      <SectionHeading
+        title="Experities Network"
+        subTitle="Find what you need when you want with wide verity of fields in health care"
+      />
       <div className="container">
         <div className="st-tabs st-fade-tabs st-style1">
           <ul className="st-tab-links st-style1 st-mp0">
-            <li className={`st-tab-title ${isActive === 0 ? "active" : ""}`} onClick={() => setIsActive(0)}>
+            <li
+              className={`st-tab-title ${isActive === 0 ? "active" : ""}`}
+              onClick={() => setIsActive(0)}
+            >
               <span className="st-blue-box">
                 <svg
                   enableBackground="new 0 0 512 512"
@@ -29,7 +33,10 @@ const Department = () => {
                 <span>Crutches</span>
               </span>
             </li>
-            <li className={`st-tab-title ${isActive === 1 ? "active" : ""}`} onClick={() => setIsActive(1)}>
+            <li
+              className={`st-tab-title ${isActive === 1 ? "active" : ""}`}
+              onClick={() => setIsActive(1)}
+            >
               <span className="st-red-box">
                 <svg
                   version="1.1"
@@ -78,7 +85,10 @@ const Department = () => {
                 <span>X-ray</span>
               </span>
             </li>
-            <li className={`st-tab-title ${isActive === 2 ? "active" : ""}`} onClick={() => setIsActive(2)}>
+            <li
+              className={`st-tab-title ${isActive === 2 ? "active" : ""}`}
+              onClick={() => setIsActive(2)}
+            >
               <span className="st-green-box">
                 <svg
                   enableBackground="new 0 0 512 512"
@@ -92,7 +102,10 @@ const Department = () => {
                 <span>Pulmonary</span>
               </span>
             </li>
-            <li className={`st-tab-title ${isActive === 3 ? "active" : ""}`} onClick={() => setIsActive(3)}>
+            <li
+              className={`st-tab-title ${isActive === 3 ? "active" : ""}`}
+              onClick={() => setIsActive(3)}
+            >
               <span className="st-dip-blue-box">
                 <svg
                   height="512pt"
@@ -108,7 +121,10 @@ const Department = () => {
                 <span>Cardiology</span>
               </span>
             </li>
-            <li className={`st-tab-title ${isActive === 4 ? "active" : ""}`} onClick={() => setIsActive(4)}>
+            <li
+              className={`st-tab-title ${isActive === 4 ? "active" : ""}`}
+              onClick={() => setIsActive(4)}
+            >
               <span className="st-orange-box">
                 <svg
                   version="1.1"
@@ -146,7 +162,10 @@ const Department = () => {
                 <span>Dental care</span>
               </span>
             </li>
-            <li className={`st-tab-title ${isActive === 5 ? "active" : ""}`} onClick={() => setIsActive(5)}>
+            <li
+              className={`st-tab-title ${isActive === 5 ? "active" : ""}`}
+              onClick={() => setIsActive(5)}
+            >
               <span className="st-gray-box">
                 <svg
                   version="1.1"
@@ -315,7 +334,10 @@ const Department = () => {
           </ul>
           <div className="st-height-b25 st-height-lg-b25" />
           <div className="tab-content">
-            <div id="Crutches" className={`st-tab ${isActive === 0 ? "active" : ""}`}>
+            <div
+              id="Crutches"
+              className={`st-tab ${isActive === 0 ? "active" : ""}`}
+            >
               <div className="st-imagebox st-style2">
                 <div className="row">
                   <div className="col-lg-6">
@@ -332,23 +354,16 @@ const Department = () => {
                             Welcome to our <span>Crutches</span>
                           </h2>
                           <h4 className="st-imagebox-subtitle">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            Magni nemo libero debitis vitae sapiente quos.{" "}
+                            Lorem ipsum dolor sit amet, consectetur adipisicing
+                            elit. Magni nemo libero debitis vitae sapiente quos.{" "}
                           </h4>
                           <div className="st-imagebox-text">
                             Oillum abrem deleniti adipisci suscipit dignissimos.
-                            remaining essentially unchanged. It was popularised in the
-                            with the . Lorem Ipsum is simply dummy text of the
-                            printing and typesetting industry. Lorem ipsum dolor sit
-                            amet consectetur adipisicing elit.
+                            remaining essentially unchanged. It was popularised
+                            in the with the . Lorem Ipsum is simply dummy text
+                            of the printing and typesetting industry. Lorem
+                            ipsum dolor sit amet consectetur adipisicing elit.
                           </div>
-                        </div>
-                        <div className="st-imagebox-btn">
-                          <Link to=""
-                            className="st-btn st-style1 st-size-medium st-color1"
-                          >
-                            Read More
-                          </Link>
                         </div>
                       </div>
                     </div>
@@ -356,7 +371,10 @@ const Department = () => {
                 </div>
               </div>
             </div>
-            <div id="X-ray" className={`st-tab ${isActive === 1 ? "active" : ""}`}>
+            <div
+              id="X-ray"
+              className={`st-tab ${isActive === 1 ? "active" : ""}`}
+            >
               <div className="st-imagebox st-style2">
                 <div className="row">
                   <div className="col-lg-6">
@@ -373,23 +391,16 @@ const Department = () => {
                             Welcome to our <span>X-ray</span>
                           </h2>
                           <h4 className="st-imagebox-subtitle">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            Magni nemo libero debitis vitae sapiente quos.{" "}
+                            Lorem ipsum dolor sit amet, consectetur adipisicing
+                            elit. Magni nemo libero debitis vitae sapiente quos.{" "}
                           </h4>
                           <div className="st-imagebox-text">
                             Oillum abrem deleniti adipisci suscipit dignissimos.
-                            remaining essentially unchanged. It was popularised in the
-                            with the . Lorem Ipsum is simply dummy text of the
-                            printing and typesetting industry. Lorem ipsum dolor sit
-                            amet consectetur adipisicing elit.
+                            remaining essentially unchanged. It was popularised
+                            in the with the . Lorem Ipsum is simply dummy text
+                            of the printing and typesetting industry. Lorem
+                            ipsum dolor sit amet consectetur adipisicing elit.
                           </div>
-                        </div>
-                        <div className="st-imagebox-btn">
-                          <Link to=""
-                            className="st-btn st-style1 st-size-medium st-color1"
-                          >
-                            Read More
-                          </Link>
                         </div>
                       </div>
                     </div>
@@ -397,7 +408,10 @@ const Department = () => {
                 </div>
               </div>
             </div>
-            <div id="Pulmonary" className={`st-tab ${isActive === 2 ? "active" : ""}`}>
+            <div
+              id="Pulmonary"
+              className={`st-tab ${isActive === 2 ? "active" : ""}`}
+            >
               <div className="st-imagebox st-style2">
                 <div className="row">
                   <div className="col-lg-6">
@@ -414,23 +428,16 @@ const Department = () => {
                             Welcome to our <span>Pulmonary</span>
                           </h2>
                           <h4 className="st-imagebox-subtitle">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            Magni nemo libero debitis vitae sapiente quos.{" "}
+                            Lorem ipsum dolor sit amet, consectetur adipisicing
+                            elit. Magni nemo libero debitis vitae sapiente quos.{" "}
                           </h4>
                           <div className="st-imagebox-text">
                             Oillum abrem deleniti adipisci suscipit dignissimos.
-                            remaining essentially unchanged. It was popularised in the
-                            with the . Lorem Ipsum is simply dummy text of the
-                            printing and typesetting industry. Lorem ipsum dolor sit
-                            amet consectetur adipisicing elit.
+                            remaining essentially unchanged. It was popularised
+                            in the with the . Lorem Ipsum is simply dummy text
+                            of the printing and typesetting industry. Lorem
+                            ipsum dolor sit amet consectetur adipisicing elit.
                           </div>
-                        </div>
-                        <div className="st-imagebox-btn">
-                          <Link to=""
-                            className="st-btn st-style1 st-size-medium st-color1"
-                          >
-                            Read More
-                          </Link>
                         </div>
                       </div>
                     </div>
@@ -438,7 +445,10 @@ const Department = () => {
                 </div>
               </div>
             </div>
-            <div id="Cardiology" className={`st-tab ${isActive === 3 ? "active" : ""}`}>
+            <div
+              id="Cardiology"
+              className={`st-tab ${isActive === 3 ? "active" : ""}`}
+            >
               <div className="st-imagebox st-style2">
                 <div className="row">
                   <div className="col-lg-6">
@@ -455,23 +465,16 @@ const Department = () => {
                             Welcome to our <span>Cardiology</span>
                           </h2>
                           <h4 className="st-imagebox-subtitle">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            Magni nemo libero debitis vitae sapiente quos.{" "}
+                            Lorem ipsum dolor sit amet, consectetur adipisicing
+                            elit. Magni nemo libero debitis vitae sapiente quos.{" "}
                           </h4>
                           <div className="st-imagebox-text">
                             Oillum abrem deleniti adipisci suscipit dignissimos.
-                            remaining essentially unchanged. It was popularised in the
-                            with the . Lorem Ipsum is simply dummy text of the
-                            printing and typesetting industry. Lorem ipsum dolor sit
-                            amet consectetur adipisicing elit.
+                            remaining essentially unchanged. It was popularised
+                            in the with the . Lorem Ipsum is simply dummy text
+                            of the printing and typesetting industry. Lorem
+                            ipsum dolor sit amet consectetur adipisicing elit.
                           </div>
-                        </div>
-                        <div className="st-imagebox-btn">
-                          <Link to=""
-                            className="st-btn st-style1 st-size-medium st-color1"
-                          >
-                            Read More
-                          </Link>
                         </div>
                       </div>
                     </div>
@@ -479,7 +482,10 @@ const Department = () => {
                 </div>
               </div>
             </div>
-            <div id="DentalCare" className={`st-tab ${isActive === 4 ? "active" : ""}`}>
+            <div
+              id="DentalCare"
+              className={`st-tab ${isActive === 4 ? "active" : ""}`}
+            >
               <div className="st-imagebox st-style2">
                 <div className="row">
                   <div className="col-lg-6">
@@ -496,23 +502,16 @@ const Department = () => {
                             Welcome to our <span>DentalCare</span>
                           </h2>
                           <h4 className="st-imagebox-subtitle">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            Magni nemo libero debitis vitae sapiente quos.{" "}
+                            Lorem ipsum dolor sit amet, consectetur adipisicing
+                            elit. Magni nemo libero debitis vitae sapiente quos.{" "}
                           </h4>
                           <div className="st-imagebox-text">
                             Oillum abrem deleniti adipisci suscipit dignissimos.
-                            remaining essentially unchanged. It was popularised in the
-                            with the . Lorem Ipsum is simply dummy text of the
-                            printing and typesetting industry. Lorem ipsum dolor sit
-                            amet consectetur adipisicing elit.
+                            remaining essentially unchanged. It was popularised
+                            in the with the . Lorem Ipsum is simply dummy text
+                            of the printing and typesetting industry. Lorem
+                            ipsum dolor sit amet consectetur adipisicing elit.
                           </div>
-                        </div>
-                        <div className="st-imagebox-btn">
-                          <Link to=""
-                            className="st-btn st-style1 st-size-medium st-color1"
-                          >
-                            Read More
-                          </Link>
                         </div>
                       </div>
                     </div>
@@ -520,7 +519,10 @@ const Department = () => {
                 </div>
               </div>
             </div>
-            <div id="Neurology" className={`st-tab ${isActive === 5 ? "active" : ""}`}>
+            <div
+              id="Neurology"
+              className={`st-tab ${isActive === 5 ? "active" : ""}`}
+            >
               <div className="st-imagebox st-style2">
                 <div className="row">
                   <div className="col-lg-6">
@@ -537,23 +539,16 @@ const Department = () => {
                             Welcome to our <span>Neurology</span>
                           </h2>
                           <h4 className="st-imagebox-subtitle">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                            Magni nemo libero debitis vitae sapiente quos.{" "}
+                            Lorem ipsum dolor sit amet, consectetur adipisicing
+                            elit. Magni nemo libero debitis vitae sapiente quos.{" "}
                           </h4>
                           <div className="st-imagebox-text">
                             Oillum abrem deleniti adipisci suscipit dignissimos.
-                            remaining essentially unchanged. It was popularised in the
-                            with the . Lorem Ipsum is simply dummy text of the
-                            printing and typesetting industry. Lorem ipsum dolor sit
-                            amet consectetur adipisicing elit.
+                            remaining essentially unchanged. It was popularised
+                            in the with the . Lorem Ipsum is simply dummy text
+                            of the printing and typesetting industry. Lorem
+                            ipsum dolor sit amet consectetur adipisicing elit.
                           </div>
-                        </div>
-                        <div className="st-imagebox-btn">
-                          <Link to=""
-                            className="st-btn st-style1 st-size-medium st-color1"
-                          >
-                            Read More
-                          </Link>
                         </div>
                       </div>
                     </div>

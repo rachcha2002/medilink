@@ -189,6 +189,37 @@ const PaymentVerification = () => {
             );
           }
 
+          const emailOptions = {
+            to: `${billData.patientEmail}`, // Patient's email address
+            subject: `Payment Confirmation for Bill ${billData.billNo}`,
+            html: `<p><b>Dear ${billData.patientName},</b></p>
+                  <p>Your payment for the invoice with Bill No. <strong>${billData.billNo}</strong> has been successfully processed. You can download your invoice by clicking the link below:</p>
+                  <p><a href="${downloadURL}" download>Download Bill</a></p>
+                  <p>If you have any questions or need further assistance, feel free to contact our support team at <a href="mailto:support@medilink.com">support@medilink.com</a>.</p>
+                  <p>Thank you for choosing Medilink for your healthcare needs.</p>
+                  <p>Best regards,</p>
+                  <p><b><i>Medilink Finance Team</i></b></p>`
+          };
+          
+          // Send a fetch request to the backend controller for sending the email
+          await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/payment/email`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              to: emailOptions.to,
+              subject: emailOptions.subject,
+              html: emailOptions.html,
+            }),
+          });
+          
+          console.log("Email sent to backend controller successfully");
+          
+
+
+
+
         });
     } catch (error) {
       console.error("Error uploading the bill:", error);

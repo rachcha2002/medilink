@@ -1,7 +1,5 @@
-import React from 'react';
-import parse from 'html-react-parser';
-
-
+import React from "react";
+import parse from "html-react-parser";
 
 const About6 = ({ data }) => {
   const { title, subTitle, avater, timeTable, contact } = data;
@@ -30,7 +28,9 @@ const About6 = ({ data }) => {
                     </div>
                     <div className="st-avatar-info">
                       <h4 className="st-avatar-name">{avater.name}</h4>
-                      <div className="st-avatar-designation">{avater.designation}</div>
+                      <div className="st-avatar-designation">
+                        {avater.designation}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -39,19 +39,23 @@ const About6 = ({ data }) => {
             <div className="st-height-b0 st-height-lg-b30" />
           </div>
           {/* .col */}
-          <div className="col-lg-5 wow fadeInRight" data-wow-duration="0.8s" data-wow-delay="0.2s" >
+          <div
+            className="col-lg-5 wow fadeInRight"
+            data-wow-duration="0.8s"
+            data-wow-delay="0.2s"
+          >
             <div className="st-shedule-wrap">
               <div className="st-shedule">
                 <h2 className="st-shedule-title">Weekly Timetable</h2>
                 <ul className="st-shedule-list">
-                  {
-                    timeTable.map((element, index) => (
-                      <li key={index}>
-                        <div className="st-shedule-left">{element.day}</div>
-                        <div className="st-shedule-right">{element.startTime}am–{element.endTime}pm </div>
-                      </li>
-                    ))
-                  }
+                  {timeTable.map((element, index) => (
+                    <li key={index}>
+                      <div className="st-shedule-left">{element.day}</div>
+                      <div className="st-shedule-right">
+                        {element.startTime}am–{element.endTime}pm{" "}
+                      </div>
+                    </li>
+                  ))}
                 </ul>
                 <div className="st-height-b25 st-height-lg-b25" />
                 <div className="st-call st-style1">
@@ -70,7 +74,7 @@ const About6 = ({ data }) => {
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default About6
+export default About6;
