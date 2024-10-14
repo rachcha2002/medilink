@@ -20,7 +20,8 @@ function NavAvatar() {
   };
 
   // Determine the name to display based on usertype
-  const displayName = usertype === "hospitaladmin" ? user?.adminName : user?.name;
+  const displayName =
+    usertype === "hospitaladmin" ? user?.adminName : user?.name;
 
   return (
     <Dropdown align="end" className="nav-item pe-3">
@@ -36,7 +37,9 @@ function NavAvatar() {
           width="40"
           height="40"
         />
-        <span className="d-none d-md-block ps-2">{displayName ? displayName : "F. David"}</span>
+        <span className="d-none d-md-block ps-2">
+          {displayName ? displayName : "F. David"}
+        </span>
       </Dropdown.Toggle>
 
       <Dropdown.Menu className="dropdown-menu-end dropdown-menu-arrow profile">
@@ -44,11 +47,6 @@ function NavAvatar() {
           <h6>{displayName ? displayName : "David"}</h6>
           <span>{user ? user.role : "Web Developer"}</span>
         </Dropdown.Header>
-        <Dropdown.Divider />
-
-        <Dropdown.Item href="/users-profile">
-          <i className="bi bi-person"></i> My Profile
-        </Dropdown.Item>
         <Dropdown.Divider />
 
         <Dropdown.Item onClick={handleLogout}>
