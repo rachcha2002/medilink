@@ -23,6 +23,8 @@ import ".././../../Main/Main.css";
 import { FaFilePdf } from "react-icons/fa";
 import { useAuthContext } from "../../../../context/AuthContext";
 
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const BillingList = () => {
   const [billingData, setBillingData] = useState([]);
@@ -35,14 +37,15 @@ const BillingList = () => {
   const [billingTypeFilter, setBillingTypeFilter] = useState("");
   const [paymentMethodFilter, setPaymentMethodFilter] = useState("");
   const navigate = useNavigate();
-  const {user} = useAuthContext();
+  const { user } = useAuthContext();
   const hospitalID = user?.registrationID;
 
   useEffect(() => {
-
-    if (!hospitalID) return; 
+    if (!hospitalID) return;
     axios
-      .get(`${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/hospital/${hospitalID}`)
+      .get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/hospital/${hospitalID}`
+      )
       .then((response) => {
         setBillingData(response.data);
         setFilteredData(response.data);
@@ -53,6 +56,19 @@ const BillingList = () => {
         setLoading(false);
       });
   }, [hospitalID]);
+
+  const totalPaid = billingData
+    .filter((bill) => bill.paymentStatus === "Paid")
+    .reduce((total, bill) => total + bill.totalAmount, 0);
+
+  const totalPending = billingData
+    .filter((bill) => bill.paymentStatus !== "Paid")
+    .reduce((total, bill) => total + bill.totalAmount, 0);
+
+  const totalPayments = billingData.reduce(
+    (total, bill) => total + bill.totalAmount,
+    0
+  );
 
   const handleShowModal = (billing) => {
     setSelectedBilling(billing);
@@ -88,7 +104,9 @@ const BillingList = () => {
   };
 
   const handleDelete = () => {
-    if (window.confirm("Are you sure you want to delete this billing record?")) {
+    if (
+      window.confirm("Are you sure you want to delete this billing record?")
+    ) {
       axios
         .delete(
           `${process.env.REACT_APP_BACKEND_URL}/api/payment/billing/${selectedBilling._id}`
@@ -187,6 +205,60 @@ const BillingList = () => {
     setFilteredData(filtered);
   };
 
+  const generatePDF = () => {
+    const doc = new jsPDF();
+  
+    // Title of the PDF
+    doc.setFontSize(18);
+    doc.text("Billing Summary Report", 14, 20);
+  
+    // Formatting the summary with labels in bold
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Summary of Payments:", 14, 30);
+  
+    doc.setFont("helvetica", "normal");
+    doc.text(`Total Paid: Rs. ${totalPaid.toFixed(2)}`, 14, 40);
+    doc.text(`Total Pending: Rs. ${totalPending.toFixed(2)}`, 14, 50);
+    doc.text(`Total Payments: Rs. ${totalPayments.toFixed(2)}`, 14, 60);
+  
+    // Adding some space before the table
+    doc.setFontSize(16);
+    doc.text("Detailed Billing Information", 14, 80);
+  
+    // Add table of billing data
+    const tableColumn = [
+      "Bill No",
+      "Billing Type",
+      "Patient Name",
+      "Patient ID",
+      "Total Amount",
+      "Payment Status",
+      "Date",
+    ];
+  
+    const tableRows = billingData.map((bill) => [
+      bill.billNo,
+      bill.billingType,
+      bill.patientName,
+      bill.patientID,
+      `Rs.${bill.totalAmount.toFixed(2)}`,
+      bill.paymentStatus,
+      new Date(bill.createdAt).toLocaleString(),
+    ]);
+  
+    // AutoTable for displaying billing data
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 90,
+    });
+  
+    // Save the generated PDF
+    doc.save("billing_summary.pdf");
+  };
+  
+
   useEffect(() => {
     handleSearchAndFilter();
   }, [searchTerm, billingTypeFilter, paymentMethodFilter, billingData]);
@@ -208,15 +280,51 @@ const BillingList = () => {
         padding: "20px",
       }}
     >
+      <Row className="mb-4">
+        <Col md={4}>
+          <div className="card shadow-sm">
+            <div className="card-body">
+              <h5 className="card-title">Total Paid</h5>
+              <h6 className="card-text">Rs. {totalPaid.toFixed(2)}</h6>
+            </div>
+          </div>
+        </Col>
+        <Col md={4}>
+          <div className="card shadow-sm">
+            <div className="card-body">
+              <h5 className="card-title">Total Pending</h5>
+              <h6 className="card-text">Rs. {totalPending.toFixed(2)}</h6>
+            </div>
+          </div>
+        </Col>
+        <Col md={4}>
+          <div className="card shadow-sm">
+            <div className="card-body">
+              <h5 className="card-title">Total Payments</h5>
+              <h6 className="card-text">Rs. {totalPayments.toFixed(2)}</h6>
+            </div>
+          </div>
+        </Col>
+      </Row>
+
+      {/* PDF Generation Button */}
+      
+
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h1>Billing Information</h1>
-        <Button
-          variant="primary"
-          onClick={() => navigate("/hospitaladmin/payment/createBill")}
-        >
-          Add Bill
-        </Button>
-      </div>
+  <h1>Billing Information</h1>
+  <div>
+    <Button variant="info" className="me-2" onClick={generatePDF}>
+      Download PDF
+    </Button>
+    <Button
+      variant="primary"
+      onClick={() => navigate("/hospitaladmin/payment/createBill")}
+    >
+      Add Bill
+    </Button>
+  </div>
+</div>
+
 
       {/* Search and Filter Section */}
       <Form className="mb-3">
@@ -329,7 +437,11 @@ const BillingList = () => {
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label>Bill No</Form.Label>
-                    <Form.Control type="text" value={selectedBilling.billNo} disabled />
+                    <Form.Control
+                      type="text"
+                      value={selectedBilling.billNo}
+                      disabled
+                    />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
@@ -393,23 +505,25 @@ const BillingList = () => {
                 </Col>
               </Row>
               {/* New Invoice Field */}
-    {selectedBilling.downloadURL && (
-      <Row className="mb-3">
-        <Col md={6}>
-          <Form.Group>
-            <Form.Label>Invoice</Form.Label>
-            <Button
-              variant="link"
-              style={{ textDecoration: "none", paddingLeft: 0 }}
-              onClick={() => window.open(selectedBilling.downloadURL, "_blank")}
-            >
-              <FaFilePdf style={{ marginRight: 5 }} />
-              Open Invoice
-            </Button>
-          </Form.Group>
-        </Col>
-      </Row>
-    )}
+              {selectedBilling.downloadURL && (
+                <Row className="mb-3">
+                  <Col md={6}>
+                    <Form.Group>
+                      <Form.Label>Invoice</Form.Label>
+                      <Button
+                        variant="link"
+                        style={{ textDecoration: "none", paddingLeft: 0 }}
+                        onClick={() =>
+                          window.open(selectedBilling.downloadURL, "_blank")
+                        }
+                      >
+                        <FaFilePdf style={{ marginRight: 5 }} />
+                        Open Invoice
+                      </Button>
+                    </Form.Group>
+                  </Col>
+                </Row>
+              )}
 
               <Row className="mb-3">
                 <Col md={6}>
