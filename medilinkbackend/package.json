@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test-appointment": "jest __tests__/appointment.test.js",
+    "test-appointmentfactory":"jest __tests__/appointmentfactory.test.js",
     "test": "jest",
     "start": "nodemon app.js"
   },
