@@ -5,10 +5,15 @@
   "main": "index.js",
   "scripts": {
 
+    "test-hospitaladmin":"jest __tests__/hospitaladmin.test.js",
+    "test": "jest",
+     "start": "nodemon app.js"
+
     "test-prescript": "jest __tests__/prescription.test.js",
     "test-reports": "jest __tests__/reports.test.js",
 
     "test-billing": "jest __tests__/billing.test.js",
+
 
     "test": "jest",
     "start": "nodemon app.js"
