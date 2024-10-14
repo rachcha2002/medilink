@@ -12,17 +12,17 @@ import { useAuthContext } from "../../Context/AuthContext";
 const heroData = [
   {
     title: "Safe your own health. <br /> Get best Service.",
-    subTitle: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. <br /> Tempor incididunt ut labore et dolore magna.",
+    subTitle: " ",
     bgImg: '/images/hero-bg13.jpg',
   },
   {
     title: "Safe your own health. <br /> Get best Service.",
-    subTitle: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. <br /> Tempor incididunt ut labore et dolore magna.",
+    subTitle: " ",
     bgImg: '/images/hero-bg6.jpg',
   },
   {
     title: "Safe your own health. <br /> Get best Service.",
-    subTitle: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. <br /> Tempor incididunt ut labore et dolore magna.",
+    subTitle: " ",
     bgImg: '/images/hero-bg.jpg',
   }
 ];
