@@ -141,7 +141,7 @@ const MyAppointmentPage = () => {
                 <td>
                   <Button className="st-btn st-style1 st-color1 st-size-medium" onClick={() => handleShowClinicModal(appointment)}>View</Button>
                   {appointment.status === 'approved' && (
-                     <Button variant="success"   onClick={()=>PayForAppointment(appointment)}>Pay</Button>
+                     <Button variant="success" onClick={()=>PayForAppointment(appointment)}>Pay</Button>
                   )}
                 </td>
               </tr>
