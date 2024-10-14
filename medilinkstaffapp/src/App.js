@@ -111,7 +111,7 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={<LandingPage toggleLoading={toggleLoading} />}
+            element={<LoginForm toggleLoading={toggleLoading} />}
           />
           <Route
             path="/login"
