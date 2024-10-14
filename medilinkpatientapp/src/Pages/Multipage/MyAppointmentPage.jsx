@@ -197,7 +197,7 @@ const MyAppointmentPage = () => {
                 <>
                   <p><strong>Payment:</strong> Rs.{selectedClinicAppointment.payment}</p>
                   {selectedClinicAppointment.status === 'approved' && (
-                     <Button variant="success" onClick={()=>PayForAppointment(selectedClinicAppointment)}>Pay</Button>
+                     <Button variant="success"  onClick={()=>PayForAppointment(selectedClinicAppointment)}>Pay</Button>
                   )}
                 </>
               )}

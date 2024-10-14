@@ -4,8 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+
     "test-prescript": "jest __tests__/prescription.test.js",
     "test-reports": "jest __tests__/reports.test.js",
+
+    "test-billing": "jest __tests__/billing.test.js",
+
     "test": "jest",
     "start": "nodemon app.js"
   },
@@ -23,6 +27,7 @@
     "md5": "^2.3.0",
     "mongoose": "^8.7.1",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.15",
     "nodemon": "^3.1.7",
     "uuid": "^10.0.0"
   },
