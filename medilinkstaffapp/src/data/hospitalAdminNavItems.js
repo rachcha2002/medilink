@@ -61,11 +61,6 @@ const navList = [
     icon: "bi bi-h-circle",
     href: "/hospitaladmin/hospitaldetails",
   },
-  {
-    _id: 6,
-    name: "Charts",
-    icon: "bi bi-bar-chart",
-  },
 ];
 
 export default navList;

@@ -42,7 +42,7 @@ function AllPrescriptions({ type, toggleLoading }) {
 
   return (
     <main id="main" className="main">
-      <PageTitle title={pageTitle} url="/mltstaff/reportlist" />
+      <PageTitle title={pageTitle} url="/medicalstaff/prescriptions" />
       <Prescriptions
         apiUrl={apiUrl}
         title={pageTitle}

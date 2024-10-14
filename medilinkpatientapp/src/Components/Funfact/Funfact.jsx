@@ -1,11 +1,11 @@
-import React from 'react';
-import VideoBlock from '../VideoBlock/VideoBlock';
+import React from "react";
+import VideoBlock from "../VideoBlock/VideoBlock";
 
 const videoBlockData = {
-  "videoThumb": '/images/video-block-img.jpg',
-  "videoSrc": 'https://www.youtube.com/embed/SqcY0GlETPk',
-  "myVideoKey": "funfactVideo"
-}
+  videoThumb: "/images/video-block-img.jpg",
+  videoSrc: "https://www.youtube.com/embed/vGOL7ZvuGMc",
+  myVideoKey: "funfactVideo",
+};
 
 const Funfact = () => {
   return (
@@ -265,13 +265,17 @@ const Funfact = () => {
               {/* .col */}
             </div>
           </div>
-          <div className="col-xl-6 wow fadeInRight" data-wow-duration="0.8s" data-wow-delay="0.2s" >
+          <div
+            className="col-xl-6 wow fadeInRight"
+            data-wow-duration="0.8s"
+            data-wow-delay="0.2s"
+          >
             <VideoBlock data={videoBlockData} />
           </div>
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
 export default Funfact;

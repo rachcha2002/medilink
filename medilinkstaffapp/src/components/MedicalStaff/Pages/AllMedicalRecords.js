@@ -9,7 +9,7 @@ function AllMedicalRecords({ type, toggleLoading }) {
   const { user } = useAuthContext(); // Fetch user from context
   const [hospitalName, setHospitalName] = useState("");
   const [apiUrl, setApiUrl] = useState(""); // State to store dynamic API URL
-  const [pageTitle, setPageTitle] = useState("All Medical Reports"); // Set default page title
+  const [pageTitle, setPageTitle] = useState("All Medical Records"); // Set default page title
   const [isLoading, setIsLoading] = useState(true); // Loading state to prevent premature rendering
 
   // Effect to set hospital name from user context
@@ -41,7 +41,7 @@ function AllMedicalRecords({ type, toggleLoading }) {
 
   return (
     <main id="main" className="main">
-      <PageTitle title={pageTitle} url="/mltstaff/reportlist" />
+      <PageTitle title={pageTitle} url="/medicalstaff/medicalrecords" />
       <MedicalRecords
         apiUrl={apiUrl}
         title={pageTitle}

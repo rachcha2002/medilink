@@ -4,6 +4,11 @@ const router = express.Router();
 const billingController = require("../controllers/PaymentControllers/Billing");
 const { paymentinitiate, handlePaymentNotification, getPaymentbyOrderID } = require("../controllers/PaymentControllers/OnlinePayments");
 const { uploadInvoice } = require("../controllers/PaymentControllers/UploadBillToFirebase");
+const { sendMail } = require("../config/nodemailer");
+
+//use email service for billing
+router.post("/email",sendMail)
+
 
 // Create a new billing record
 router.post("/billing", billingController.createBilling);
