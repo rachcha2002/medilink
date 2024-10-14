@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-
+    "test-hospitaladmin":"jest __tests__/hospitaladmin.test.js",
     "test": "jest",
      "start": "nodemon app.js"
 
