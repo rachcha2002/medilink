@@ -54,8 +54,9 @@ const HealthAdminDashboard = () => {
         padding: "20px",
       }}
     >
-      <div style={{ width: '100%', height: 500 }}>
+      <div style={{ width: '100%', height: 200}}>
         <ResponsiveContainer>
+          <h3 style={{ fontSize:"40px" }}>Rush Hours</h3>
           <BarChart data={dummyData} >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis 
@@ -71,6 +72,7 @@ const HealthAdminDashboard = () => {
           </BarChart>
         </ResponsiveContainer>
       </div>
+      <br/>
       </Container>
 
 
