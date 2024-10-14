@@ -57,7 +57,7 @@ const HealthSummary = () => {
       <div className="st-shape4">
         <img src="/shape/section_shape.png" alt="shape" />
       </div>
-      <div className="st-height-b120 st-height-md-b5" />
+      <div className="st-height-b120 st-height-lg-b20" />
       <SectionHeading
         title={`Health Summary: ${patient.name}`}
         subTitle="Overview of the patient's medical history, current diagnosis, and medication."
@@ -99,7 +99,7 @@ const HealthSummary = () => {
 
                 {/* Touchable Cards */}
                 <div className="col-lg-12">
-                  <Spacing lg={80} md={40} />
+                  <Spacing lg={80} md={20} />
                   <div className="row">
                     {/* Medical Records Card */}
                     <div className="col-lg-4 col-md-6 mb-4">
