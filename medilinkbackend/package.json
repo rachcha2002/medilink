@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test-billing": "jest __tests__/billing.test.js",
     "test": "jest",
     "start": "nodemon app.js"
   },
