@@ -15,7 +15,6 @@ function Filteredtestandscans({ appointments }) {
     const hospital = auth.user?.hospitalName || '';
     const type = 'testscan';
 
-
     const handleClose = () => setShow(false);
     const handleShow = (appointment) => {
         setSelectedAppointment(appointment);
@@ -82,8 +81,36 @@ function Filteredtestandscans({ appointments }) {
                     });
 
                     if (response.ok) {
-                        await submitBilling(type,selectedAppointment, payment, auth.user);
+                        await submitBilling(type, selectedAppointment, payment, auth.user);
                         setShow(false);
+
+                        const emailOptions = {
+                            to: `${selectedAppointment.email}`, // Patient's email address
+                            subject: `Test and Scan Appointment Approval`,
+                            html: `<p><b>Dear ${selectedAppointment.username},</b></p>
+                                  <p>Your <strong>${selectedAppointment.scanName}</strong> on <strong>${new Date(selectedAppointment.appointmentDate).toLocaleDateString()}</strong> at <strong>${selectedAppointment.hospitalName}</strong> has been Approved.</p>
+                                  <p>For more details check My Appointments in your profile.</p>
+                                  <p>If you have any questions or need further assistance, feel free to contact our support team at <a href="mailto:support@medilink.com">support@medilink.com</a>.</p>
+                                  <p>Thank you for choosing Medilink for your healthcare needs.</p>
+                                  <p>Best regards,</p>
+                                  <p><b><i>Medilink Appointment Management Team</i></b></p>`
+                        };
+
+                        // Send a fetch request to the backend controller for sending the email
+                        await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/payment/email`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                to: emailOptions.to,
+                                subject: emailOptions.subject,
+                                html: emailOptions.html,
+                            }),
+                        });
+
+                        console.log("Email sent to backend controller successfully");
+
                         window.location.reload(); // Refresh the page
                     } else {
                         console.error('Failed to approve the appointment');
@@ -93,7 +120,7 @@ function Filteredtestandscans({ appointments }) {
                 }
             }
         }
-    }
+    };
 
     const handleReject = async () => {
         if (selectedAppointment) {
@@ -116,7 +143,7 @@ function Filteredtestandscans({ appointments }) {
                 console.error('Error:', error);
             }
         }
-    }
+    };
 
     // Filtered appointments based on search criteria
     const filteredAppointments = appointments.filter(appointment => {
