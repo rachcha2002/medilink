@@ -4,18 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-
-    "test-hospitaladmin":"jest __tests__/hospitaladmin.test.js",
+    "test-appointment": "jest __tests__/appointment.test.js",
+    "test-appointmentfactory":"jest __tests__/appointmentfactory.test.js",
     "test": "jest",
-     "start": "nodemon app.js"
-
+    "test-hospitaladmin":"jest __tests__/hospitaladmin.test.js",
     "test-prescript": "jest __tests__/prescription.test.js",
     "test-reports": "jest __tests__/reports.test.js",
-
     "test-billing": "jest __tests__/billing.test.js",
-
-
-    "test": "jest",
     "start": "nodemon app.js"
   },
   "author": "",

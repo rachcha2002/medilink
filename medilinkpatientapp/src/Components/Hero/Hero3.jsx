@@ -70,15 +70,11 @@ const Hero3 = ({ data }) => {
                     >
                       Appointment
                     </ScrollLink>
-                  )}
-                  <ScrollLink
-                    to="/about"
-                    className="st-btn st-style1 st-size-medium st-color3 st-smooth-move"
-                  >
-                    About Us
-                  </ScrollLink>
-                </div>
-                <div className="st-height-b15 st-height-lg-b15" />
+
+                    )}
+                  </div>
+                  <div className="st-height-b15 st-height-lg-b15" />
+
               </div>
             </div>
           </div>

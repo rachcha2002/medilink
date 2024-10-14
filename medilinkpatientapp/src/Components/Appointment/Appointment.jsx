@@ -34,7 +34,7 @@ const Appointment = () => {
       {/* Section Heading */}
       <SectionHeading
         title="Make an appointment"
-        subTitle="Lorem Ipsum is simply dummy text of the printing and typesetting industry. <br /> Lorem Ipsum the industry's standard dummy text."
+        subTitle="Manage your appointments effortlessly with us. Easily schedule, view, and manage upcoming appointments, ensuring you never miss a meeting or event. Stay organized and in control with reminders and quick access to all your bookings in one convenient place."
       />
 
       {/* Buttons for navigation */}
