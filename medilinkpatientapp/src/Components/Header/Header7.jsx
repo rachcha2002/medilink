@@ -36,7 +36,7 @@ const Header7 = ({ data }) => {
                 >
                   <path d="m434.146 59.882h-389.234c-24.766 0-44.912 20.146-44.912 44.912v269.47c0 24.766 20.146 44.912 44.912 44.912h389.234c24.766 0 44.912-20.146 44.912-44.912v-269.47c0-24.766-20.146-44.912-44.912-44.912zm0 29.941c2.034 0 3.969.422 5.738 1.159l-200.355 173.649-200.356-173.649c1.769-.736 3.704-1.159 5.738-1.159zm0 299.411h-389.234c-8.26 0-14.971-6.71-14.971-14.971v-251.648l199.778 173.141c2.822 2.441 6.316 3.655 9.81 3.655s6.988-1.213 9.81-3.655l199.778-173.141v251.649c-.001 8.26-6.711 14.97-14.971 14.97z" />
                 </svg>
-                <Link to="">teamoctagonit@gmail.com </Link>
+                <Link to="">medilinklk@gmail.com </Link>
               </li>
               <li style={{ display: "flex", alignItems: "center" }}>
                 <svg
@@ -53,8 +53,6 @@ const Header7 = ({ data }) => {
                   </g>
                 </svg>
                 <span style={{ marginRight: "20px" }}>+94 71 152 1161</span>
-
-
               </li>
             </ul>
           </div>
@@ -86,24 +84,47 @@ const Header7 = ({ data }) => {
                     </Link>
                   </li>
                   <li>
-                    <Link to="myappointments" onClick={() => setMobileToggle(false)}>
+                    <Link
+                      to="myappointments"
+                      onClick={() => setMobileToggle(false)}
+                    >
                       My Appointments
                     </Link>
                   </li>
                   <li className="menu-item-has-children">
-                    <Link to="payment/fullpage" onClick={() => setMobileToggle(false)}>Payments</Link>
+                    <Link
+                      to="payment/fullpage"
+                      onClick={() => setMobileToggle(false)}
+                    >
+                      Payments
+                    </Link>
                     <ul>
                       <li>
                         <Link to="payment/payonline">Pay Online</Link>
                       </li>
-                      { auth.isLoggedIn &&
-                      <li>
-                        <Link to="payment/mypayments">My Payments</Link>
-                      </li>
-    }
+                      {auth.isLoggedIn && (
+                        <li>
+                          <Link to="payment/mypayments">My Payments</Link>
+                        </li>
+                      )}
                     </ul>
                   </li>
 
+                  {auth.isLoggedIn && (
+                    <li>
+                      <Link
+                        to="health/healthsummery"
+                        onClick={() => setMobileToggle(false)}
+                      >
+                        Health
+                      </Link>
+                    </li>
+                  )}
+                  <li>
+                    <Link to="contact" onClick={() => setMobileToggle(false)}>
+                      Health Facilities
+                    </Link>
+                  </li>
                   <li className="menu-item-has-children">
                     <Link to="post" onClick={() => setMobileToggle(false)}>
                       Blog
@@ -113,19 +134,6 @@ const Header7 = ({ data }) => {
                         <Link to="post/post_details">Single Details</Link>
                       </li>
                     </ul>
-                  </li>
-                  <li className="menu-item-has-children">
-                    <Link
-                      to="health/healthsummery"
-                      onClick={() => setMobileToggle(false)}
-                    >
-                      Health
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="contact" onClick={() => setMobileToggle(false)}>
-                      Health Facilities
-                    </Link>
                   </li>
                 </ul>
                 <div
@@ -138,7 +146,6 @@ const Header7 = ({ data }) => {
                 </div>
               </div>
             </div>
-
 
             <div className="st-main-header-right">
               {auth.isLoggedIn ? (
@@ -181,7 +188,6 @@ const Header7 = ({ data }) => {
                 </button>
               )}
             </div>
-
           </div>
         </div>
       </div>
