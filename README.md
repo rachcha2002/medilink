@@ -59,8 +59,7 @@ Follow the steps below to clone the repository, set up the development environme
    cd medilinkstaffapp --> npm install --> npm start
 
 ## Some of UI
-  ## Screenshots
-
+  
 Below are screenshots of the MediLink application for better visualization:
 
 ### Add Prescription Screen
