@@ -53,6 +53,7 @@ Follow the steps below to clone the repository, set up the development environme
    git clone https://github.com/rachcha2002/medilink.git
    cd medilink
 2. **Install Dependencies and Run**
+   ```bash
    cd medilinkbackend --> npm install --> npm start
    cd medilinkpatientapp --> npm install --> npm start
    cd medilinkstaffapp --> npm install --> npm start
