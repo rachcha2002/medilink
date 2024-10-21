@@ -83,10 +83,10 @@ Below are screenshots of the MediLink application for better visualization:
 ### Prescriptions Screen
 ![Prescriptions Screen](./UIscreens/Prescriptions.png)
 
-### Screenshot (2024-10-14 10:21:19)
+
 ![Screenshot 2024-10-14 10:21:19](./UIscreens/Screenshot%202024-10-14%20102119.png)
 
-### Screenshot (2024-10-14 10:23:07)
+
 ![Screenshot 2024-10-14 10:23:07](./UIscreens/Screenshot%202024-10-14%20102307.png)
 
 
