@@ -59,6 +59,36 @@ Follow the steps below to clone the repository, set up the development environme
    cd medilinkstaffapp --> npm install --> npm start
 
 ## Some of UI
+  ## Screenshots
+
+Below are screenshots of the MediLink application for better visualization:
+
+### Add Prescription Screen
+![Add Prescription Screen](./UIscreens/Add%20Prescription.png)
+
+### All Prescriptions Screen
+![All Prescriptions Screen](./UIscreens/All%20prescriptions.png)
+
+### All Reports Screen
+![All Reports Screen](./UIscreens/All%20reports.png)
+
+### Medical Records Overview Screen
+![Medical Records Overview](./UIscreens/Medical%20Records%20All.png)
+
+### Medical Records Screen
+![Medical Records Screen](./UIscreens/Medical%20Records.png)
+
+### Patient Checker Screen
+![Patient Checker Screen](./UIscreens/Patient%20Checker.png)
+
+### Prescriptions Screen
+![Prescriptions Screen](./UIscreens/Prescriptions.png)
+
+### Screenshot (2024-10-14 10:21:19)
+![Screenshot 2024-10-14 10:21:19](./UIscreens/Screenshot%202024-10-14%20102119.png)
+
+### Screenshot (2024-10-14 10:23:07)
+![Screenshot 2024-10-14 10:23:07](./UIscreens/Screenshot%202024-10-14%20102307.png)
 
 
 
